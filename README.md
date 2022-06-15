@@ -1,6 +1,6 @@
 # Article title
 
-Author(s): [Kilian Eichenseer](mailto:Kilian.Eichenseer@gmail.com), [Lewis A. Jones](mailto:LewisA.Jones@outlook.com)
+Author(s): [Kilian Eichenseer](mailto:Kilian.Eichenseer@gmail.com) and [Lewis A. Jones](mailto:LewisA.Jones@outlook.com)
 
 This repository contains the data and code required to run the analyses and results of the article, "Article title" (Eichenseer and Jones, 2023). 
 
