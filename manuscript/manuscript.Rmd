@@ -1,0 +1,36 @@
+---
+title: "Article title goes here"
+author: 
+  - Kilian Eichenseer^[Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom] and Lewis A. Jones^[Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Universidade de Vigo, 36310 Vigo, Spain]
+output: 
+  word_document:
+    reference_docx: "template.docx"
+bibliography: references.bib
+csl: palaeontology.csl
+---
+
+Abstract
+===============================================================================
+
+Here goes the abstract
+
+# Introduction
+
+Example reference [@R-base]
+
+# Materials & Methods
+
+# Results
+
+# Discussion
+
+# Conclusions
+
+# Acknowledgements
+
+# Author contributions
+
+# Data accessibility
+
+# References
+
