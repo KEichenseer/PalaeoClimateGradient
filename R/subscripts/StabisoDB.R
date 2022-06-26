@@ -14,6 +14,7 @@ calcite_temp(-1.17,-0.67)
 
 ## latitude correction
 lat_correction <- function(lat, d18O_sw_ice) {
+  lat = abs(lat)
   d18O_sw_lat_mod = -6.650 * 10^(-4)*lat^2 + 3.363 * 10^(-2) * lat + 0.174
   d18O_sw_lat_pg = -4.944 * 10^(-4)*lat^2 + 2.492 * 10^(-2) * lat + 0.102
   out = d18O_sw_lat_mod * (d18O_sw_ice--1.08)/(0.45--1.08) + d18O_sw_lat_pg * (1-(d18O_sw_ice--1.08)/(0.45--1.08))
@@ -32,22 +33,30 @@ apatite_temp <- function(d18O_apatite,d18O_sw) {
 }
 # do we need to correct for standard d18O in the apatite samples? Ask Grossman / Joachimski
 
-get_temperature <- function(d18O_sample, d18O_sw_ice, lat, mineral, belemnite) {
+get_temperature <- function(d18O_sample, d18O_sw_ice, lat, mineral, fossil_group) {
   out = rep(NA_real_,length(d18O_sample))
   
-  out[which(mineral == "calcite" & "belemnite" == F)] <- calcite_temp(
-    d18O_sample, d18O_sw_ice + lat_correction(lat,d18O_sw_ice))
-  out[which(mineral == "calcite" & "belemnite" == T)] <- calcite_temp(
-    d18O_sample - 1.5, d18O_sw_ice + lat_correction(lat,d18O_sw_ice))
-  out[which(mineral == "aragonite")] <- calcite_temp(
-    d18O_sample - 0.6, d18O_sw_ice + lat_correction(lat,d18O_sw_ice))
-  out[which(mineral == "apatite")] <- apatite_temp(
-    d18O_sample, d18O_sw_ice + lat_correction(lat,d18O_sw_ice))
+  index1 <- which(mineral == "calcite" & fossil_group != "Belemnite")
+  if(length(index1)>=1) out[index1] <- calcite_temp(
+    d18O_sample[index1], d18O_sw_ice[index1] + lat_correction(lat[index1],d18O_sw_ice[index1]))
+  
+  index2 <- which(mineral == "calcite" & fossil_group == "Belemnite")
+  if(length(index2)>=1) out[index2] <- calcite_temp(
+    d18O_sample[index2]- 1.5, d18O_sw_ice[index2] + lat_correction(lat[index2],d18O_sw_ice[index2]))
+  
+  index3 <- which(mineral == "aragonite" & fossil_group != "Belemnite")
+  if(length(index3)>=1) out[index3] <- calcite_temp(
+    d18O_sample[index3]- 0.6, d18O_sw_ice[index3] + lat_correction(lat[index3],d18O_sw_ice[index3]))
+  
+  index4 <- which(mineral == "apatite")
+  if(length(index4)>=1) out[index4] <- apatite_temp(
+    d18O_sample[index4], d18O_sw_ice[index4] + lat_correction(lat[index4],d18O_sw_ice[index4]))
+ 
 return(out)
   }
 
 # An example with ID 16333 (a sample from Grossman and Joachmiski 2022)
-get_temperature(d18O_sample = c(-2.58), d18O_sw_ice=c(0), lat = c(7.99), mineral=c("aragonite"), belemnite=c(F))
+get_temperature(d18O_sample = c(-2.58), d18O_sw_ice=c(0), lat = c(7.99), mineral=c("aragonite"), fossil_group="something else")
 # it looks like Grossman and Joachimski 2022 have not actually applied the -0.6 aragonite correction.
 # Also, my temperature values are generally 0.1 - 0.2 deg C warmer than theirs, I can't figure out why.
 
@@ -92,4 +101,48 @@ hist(dat$sw_d18O_ice)
 hist(dat$age[which(dat$sw_d18O_ice==0.45)],1000)
 # looks ok
 
+### correct mineralogies:
+dat$mineralogy[which(dat$mineralogy=="Aragonite")] <- "aragonite"
+dat$mineralogy[which(dat$mineralogy=="Calcite")] <- "calcite"
+dat$mineralogy[which(dat$mineralogy=="na")] <- NA
+
+### add column for belemnite
+table(dat$fossil_group)
+
 ### assign temperatures (use select d18O for now)
+dat$temperature <- get_temperature(dat$select_d18o_permille, dat$sw_d18O_ice, dat$paleolat, dat$mineralogy, dat$fossil_group)
+hist(dat$temperature)
+### assign stages (use palaeoverse::time_bins)
+dat$stage_2020[which(dat$stage_2020 == "Ionian")] <- "Chibanian"
+dat$stage_2020[which(dat$stage_2020 == "Tarantian")] <- "Upper Pleistocene"
+dat$stage_2020[which(dat$stage_2020 == "Cambrian")] <- "Pre-Cambrian boundary"
+dat$stage_2020[which(dat$stage_2020 == "Age 3")] <- "Stage 2" # from boundary pack in prev interval (is empty anyway)
+dat$stage_2020[which(dat$stage_2020 == "Ordovician")] <- "Stage 10" # from boundary pack in prev interval (is empty anyway)
+
+stages <- c("Pre-Cambrian boundary", "Fortunian", "Stage 2", "Stage 3", "Stage 4", "Wuliuan", "Drumian", 
+            "Guzhangian", "Paibian", "Jiangshanian", "Stage 10", "Tremadocian", 
+            "Floian", "Dapingian", "Darriwilian", "Sandbian", "Katian", "Hirnantian", 
+            "Rhuddanian", "Aeronian", "Telychian", "Sheinwoodian", "Homerian", 
+            "Gorstian", "Ludfordian", "Pridoli", "Lochkovian", "Pragian", 
+            "Emsian", "Eifelian", "Givetian", "Frasnian", "Famennian", "Tournaisian", 
+            "Visean", "Serpukhovian", "Bashkirian", "Moscovian", "Kasimovian", 
+            "Gzhelian", "Asselian", "Sakmarian", "Artinskian", "Kungurian", 
+            "Roadian", "Wordian", "Capitanian", "Wuchiapingian", "Changhsingian", 
+            "Induan", "Olenekian", "Anisian", "Ladinian", "Carnian", "Norian", 
+            "Rhaetian", "Hettangian", "Sinemurian", "Pliensbachian", "Toarcian", 
+            "Aalenian", "Bajocian", "Bathonian", "Callovian", "Oxfordian", 
+            "Kimmeridgian", "Tithonian", "Berriasian", "Valanginian", "Hauterivian", 
+            "Barremian", "Aptian", "Albian", "Cenomanian", "Turonian", "Coniacian", 
+            "Santonian", "Campanian", "Maastrichtian", "Danian", "Selandian", 
+            "Thanetian", "Ypresian", "Lutetian", "Bartonian", "Priabonian", 
+            "Rupelian", "Chattian", "Aquitanian", "Burdigalian", "Langhian", 
+            "Serravallian", "Tortonian", "Messinian", "Zanclean", "Piacenzian", 
+            "Gelasian", "Calabrian", "Chibanian", "Upper Pleistocene", "Holocene")
+unistage <- unique(dat$stage_2020)
+unistage[which(!(unistage %in% stages))] # Ludlow Devonian Modern - not use
+
+
+#get_temperature(d18O_sample = -0.82,d18O_sw_ice = -0.83,lat = -0, mineral = "calcite", fossil_group = "brachiopod")
+#small_dat <- dat[,c("stage_2020","fossil_group","mineralogy","select_d18o_permille","sw_d18O_ice","temperature", "paleolat") ]
+
+saveRDS(dat,"data/processed/StabisoDB_processed_26_06_2022.rds")
