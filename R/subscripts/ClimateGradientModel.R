@@ -130,7 +130,7 @@ run_MCMC <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_inits, 
   sdy = rep(NA_real_,nIter) # set up vector to store sdy
   sdy[1] = sdy_init # intialise sdy
   
-  logpostold = 0
+  logpostold = NA
   accept = rep(NA,nIter)
   x = NULL
   if(!is.null(obsmat)) {
@@ -319,8 +319,9 @@ run_MCMC <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_inits, 
         while(any(eigen(proposal_cov)$values <= 0.000001)) {
           diag(proposal_cov) <- 1.25 * diag(proposal_cov)
           # print(paste("stuck in while loop at it",i))}
-      }
+        }
       
+      }
     }
     # create matrix of proposal innovations as this is much faster than doing it anew at every it
     if(i == adapt_sd) proposal_innovation <-   mvnfast::rmvn(n = nIter-adapt_sd, mu = rep(0,4),
@@ -333,7 +334,7 @@ run_MCMC <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_inits, 
   rm(proposal_innovation) #delete matrix of proposal innovations to save memory
   
   ###  Function output
-  output = list(data.frame(A = coefficients[,1],
+  output = list(params = data.frame(A = coefficients[,1],
                            DKA = coefficients[,2],
                            M = coefficients[,3],
                            Q = coefficients[,4],
