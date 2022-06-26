@@ -20,6 +20,8 @@ sample_lats <- sapply(samples, function(x) unique(dat_mod$lat[which(dat_mod$samp
 plot(abs(dat_mod$latitude),dat_mod$temperature)
 
 # wait a second - how do we deal with situationsn with 1 value per locality?
+## ok, this is taken care of by the prior on yest ... although it is counterintuitive, as yest deviates less 
+## with larger priors on sdyest. Definetly some prior sensitivity tests are in order. 
 
 # call model functions
 source("R/subscripts/ClimateGradientModel.R")
