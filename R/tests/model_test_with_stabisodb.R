@@ -6,14 +6,15 @@
 dat <- readRDS("data/processed/StabisoDB_processed_26_06_2022.rds")
 
 # select data from one stage to test, exclude NA data
-dat_sub <- subset(dat,stage_2020 == "Gzhelian" & !(is.na(paleolat)) & !(is.na(temperature)))#table(dat$stage_2020)
+dat_sub <- subset(dat,stage_2020 == "Induan" & !(is.na(paleolat)) & !(is.na(temperature)))#table(dat$stage_2020)
 dat_sub <- dat_sub[with(dat_sub, order(abs(paleolat), longitude)),]
 # prepare for use in the model
-dat_mod <- data.frame(sample = as.factor(paste(abs(dat_sub$paleolat),dat_sub$longitude)),
+dat_mod <- data.frame(sample = (paste(abs(dat_sub$paleolat),dat_sub$longitude)),
                        latitude = abs(dat_sub$paleolat), temperature = dat_sub$temperature)
-levels(dat_mod$sample) <- 1:length(levels(dat_mod$sample))
+samples1 <- unique(dat_mod$sample)
+for(i in 1:length(samples1)) dat_mod$sample[which(dat_mod$sample==samples1[i])] <- i
 
-samples <-  1:length(levels(dat_mod$sample))
+samples <-  1:length(samples1)
 sample_lats <- sapply(samples, function(x) unique(dat_mod$lat[which(dat_mod$sample==x)]))
   
 # visualise data
@@ -71,3 +72,4 @@ replicate(8, points(latitude, gradient(x = latitude, coeff = unlist(mod$params[s
 #axis(2,seq(-5,30,5),c(NA,0,NA,10,NA,20,NA,30))
 
 ### Ghzelian: Investigate why the lat 20 point estimate is so offset
+### solved: was a problem with assigning sample numbers. 
