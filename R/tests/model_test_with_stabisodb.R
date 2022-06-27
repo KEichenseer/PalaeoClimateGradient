@@ -6,7 +6,7 @@
 dat <- readRDS("data/processed/StabisoDB_processed_26_06_2022.rds")
 
 # select data from one stage to test, exclude NA data
-dat_sub <- subset(dat,stage_2020 == "Induan" & !(is.na(paleolat)) & !(is.na(temperature)))#table(dat$stage_2020)
+dat_sub <- subset(dat,stage_2020 == "Changhsingian" & !(is.na(paleolat)) & !(is.na(temperature)))#table(dat$stage_2020)
 dat_sub <- dat_sub[with(dat_sub, order(abs(paleolat), longitude)),]
 # prepare for use in the model
 dat_mod <- data.frame(sample = (paste(abs(dat_sub$paleolat),dat_sub$longitude)),
@@ -23,6 +23,7 @@ plot(abs(dat_mod$latitude),dat_mod$temperature)
 # wait a second - how do we deal with situationsn with 1 value per locality?
 ## ok, this is taken care of by the prior on yest ... although it is counterintuitive, as yest deviates less 
 ## with larger priors on sdyest. Definetly some prior sensitivity tests are in order. 
+### resolved, it is an inverse gamma distribution, hence larger scale leads to smaller deviations, all good.
 
 # call model functions
 source("R/subscripts/ClimateGradientModel.R")
