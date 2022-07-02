@@ -44,19 +44,19 @@ cl <- parallel::makeCluster(nClusters)
 doParallel::registerDoParallel(cl)
 
 # Iterations and burnin
-nIter = 100000
-burnin = 12000
-iterOut = 4000
+nIter = 10000
+burnin = 1200
+iterOut = 400
 seqstep <- round((nIter-burnin+1)/iterOut)
 
 # list to save output
 mod <- vector(mode = "list", length = length(stages))
 
 # loop across stages
-for(s in 20:21) {
+for(st in 20:21) {
   
   # select stage
-  mystage <- stages[s]
+  mystage <- stages[st]
   
   ##
   ## subset isotope data
@@ -86,8 +86,10 @@ for(s in 20:21) {
                                distribution = "skew-normal")
   smod <- climate_parallel(nChains = nChains, nIter = nIter, obsmat = iso_mod, distrmat = coral_distrmat)
   
-  mod[[s]] <- do.call("rbind",ls)
-    smod$params[[1]][seq(burnin+seqstep,nIter,seqstep),1:5]
+  mod[[st]] <- do.call("rbind",lapply(1:nChains,function(l) 
+    smod[[l]]$params[seq(burnin+seqstep,nIter,seqstep),1:5]))
 }
 
-stopImplicitCluster()
+doParallel::stopImplicitCluster()
+
+mod[[21]]
