@@ -44,10 +44,10 @@ loglik_skew <- function(x, yest, mu, sigma, lambda, coeff, sdy) {
 logprior <- function(coeff) {
   coeff = unlist(coeff)
   return(sum(c(
-    log(2/12)+dnorm((coeff[1] - (-2.85))/12,log=T)+pnorm(10*(coeff[1] - (-2.85))/12,log=T),  #dunif(coeff[1], -4, 40, log = TRUE),
-    dtnorm(coeff[2], 0, Inf,25,12, log = TRUE),
-    dnorm(coeff[3], 45, 10, log = TRUE),
-    dlnorm(coeff[4], -2.2, 0.8, log = TRUE))))
+    dsnorm(coeff[1],location = -2.7, scale = 16, alpha = 16, log = TRUE), # prior on A
+    dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on DKA
+    dnorm(coeff[3], 45, 10, log = TRUE), # prior on M
+    dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on Q
 }
 
 # function to generate truncated normal
@@ -70,6 +70,9 @@ dtnorm <- function(x,lower,upper,mean,sd, log = FALSE) {
   ret
 } # from msm
 
+dsnorm <- function(x,location,scale,alpha, log = TRUE) {
+  if(log == TRUE) log(2/scale)+dnorm((x - location)/scale,log=T)+pnorm(alpha*(x - location)/scale,log=T)
+}
 
 
 logposterior_norm <- function(x, yest, ymean, sdyest, coeff, sdy){

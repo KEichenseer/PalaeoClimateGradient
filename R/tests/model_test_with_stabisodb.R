@@ -6,7 +6,7 @@
 dat <- readRDS("data/processed/StabisoDB_processed_26_06_2022.rds")
 
 # select data from one stage to test, exclude NA data
-dat_sub <- subset(dat,stage_2020 == "Changhsingian" & !(is.na(paleolat)) & !(is.na(temperature)))#table(dat$stage_2020)
+dat_sub <- subset(dat,stage_2020 == "Rhuddanian" & !(is.na(paleolat)) & !(is.na(temperature)))#table(dat$stage_2020)
 dat_sub <- dat_sub[with(dat_sub, order(abs(paleolat), longitude)),]
 # prepare for use in the model
 dat_mod <- data.frame(sample = (paste(abs(dat_sub$paleolat),dat_sub$longitude)),
@@ -31,13 +31,15 @@ source("R/subscripts/ClimateGradientModel.R")
 # initial temperature values for the sample locations
 yest_inits <- sapply(unique(dat_mod$sample), function(x) mean(dat_mod$temperature[which(dat_mod$sample == x)]))
 
+nIter <- 20000
+
+
 # run the model
-mod <- run_MCMC(nIter = 20000, obsmat = dat_mod, distrmat = NULL, coeff_inits = c(10,20,45,0.1), sdy_init = 1, 
+mod <- run_MCMC(nIter = nIter, obsmat = dat_mod, distrmat = NULL, coeff_inits = c(10,20,45,0.1), sdy_init = 1, 
          yest_inits = yest_inits, sdyest_inits = rep(2,length(yest_inits)),
                      proposal_var_inits = c(2,2,2,0.2))
 
 
-nIter <- 20000
 burnin <- 4000+1 # burnin - to be discarded for the plots
 
 # function for plotting the 95 % CI shading
@@ -67,7 +69,6 @@ sapply(samples,function(x) points(rep(sample_lats[x],2), quantile(mod$yestimate[
                                   type = "l", col = rgb(1,0,0,0.75)))
 
 
-points(sample_data$x, sample_data$y,  pch = 19, cex = 1.1, col = rgb(0,0,0,0.5), xpd = T)
 replicate(8, points(latitude, gradient(x = latitude, coeff = unlist(mod$params[sample(burnin:nIter,1),1:4]), sdy = 0), 
                     type = "l", col = rgb(0,0.25,0.5,0.33), lwd = 2))
 #axis(2,seq(-5,30,5),c(NA,0,NA,10,NA,20,NA,30))
