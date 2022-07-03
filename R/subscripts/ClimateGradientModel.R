@@ -2,12 +2,33 @@
 ############## 26/06/2022
 
 gradient <- function(x, coeff, sdy) { # parametrise with difference between cold and hot end instead
-  coeff = unlist(coeff)
-  A = coeff[1]
-  DKA = coeff[2]
-  M = coeff[3]
-  Q = coeff[4]
-  return(A + DKA/((1+(exp(Q*(x-M))))) + rnorm(length(x),0,sdy))
+  if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
+  if(is.data.frame(coeff) | is.matrix(coeff)) {
+    A = coeff[,1]
+    DKA = coeff[,2]
+    M = coeff[,3]
+    Q = coeff[,4]
+    
+    lat = t(data.frame(lat=x))
+    lat = lat[rep(1, each=length(A)),]
+
+    if(sdy == 0) {out = A + DKA/((1+(exp(Q*(lat-M)))))
+    } else {
+      out = A + DKA/((1+(exp(Q*(lat-M)))))+ rnorm(length(x),0,sdy)
+    }
+    
+  } else {
+    A = coeff[1]
+    DKA = coeff[2]
+    M = coeff[3]
+    Q = coeff[4]
+
+  if(sdy == 0) {return(A + DKA/((1+(exp(Q*(x-M))))))
+   } else {
+   out = A + DKA/((1+(exp(Q*(x-M)))))+ rnorm(length(x),0,sdy)
+   }
+  }
+  return(out)
 }
 
 loglik_norm <- function(x, yest, ymean, sdyest, coeff, sdy) {

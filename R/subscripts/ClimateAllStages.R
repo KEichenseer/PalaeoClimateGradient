@@ -44,19 +44,28 @@ cl <- parallel::makeCluster(nClusters)
 doParallel::registerDoParallel(cl)
 
 # Iterations and burnin
-nIter = 10000
-burnin = 1200
-iterOut = 400
+nIter = 100000
+burnin = 12000
+iterOut = 4000
 seqstep <- round((nIter-burnin+1)/iterOut)
 
+nstage <- 10
+
 # list to save output
-mod <- vector(mode = "list", length = length(stages))
+mod <- vector(mode = "list", length = nstage)
+
+cli::cli_progress_bar('Sampling', total = nstage)
 
 # loop across stages
-for(st in 20:21) {
-  
-  # select stage
+for(st in 10) {
+  # start progress bar
+  ### The MCMC loop
+
+    # select stage
   mystage <- stages[st]
+  
+  # update progress bar
+  cli::cli_progress_update(set = st, status = paste0('stage ', st, ' - ', mystage, ' - '))
   
   ##
   ## subset isotope data
@@ -79,17 +88,28 @@ for(st in 20:21) {
   coral_sub <- subset(coral,early_stage == mystage & !(is.na(pal_lat_scotese)))
   coral_sub <- coral_sub[with(coral_sub, order(abs(pal_lat_scotese), longit)),]
   # prepare for use in the model
-  coral_distrmat <- data.frame(latitude = abs(coral_sub$pal_lat_scotese),
+ if(nrow(coral_sub) >= 1) {coral_distrmat <- data.frame(latitude = abs(coral_sub$pal_lat_scotese),
                                location = 22.8,
                                scale = 10,
                                shape = 4,
                                distribution = "skew-normal")
+ } else coral_distrmat <- data.frame(NULL)
+  
+  # run model in parallel chains
   smod <- climate_parallel(nChains = nChains, nIter = nIter, obsmat = iso_mod, distrmat = coral_distrmat)
   
+  # store only part of the output to save memory
   mod[[st]] <- do.call("rbind",lapply(1:nChains,function(l) 
     smod[[l]]$params[seq(burnin+seqstep,nIter,seqstep),1:5]))
 }
 
 doParallel::stopImplicitCluster()
 
-mod[[21]]
+### check effective sample size
+# should aim for ~ 10,000 for the publication
+mcmcse::multiESS(mod[[10]][,1:4])
+
+### plot output
+source("R/subscripts/AuxiliaryFunctions.R")
+plot_gradient(mod[[10]])
+
