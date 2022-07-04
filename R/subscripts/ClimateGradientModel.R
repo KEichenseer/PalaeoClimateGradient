@@ -92,7 +92,9 @@ dtnorm <- function(x,lower,upper,mean,sd, log = FALSE) {
 } # from msm
 
 dsnorm <- function(x,location,scale,alpha, log = TRUE) {
-  if(log == TRUE) log(2/scale)+dnorm((x - location)/scale,log=T)+pnorm(alpha*(x - location)/scale,log=T)
+  if(log == TRUE) out = log(2/scale)+dnorm((x - location)/scale,log=T)+pnorm(alpha*(x - location)/scale,log=T)
+  if(log == FALSE) out = (2/scale)*dnorm((x - location)/scale,log=F)*pnorm(alpha*(x - location)/scale,log=F)
+  return(out)
 }
 
 

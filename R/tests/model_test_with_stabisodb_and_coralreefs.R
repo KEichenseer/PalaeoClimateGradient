@@ -157,3 +157,8 @@ points(mod3[[3]]$params$DKA[seq(1,20000,10)],type = "l", col = rgb(0,0.6,.8,0.5)
 ### Effective sample size 
 mcmcse::multiESS(mod3$params[(0.5*nIter):nIter,1:4])
 
+### tets plot function
+plot_gradient(mod$params, ylim = c(-5,30))
+plot_data(iso_mod,add = T)
+plot_distr(coral_distrmat,add = T)
+
