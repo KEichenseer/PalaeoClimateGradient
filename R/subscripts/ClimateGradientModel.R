@@ -67,7 +67,7 @@ logprior <- function(coeff) {
   return(sum(c(
     dsnorm(coeff[1],location = -2.7, scale = 16, alpha = 16, log = TRUE), # prior on A
     dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on DKA
-    dnorm(coeff[3], 45, 10, log = TRUE), # prior on M
+    dnorm(coeff[3], 45, 15, log = TRUE), # prior on M
     dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on Q
 }
 

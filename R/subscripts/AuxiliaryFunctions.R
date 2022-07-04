@@ -8,6 +8,8 @@ error_polygon <- function(x,en,ep,color=rgb(0,0,0,0.2)) {
 
 plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
                           ylim = NULL) {
+  # select only params
+  if(!is.null(mod["params"])) model_out <- model_out$params
   
   nIter <- nrow(model_out)
   if(is.null(burnin)) burnin = round(nrow(model_out)*12/100)+1
@@ -35,7 +37,7 @@ plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint
 }
 
 plot_distr <- function(distrmat, lat = seq(0,90,0.2), trange = c(-10,100), distrwidth = 0.01,
-                       col = rgb(0,0.5,0.75,0.33)) {
+                       col = rgb(0.15,0,0.7,0.25)) {
   
   tseq <- seq(trange[1],trange[2],0.1)
   
@@ -57,7 +59,7 @@ plot_distr <- function(distrmat, lat = seq(0,90,0.2), trange = c(-10,100), distr
 }
 
 plot_data <- function(obsmat = NULL, distrmat = NULL, lat = seq(0,90,0.2), add = F, ylim = NULL,
-                      col = rgb(0.75,0.4,0,0.33)) {
+                      col = rgb(0.75,0.45,0,0.4)) {
   if(add == T) {
     points(obsmat$latitude,obsmat$temperature, bg = col, pch = 21, col = NA)
   }
@@ -68,3 +70,53 @@ plot_data <- function(obsmat = NULL, distrmat = NULL, lat = seq(0,90,0.2), add =
   }
   
 }
+
+plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
+                           ylim = NULL, col_obs = rgb(.85,0.3,0,0.75), col_dist = rgb(0.6,0,.9,0.75)) {
+  nIter <- nrow(mod$params)
+  if(is.null(burnin)) burnin = round(nrow(mod$params)*12/100)+1
+  
+  if(!(is.null(mod$sdyest))) {
+  nobsloc <- dim(mod$sdyest)[2]
+  samples <- 1:dim(mod$sdyest)[2]
+  invisible(sapply(samples,function(x) points(mod$lat[x], mean(mod$yestimate[burnin:nIter,x]), pch = 17, col = col_obs)))
+  invisible(sapply(samples,function(x) points(rep(mod$lat[x],2), quantile(mod$yestimate[burnin:nIter,x], probs = c(0.05,0.95)), 
+                                    type = "l", col = col_obs)))
+  } else nobsloc <- 0
+  
+  if(dim(mod$yestimate)[2] > nobsloc) {
+    ndistrloc <- dim(mod$yestimate)[2]
+  
+    
+  
+  distr_ind <- (nobsloc+1):ndistrloc
+  invisible(sapply(distr_ind,function(x) points(mod$lat[x], median(mod$yestimate[burnin:nIter,x]), pch = 17, col = col_dist)))
+  invisible(sapply(distr_ind,function(x) points(rep(mod$lat[x],2), quantile(mod$yestimate[burnin:nIter,x], probs = c(0.05,0.95)), 
+                                                type = "l", col = col_dist)))
+  }
+}
+
+coral_distrmat <- function(data,stage) { # for PARED
+  
+  data_sub <- subset(data,early_stage == stage & !(is.na(pal_lat_scotese)))#table(iso$stage_2020)
+  data_sub <- data_sub[with(data_sub, order(abs(pal_lat_scotese), longit)),]
+  # prepare for use in the model
+  if(nrow(data_sub) >= 1) {data_distrmat <- data.frame(latitude = abs(data_sub$pal_lat_scotese),
+                                                         location = 22.8,
+                                                         scale = 10,
+                                                         shape = 4,
+                                                         distribution = "skew-normal")
+  } else data_distrmat <- data.frame(NULL)
+  
+}
+  
+iso_obsmat <- function(data, stage) { # for StabisoDB
+  # select data from one stage to test, exclude NA data
+  data_sub <- subset(data,stage_2020 == stage & !(is.na(paleolat)) & !(is.na(temperature)))
+  data_sub <- data_sub[with(data_sub, order(abs(paleolat), longitude)),]
+  # prepare for use in the model
+  data_mod <- data.frame(sample = (paste(abs(data_sub$paleolat),data_sub$longitude)),
+                        latitude = abs(data_sub$paleolat), temperature = data_sub$temperature)
+  return(data_mod)
+}
+

@@ -3,7 +3,7 @@
 ### 02/07/2022
 ###
 
-mystage <- "Gelasian"
+mystage <- "Turonian"
 
 # load isotope data
 iso <- readRDS("data/processed/StabisoDB_processed_26_06_2022.rds")
@@ -28,11 +28,12 @@ coral <- readRDS("data/processed/PARED_coralreefs_processed_02_07_2022.rds")
 coral_sub <- subset(coral,early_stage == mystage & !(is.na(pal_lat_scotese)))#table(iso$stage_2020)
 coral_sub <- coral_sub[with(coral_sub, order(abs(pal_lat_scotese), longit)),]
 # prepare for use in the model
-coral_distrmat <- data.frame(latitude = abs(coral_sub$pal_lat_scotese),
-                             location = 22.8,
-                             scale = 10,
-                             shape = 4,
-                             distribution = "skew-normal")
+if(nrow(coral_sub) >= 1) {coral_distrmat <- data.frame(latitude = abs(coral_sub$pal_lat_scotese),
+                                                       location = 22.8,
+                                                       scale = 10,
+                                                       shape = 4,
+                                                       distribution = "skew-normal")
+} else coral_distrmat <- data.frame(NULL)
 
 # visualise data
 plot(abs(iso_mod$latitude),iso_mod$temperature, xlim = range(c(iso_mod$latitude, coral_distrmat$latitude)),
@@ -157,8 +158,9 @@ points(mod3[[3]]$params$DKA[seq(1,20000,10)],type = "l", col = rgb(0,0.6,.8,0.5)
 ### Effective sample size 
 mcmcse::multiESS(mod3$params[(0.5*nIter):nIter,1:4])
 
-### tets plot function
-plot_gradient(mod$params, ylim = c(-5,30))
+### tests plot function
+plot_gradient(mod, ylim = c(-5,35))
 plot_data(iso_mod,add = T)
-plot_distr(coral_distrmat,add = T)
+plot_distr(coral_distrmat)
+plot_posterior(mod)
 
