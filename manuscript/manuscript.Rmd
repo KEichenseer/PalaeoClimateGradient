@@ -1,5 +1,5 @@
 ---
-title: "Article title goes here"
+title: "Modelling latitudinal temperature gradients from geological proxies: An early Eocene example"
 author: 
   - Kilian Eichenseer^[Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom] and Lewis A. Jones^[Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Universidade de Vigo, 36310 Vigo, Spain]
 output: 
@@ -21,6 +21,10 @@ Example reference [@R-base]
 # Materials & Methods
 
 # Results
+
+## Fig 1 - Model structure and proof of concept with modern data
+## Fig 2 - Eocene example
+## Fig 3 - Showing influence of changing model assumptions
 
 # Discussion
 

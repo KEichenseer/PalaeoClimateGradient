@@ -92,7 +92,8 @@ for(st in 10) {
                                location = 22.8,
                                scale = 10,
                                shape = 4,
-                               distribution = "skew-normal")
+                               distribution = "skew-normal",
+                               proxy = "coral")
  } else coral_distrmat <- data.frame(NULL)
   
   # run model in parallel chains
