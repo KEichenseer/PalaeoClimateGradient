@@ -58,7 +58,6 @@ plot_distr <- function(distrmat, lat = seq(0,90,0.2), trange = c(-10,100), distr
   }
 }
 
-<<<<<<< Updated upstream
 plot_data <- function(obsmat = NULL, distrmat = NULL, lat = seq(0,90,0.2), add = F, ylim = NULL,
                       col = rgb(0.75,0.45,0,0.4)) {
   if(add == T) {
