@@ -121,7 +121,6 @@ iso_obsmat <- function(data, stage) { # for StabisoDB
   return(data_mod)
 }
 
-=======
 
 plot_chains <- function(model_out, params = 1:4, nthin = NULL, logQ = TRUE) {
   op <- par()[c("mfrow","mar","mgp")]
@@ -158,4 +157,3 @@ plot_chains <- function(model_out, params = 1:4, nthin = NULL, logQ = TRUE) {
   }
   par(op)
 }
->>>>>>> Stashed changes
