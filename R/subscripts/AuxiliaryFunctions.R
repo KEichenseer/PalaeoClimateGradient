@@ -58,6 +58,7 @@ plot_distr <- function(distrmat, lat = seq(0,90,0.2), trange = c(-10,100), distr
   }
 }
 
+<<<<<<< Updated upstream
 plot_data <- function(obsmat = NULL, distrmat = NULL, lat = seq(0,90,0.2), add = F, ylim = NULL,
                       col = rgb(0.75,0.45,0,0.4)) {
   if(add == T) {
@@ -120,3 +121,41 @@ iso_obsmat <- function(data, stage) { # for StabisoDB
   return(data_mod)
 }
 
+=======
+
+plot_chains <- function(model_out, params = 1:4, nthin = NULL, logQ = TRUE) {
+  op <- par()[c("mfrow","mar","mgp")]
+  nplot <- length(params)
+  cols <- c(rgb(0,0.5,0.75,0.7),
+            rgb(0.75,0,0.5,0.7),
+            rgb(0.5,0.75,0,0.7),
+            rgb(0,0.75,0,0.7))
+  par(mfrow = c(nplot,1), mar  = c(3.5,3.5,0.5,0.5), mgp = c(2.25,0.75,0), las = 1)
+  if(!("data.frame" %in% class(model_out))) {
+    nchains <- length(model_out)
+    nIter <- nrow(model_out[[1]]$params)
+    if(is.null(nthin)) nthin <- round(nIter/2000)
+        iteration <- seq(1,nIter,nthin)
+    for(j in 1:nplot) {
+      if(j != 4 | logQ == FALSE){
+      plot(iteration,model_out[[1]]$params[iteration,params[j]],type = "l",
+                           col = cols[1], ylab = names(model_out[[1]]$params[j]))
+      if(nchains >= 2)  for(i in 2:nchains) {
+        points(iteration,model_out[[i]]$params[iteration,params[j]],type = "l",
+             col = cols[i])
+      }
+      }
+      if(j == 4 & logQ == TRUE){
+        plot(iteration,log10(model_out[[1]]$params[iteration,params[j]]),type = "l",
+             col = cols[1], ylab = "log10(Q)")
+        if(nchains >= 2)  for(i in 2:nchains) {
+          points(iteration,log10(model_out[[i]]$params[iteration,params[j]]),type = "l",
+                 col = cols[i])
+        }
+      }
+
+    }
+  }
+  par(op)
+}
+>>>>>>> Stashed changes
