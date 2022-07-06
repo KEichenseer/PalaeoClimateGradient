@@ -25,6 +25,8 @@ plot(coords[,2],sstr, pch = 19, col = rgb(0,0,0,0.1))
      
 
 ### Test modern data
+source("R/subscripts/ClimateParallelSimple.R")
+
 cl <- parallel::makeCluster(3)
 doParallel::registerDoParallel(cl)
 
@@ -33,3 +35,6 @@ stopImplicitCluster()
 plot_chains(mod3)
 par(mfrow=c(1,1))
 plot_gradient(mod3[[1]])
+# looking good
+
+# next: use naive priors
