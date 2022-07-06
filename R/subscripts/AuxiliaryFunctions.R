@@ -9,7 +9,7 @@ error_polygon <- function(x,en,ep,color=rgb(0,0,0,0.2)) {
 plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
                           ylim = NULL) {
   # select only params
-  if(!is.null(mod["params"])) model_out <- model_out$params
+  if("params" %in% names(model_out)) model_out <- model_out$params
   
   nIter <- nrow(model_out)
   if(is.null(burnin)) burnin = round(nrow(model_out)*12/100)+1
@@ -121,7 +121,8 @@ iso_obsmat <- function(data, stage) { # for StabisoDB
 }
 
 
-plot_chains <- function(model_out, params = 1:4, nthin = NULL, logQ = TRUE) {
+plot_chains <- function(mod, params = 1:4, nthin = NULL, logQ = TRUE) {
+  if("params" %in% names(mod[[1]])) mod <- lapply(mod, function(x) x$params)
   op <- par()[c("mfrow","mar","mgp")]
   nplot <- length(params)
   cols <- c(rgb(0,0.5,0.75,0.7),
@@ -129,25 +130,25 @@ plot_chains <- function(model_out, params = 1:4, nthin = NULL, logQ = TRUE) {
             rgb(0.5,0.75,0,0.7),
             rgb(0,0.75,0,0.7))
   par(mfrow = c(nplot,1), mar  = c(3.5,3.5,0.5,0.5), mgp = c(2.25,0.75,0), las = 1)
-  if(!("data.frame" %in% class(model_out))) {
-    nchains <- length(model_out)
-    nIter <- nrow(model_out[[1]]$params)
+  if(!("data.frame" %in% class(mod))) {
+    nchains <- length(mod)
+    nIter <- nrow(mod[[1]])
     if(is.null(nthin)) nthin <- round(nIter/2000)
         iteration <- seq(1,nIter,nthin)
     for(j in 1:nplot) {
       if(j != 4 | logQ == FALSE){
-      plot(iteration,model_out[[1]]$params[iteration,params[j]],type = "l",
-                           col = cols[1], ylab = names(model_out[[1]]$params[j]))
+      plot(iteration,mod[[1]][iteration,params[j]],type = "l",
+                           col = cols[1], ylab = names(mod[[1]][j]))
       if(nchains >= 2)  for(i in 2:nchains) {
-        points(iteration,model_out[[i]]$params[iteration,params[j]],type = "l",
+        points(iteration,mod[[i]][iteration,params[j]],type = "l",
              col = cols[i])
       }
       }
       if(j == 4 & logQ == TRUE){
-        plot(iteration,log10(model_out[[1]]$params[iteration,params[j]]),type = "l",
+        plot(iteration,log10(mod[[1]][iteration,params[j]]),type = "l",
              col = cols[1], ylab = "log10(Q)")
         if(nchains >= 2)  for(i in 2:nchains) {
-          points(iteration,log10(model_out[[i]]$params[iteration,params[j]]),type = "l",
+          points(iteration,log10(mod[[i]][iteration,params[j]]),type = "l",
                  col = cols[i])
         }
       }

@@ -233,6 +233,7 @@ run_MCMC <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_inits, 
   logpost = rep(NA,nIter)
   # start progress bar
   if (!quiet) cli::cli_progress_bar('Sampling', total = nIter)
+  
   ### The MCMC loop
   for (i in 2:nIter){
     # update progress bar

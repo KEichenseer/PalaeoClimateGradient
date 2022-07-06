@@ -17,9 +17,19 @@ map2color<-function(x,pal,limits=NULL){
   pal[findInterval(x,seq(limits[1],limits[2],length.out=length(pal)+1), all.inside=TRUE)]
 }
 
-coords <- fastRandomPoints(sstm$BO21_tempmean_ss,10000)
+coords <- fastRandomPoints(sstm$BO21_tempmean_ss,100)
 
 sstr <- raster::extract(sstm,coords)
 
 plot(coords[,2],sstr, pch = 19, col = rgb(0,0,0,0.1))
      
+
+### Test modern data
+cl <- parallel::makeCluster(3)
+doParallel::registerDoParallel(cl)
+
+mod3 <- climate_simple_parallel(3,100000,abs(coords[,2]),sstr)
+stopImplicitCluster()
+plot_chains(mod3)
+par(mfrow=c(1,1))
+plot_gradient(mod3[[1]])
