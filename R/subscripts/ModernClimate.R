@@ -17,7 +17,7 @@ map2color<-function(x,pal,limits=NULL){
   pal[findInterval(x,seq(limits[1],limits[2],length.out=length(pal)+1), all.inside=TRUE)]
 }
 
-coords <- fastRandomPoints(sstm$BO21_tempmean_ss,100)
+coords <- fastRandomPoints(sstm$BO21_tempmean_ss,5)
 
 sstr <- raster::extract(sstm,coords)
 
@@ -25,16 +25,34 @@ plot(coords[,2],sstr, pch = 19, col = rgb(0,0,0,0.1))
      
 
 ### Test modern data
+library(foreach)
+source("R/subscripts/AuxiliaryFunctions.R")
 source("R/subscripts/ClimateParallelSimple.R")
+source("R/subscripts/ClimateGradientModelSimple.R")
+
+
+priorvec <- 
+c("dsnorm(x,location = -2.7, scale = 16, alpha = 16, log = TRUE)", # prior on A
+"dtnorm(x, 0, Inf,25,12, log = TRUE)", # prior on DKA
+"dnorm(x, 45, 15, log = TRUE)", # prior on M
+"dlnorm(x, -2.2, 0.8, log = TRUE)") # prior on Q
+
 
 cl <- parallel::makeCluster(3)
 doParallel::registerDoParallel(cl)
 
-mod3 <- climate_simple_parallel(3,100000,abs(coords[,2]),sstr)
-stopImplicitCluster()
+mod3 <- climate_simple_parallel(3,100000,abs(coords[,2]),sstr, priorvec)
+doParallel::stopImplicitCluster()
+
 plot_chains(mod3)
 par(mfrow=c(1,1))
 plot_gradient(mod3[[1]])
+#coords <- fastRandomPoints(sstm$BO21_tempmean_ss,1000)
+
+#sstr <- raster::extract(sstm,coords)
+
+points(abs(coords[,2]),sstr, pch = 19, col = rgb(0.8,0,0,0.33))
+
 # looking good
 
 # next: use naive priors

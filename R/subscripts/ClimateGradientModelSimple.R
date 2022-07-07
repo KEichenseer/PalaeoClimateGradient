@@ -9,6 +9,27 @@
 ######################################################
 ### FUNCTIONS
 
+make_prior <- function(priorvec) {
+  for(ip in 1:4) priorvec[ip] <- gsub("x",paste("coeff[",ip,"]",sep = ""),priorvec[ip])
+
+priortext <- paste("logprior_custom <- function(coeff) {
+  coeff = unlist(coeff)
+  return(sum(c(",
+    eval(parse(text = "priorvec[1]")),",",
+    eval(parse(text = "priorvec[2]")),",",
+    eval(parse(text = "priorvec[3]")),",",
+    eval(parse(text = "priorvec[4]")),
+    ")))}",sep="")
+eval(parse(text = priortext),envir=.GlobalEnv)
+}
+
+
+prior_dens <- function(x,priorindex,priorvec) {
+  exp(eval(parse(text = priorvec[priorindex])))
+}
+
+plot(exp(prior_dens(seq(-10,10,1),1,priorvec)))
+
 gradient <- function(x, coeff, sdy) { # parametrise with difference between cold and hot end instead
   if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
   if(is.data.frame(coeff) | is.matrix(coeff)) {
@@ -48,14 +69,14 @@ loglik_s <- function(x, y,  coeff, sdy) {
   return(sum(dnorm(y, mean = pred, sd = sdy, log = TRUE)))
 }
 
-logprior_s <- function(coeff) {
-  coeff = unlist(coeff)
-  return(sum(c(
-    dsnorm(coeff[1],location = -2.7, scale = 16, alpha = 16, log = TRUE), # prior on A
-    dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on DKA
-    dnorm(coeff[3], 45, 15, log = TRUE), # prior on M
-    dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on Q
-}
+#logprior_s <- function(coeff) {
+ # coeff = unlist(coeff)
+#  return(sum(c(
+#    dsnorm(coeff[1],location = -2.7, scale = 16, alpha = 16, log = TRUE), # prior on A
+#    dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on DKA
+#    dnorm(coeff[3], 45, 15, log = TRUE), # prior on M
+#    dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on Q
+#}
 
 # function to generate truncated normal
 dtnorm <- function(x,lower,upper,mean,sd, log = FALSE) {
@@ -83,7 +104,7 @@ dsnorm <- function(x,location,scale,alpha, log = TRUE) {
   return(out)
 }
 logposterior_s <- function(x, y, coeff, sdy){
-  return (loglik_s(x, y, coeff, sdy) + logprior_s(coeff)) # + 2*(coeff[4])
+  return (loglik_s(x, y, coeff, sdy) + logprior_custom(coeff)) # + 2*(coeff[4])
 }
 
 
@@ -113,7 +134,11 @@ weighted_cov <- function(x, weights) { # takes 2.5 times as long as cov()
   return(out)
 }
 
-
+standard_prior <- 
+  c("dsnorm(x,location = -2.7, scale = 16, alpha = 16, log = TRUE)", # prior on A
+    "dtnorm(x, 0, Inf,25,12, log = TRUE)", # prior on DKA
+    "dnorm(x, 45, 15, log = TRUE)", # prior on M
+    "dlnorm(x, -2.2, 0.8, log = TRUE)") # prior on Q
 
 # Main MCMCM function
 run_MCMC_simple <- function(x, y, nIter, coeff_inits = NULL, sdy_init = NULL,

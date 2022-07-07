@@ -1,10 +1,12 @@
 # Wrapper function for parallel chains 
 # for ClimateGradientModelSimple.R
 climate_simple_parallel <- function(nChains = 3, nIter = 1000, latitude = NULL, temperature = NULL, 
+                                    priorvec = NULL,
                                     coeff_inits = NULL, sdy_init = NULL) {
   foreach(pc = 1:nChains) %dopar% {
     # call model functions
     source("R/subscripts/ClimateGradientModelSimple.R") 
+    make_prior(priorvec)
     
     # set random seed
     set.seed(pc)
@@ -18,7 +20,7 @@ climate_simple_parallel <- function(nChains = 3, nIter = 1000, latitude = NULL, 
     sdy_init = exp(rnorm(1,0.7,0.25))
     
     
-    run_MCMC_simple(x = latitude, y = temperature, nIter = nIter, 
+    run_MCMC_simple(x = latitude, y = temperature, nIter = nIter,
                     coeff_inits = coeff_inits, sdy_init = sdy_init
     )
   }
