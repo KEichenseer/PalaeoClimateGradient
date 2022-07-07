@@ -11,19 +11,30 @@ fastRandomPoints <- function(r, n) {
   pts <- raster::xyFromCell(r, x)
   return(pts)
 }
-
+fastRandomPoints_lat <- function(r, n, min, max) {
+  if(raster::nlayers(r) > 1) r <- r[[1]]
+  row = raster::rowFromY(r, c(min,max))
+  row = row[1]:row[2]
+  cells = raster::cellFromRow(r, row)
+  r <- raster::rasterFromCells(r, cells, values=TRUE)
+  v <- raster::getValues(r)
+  v.notNA <- which(!is.na(v))
+  x <- sample(v.notNA, n)
+  pts <- raster::xyFromCell(r, x)
+  return(pts)
+}
 map2color<-function(x,pal,limits=NULL){
   if(is.null(limits)) limits=range(x)
   pal[findInterval(x,seq(limits[1],limits[2],length.out=length(pal)+1), all.inside=TRUE)]
 }
 
-coords <- fastRandomPoints(sstm$BO21_tempmean_ss,5)
+coords <- fastRandomPoints_lat(sstm$BO21_tempmean_ss,10,-25,25)
 
 sstr <- raster::extract(sstm,coords)
 
-plot(coords[,2],sstr, pch = 19, col = rgb(0,0,0,0.1))
+plot(coords[,2],sstr, pch = 19
+     , col = rgb(0,0,0,0.1))
      
-
 ### Test modern data
 library(foreach)
 source("R/subscripts/AuxiliaryFunctions.R")
