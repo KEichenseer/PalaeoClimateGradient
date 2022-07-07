@@ -23,12 +23,9 @@ priortext <- paste("logprior_custom <- function(coeff) {
 eval(parse(text = priortext),envir=.GlobalEnv)
 }
 
-
 prior_dens <- function(x,priorindex,priorvec) {
   exp(eval(parse(text = priorvec[priorindex])))
 }
-
-plot(exp(prior_dens(seq(-10,10,1),1,priorvec)))
 
 gradient <- function(x, coeff, sdy) { # parametrise with difference between cold and hot end instead
   if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
