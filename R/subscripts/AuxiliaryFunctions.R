@@ -157,3 +157,7 @@ plot_chains <- function(mod, params = 1:4, nthin = NULL, logQ = TRUE) {
   }
   par(op)
 }
+
+prior_dens <- function(x,priorindex,priorvec) {
+  exp(eval(parse(text = priorvec[priorindex])))
+}

@@ -12,12 +12,13 @@ fastRandomPoints <- function(r, n) {
   return(pts)
 }
 fastRandomPoints_lat <- function(r, n, min, max) {
-  if(raster::nlayers(r) > 1) r <- r[[1]]
+  #if(raster::nlayers(r) > 1) r <- r[[1]]
   row = raster::rowFromY(r, c(min,max))
   row = row[1]:row[2]
   cells = raster::cellFromRow(r, row)
-  r <- raster::rasterFromCells(r, cells, values=TRUE)
+  r <- raster::rasterFromCells(r, cells, values = FALSE)
   v <- raster::getValues(r)
+  raster::cel
   v.notNA <- which(!is.na(v))
   x <- sample(v.notNA, n)
   pts <- raster::xyFromCell(r, x)
