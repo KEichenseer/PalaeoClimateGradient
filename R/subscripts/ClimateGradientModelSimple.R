@@ -99,7 +99,9 @@ dsnorm <- function(x,location,scale,alpha, log = TRUE) {
   return(out)
 }
 logposterior_s <- function(x, y, coeff, sdy){
+  if(!is.null(y)) {
   return (loglik_s(x, y, coeff, sdy) + logprior_custom(coeff)) # + 2*(coeff[4])
+  } else return(logprior_custom(coeff))
 }
 
 

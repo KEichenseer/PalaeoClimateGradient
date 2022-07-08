@@ -158,6 +158,18 @@ plot_chains <- function(mod, params = 1:4, nthin = NULL, logQ = TRUE) {
   par(op)
 }
 
-prior_dens <- function(x,priorindex,priorvec) {
+prior_dens <- function(x,priorvec,priorindex) {
+  x = x
   exp(eval(parse(text = priorvec[priorindex])))
+}
+
+plot_dens <- function(x,dens,xlim = NULL,ylim = NULL,col = rgb(0,0.5,0.7,0.25),
+                      xlab = "", ylab = "density") {
+  
+  if(is.null(ylim)) ylim = c(0,max(dens))
+  if(is.null(xlim)) xlim = range(x)
+  
+  plot(0,0,type = "n", xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab)
+  polygon(c(x[1],x,x[length(x)]),c(0,dens,0), col = col, border = NA)
+  
 }

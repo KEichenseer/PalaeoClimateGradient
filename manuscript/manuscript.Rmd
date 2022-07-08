@@ -1,5 +1,5 @@
 ---
-title: "Modelling latitudinal temperature gradients from geological proxies: An early Eocene example"
+title: "Eocene temperature gradients from integrated multiple proxies"
 author: 
   - Kilian Eichenseer^[Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom] and Lewis A. Jones^[Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Universidade de Vigo, 36310 Vigo, Spain]
 output: 
@@ -8,6 +8,10 @@ output:
 bibliography: references.bib
 csl: palaeontology.csl
 ---
+
+<!-- discarded titles: 
+Modelling latitudinal temperature gradients from geological proxies: An early Eocene example
+-->
 
 Abstract
 ===============================================================================
