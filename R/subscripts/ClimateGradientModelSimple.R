@@ -140,7 +140,7 @@ standard_prior <-
 # Main MCMCM function
 run_MCMC_simple <- function(x, y, nIter, coeff_inits = NULL, sdy_init = NULL,
                             adapt_sd = floor(0.1 * nIter),
-                            adapt_sd_decay = max(floor(0.01*nIter),1),
+                            adapt_sd_decay = max(floor(0.005*nIter),1),
                             proposal_var_inits = c(2,2,2,0.2)){
   ### Initialisation
   coefficients = array(dim = c(nIter,4)) # set up array to store coefficients

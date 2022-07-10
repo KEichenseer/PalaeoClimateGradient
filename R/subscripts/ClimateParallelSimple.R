@@ -2,7 +2,10 @@
 # for ClimateGradientModelSimple.R
 climate_simple_parallel <- function(nChains = 3, nIter = 1000, latitude = NULL, temperature = NULL, 
                                     priorvec = NULL,
-                                    coeff_inits = NULL, sdy_init = NULL) {
+                                    coeff_inits = NULL, sdy_init = NULL,
+                                    adapt_sd = floor(0.1 * nIter),
+                                    adapt_sd_decay = max(floor(0.01*nIter),1),
+                                    proposal_var_inits = c(2,2,2,0.2)) {
   foreach(pc = 1:nChains) %dopar% {
     # call model functions
     source("R/subscripts/ClimateGradientModelSimple.R") 
@@ -21,7 +24,9 @@ climate_simple_parallel <- function(nChains = 3, nIter = 1000, latitude = NULL, 
     
     
     run_MCMC_simple(x = latitude, y = temperature, nIter = nIter,
-                    coeff_inits = coeff_inits, sdy_init = sdy_init
+                    coeff_inits = coeff_inits, sdy_init = sdy_init,
+                    adapt_sd = adapt_sd, adapt_sd_decay = adapt_sd_decay,
+                    proposal_var_inits = proposal_var_inits
     )
   }
 }

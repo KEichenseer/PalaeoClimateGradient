@@ -2,7 +2,7 @@
 climate_parallel <- function(nChains = 3, nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_inits = NULL, sdy_init = NULL, 
                             yest_inits = NULL, sdyest_inits = NULL,
                             proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.1 * nIter),
-                            adapt_sd_decay = max(floor(0.01*nIter),1), quiet = FALSE) {
+                            adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE) {
   foreach(pc = 1:nChains) %dopar% {
     # call model functions
     source("R/subscripts/ClimateGradientModel.R") 

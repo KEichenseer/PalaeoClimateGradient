@@ -1,36 +1,11 @@
 ### load climate data
 # Mean annual sea surface temperatures (Bio-Oracle)
+source("R/subscripts/AuxiliaryFunctions.R")
 
 sstm <- sdmpredictors::load_layers(c("BO21_tempmean_ss")) 
 
-fastRandomPoints <- function(r, n) {
-  if(raster::nlayers(r) > 1) r <- r[[1]]
-  v <- raster::getValues(r)
-  v.notNA <- which(!is.na(v))
-  x <- sample(v.notNA, n)
-  pts <- raster::xyFromCell(r, x)
-  return(pts)
-}
-fastRandomPoints_lat <- function(r, n, min, max) {
-  #if(raster::nlayers(r) > 1) r <- r[[1]]
-  #row = raster::rowFromY(r, c(min,max))
-  #row = row[1]:row[2]
-  #cells = raster::cellFromRow(r, row)
-  #r <- raster::rasterFromCells(r, cells, values = FALSE)
-  extent <- c(-180,180,min,max)
-  r <- raster::crop(r,extent)
-  v <- raster::getValues(r)
-  v.notNA <- which(!is.na(v))
-  x <- sample(v.notNA, n)
-  pts <- raster::xyFromCell(r, x)
-  return(pts)
-}
-map2color<-function(x,pal,limits=NULL){
-  if(is.null(limits)) limits=range(x)
-  pal[findInterval(x,seq(limits[1],limits[2],length.out=length(pal)+1), all.inside=TRUE)]
-}
 
-coords <- fastRandomPoints_lat(sstm$BO21_tempmean_ss,1000,-90,90)
+coords <- fastRandomPoints_lat(sstm$BO21_tempmean_ss,10000,-90,90)
 
 sstr <- raster::extract(sstm,coords)
 
@@ -39,7 +14,6 @@ plot(abs(coords[,2]),sstr, pch = 19
      
 ### Test modern data
 library(foreach)
-source("R/subscripts/AuxiliaryFunctions.R")
 source("R/subscripts/ClimateParallelSimple.R")
 source("R/subscripts/ClimateGradientModelSimple.R")
 
@@ -57,37 +31,55 @@ priorvec <-
     "dnorm(x, 45, 25, log = TRUE)", # prior on M
     "dlnorm(x, -2, 1, log = TRUE)") # prior on Q
 
+priorvec <- 
+  c("dsnorm(x,location = 4.3, scale = 12, alpha = 3, log = TRUE)", # prior on A
+    "dtnorm(x, 0, Inf,16,10, log = TRUE)", # prior on DKA
+    "dnorm(x, 45, 15, log = TRUE)", # prior on M
+    "dlnorm(x, -2.2, 0.75, log = TRUE)")#dsnorm(x,location = 0.025, scale = 0.3, alpha = 20, log = TRUE)") # prior on Q
 
-
-latx <- seq(-40,60,0.1)
+par(mfrow=c(2,2), mar = c(4,4,.5,.5), mgp = c(2.5,0.75,0))
+latx <- seq(-10,48,0.001)
 dens <- prior_dens(latx,priorvec,1)
 plot_dens(latx,dens,xlab="A")
 
-latx <- seq(-40,60,0.1)
+latx <- seq(-3,55,0.1)
 dens <- prior_dens(latx,priorvec,2)
 plot_dens(latx,dens,xlab="K")
 
-latx <- seq(-45,135,0.1)
+latx <- seq(-1,91,0.1)
 dens <- prior_dens(latx,priorvec,3)
 plot_dens(latx,dens,xlab="Q")
 
-latx <- seq(0,2,0.002)
+latx <- seq(-0.01,0.56,0.002)
 dens <- prior_dens(latx,priorvec,4)
-plot_dens(latx,dens,xlab="M")
+#dens2 <- exp(dsnorm(latx,location = 0.025, scale = 0.3, alpha = 20, log = TRUE))
+plot_dens(latx,dens,xlab="M", add = F)
+#plot_dens(latx,dens,xlab="M", add = T, col = rgb(0.75,0,0,0.2))
 
+plot(latx,gradient(latx,c(20,30,45,0.2),0), type = "l")
 
 cl <- parallel::makeCluster(3)
 doParallel::registerDoParallel(cl)
 
-mod3 <- climate_simple_parallel(3,40000,abs(coords[,2]),sstr, priorvec)
+mod0b <- climate_simple_parallel(3,40000,NULL,NULL,priorvec)
+mod10c <- climate_simple_parallel(3,40000,abs(coords[,2][1:10]),c(sstr[1:10]), priorvec,
+                                adapt_sd_decay = 100, adapt_sd = 4000)
 doParallel::stopImplicitCluster()
 
 
 
-plot_chains(mod3)
+plot_chains(mod4)
 par(mfrow=c(1,1))
-plot_gradient(mod3[[1]])
-points(abs(coords[,2]),sstr, pch = 19, col = rgb(0.8,0,0,0.33))
+plot_gradient(mod0b[[2]], add = F, ylim = c(-5,55), line_col = rgb(0,0,0,0.5), confint_col = rgb(0,0,0,0.1))
+plot_gradient(mod2[[2]], add = T, line_col = rgb(0,0.3,0.8,1), confint_col = rgb(0,0.3,0.8,0.2))
+plot_gradient(mod5[[2]], add = T, line_col = rgb(0.8,0.3,0,1), confint_col = rgb(0.8,0.3,0,0.2))
+plot_gradient(mod10[[2]], add = T, line_col = rgb(0.3,0.8,0,1), confint_col = rgb(0.3,0.8,0,0.2))
+plot_gradient(mod10b[[2]], add = T, line_col = rgb(0.3,0,0.8,1), confint_col = rgb(0.3,0,0.8,0.2))
+plot_gradient(mod10c[[2]], add = T, line_col = rgb(0,0.2,0.8,1), confint_col = rgb(0,0.2,0.8,0.2))
+
+points(abs(coords[,2])[1:10],sstr[1:10], pch = 19, col = rgb(0.3,0.8,0,0.5))
+
+points(abs(coords[,2]),sstr, pch = 19, col = rgb(0.8,0,0,0.03))
 
 plot_dens(seq(0,90,0.1),prior_dens(seq(0,90,0.1),priorvec,1))
 

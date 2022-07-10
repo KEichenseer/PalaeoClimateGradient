@@ -7,7 +7,7 @@ error_polygon <- function(x,en,ep,color=rgb(0,0,0,0.2)) {
 }
 
 plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
-                          ylim = NULL) {
+                          ylim = NULL, line_col = "black", confint_col = rgb(0,0,0,0.2)) {
   # select only params
   if("params" %in% names(model_out)) model_out <- model_out$params
   
@@ -26,13 +26,13 @@ plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint
   
   if(add == F) {
   plot(lat, med_grad, ylim = ylim,
-       type = "l", lwd = 2, xlab = "|latitude|", ylab = "temperature")
-  error_polygon(lat,grad_q["2.5%",],grad_q["97.5%",])
+       type = "l", lwd = 2, xlab = "|latitude|", ylab = "temperature", col = line_col)
+  error_polygon(lat,grad_q["2.5%",],grad_q["97.5%",], col = confint_col)
   }
   if(add == T) {
-    error_polygon(lat,grad_q["2.5%",],grad_q["97.5%",])
-    points(lat, med_grad, ylim = ylims,
-           type = "l", lwd = 2)
+    error_polygon(lat,grad_q["2.5%",],grad_q["97.5%",], col = confint_col)
+    points(lat, med_grad,
+           type = "l", lwd = 2, col = line_col)
   }
 }
 
@@ -127,7 +127,7 @@ plot_chains <- function(mod, params = 1:4, nthin = NULL, logQ = TRUE) {
   nplot <- length(params)
   cols <- c(rgb(0,0.5,0.75,0.7),
             rgb(0.75,0,0.5,0.7),
-            rgb(0.5,0.75,0,0.7),
+            rgb(0.7,0.8,0,0.7),
             rgb(0,0.75,0,0.7))
   par(mfrow = c(nplot,1), mar  = c(3.5,3.5,0.5,0.5), mgp = c(2.25,0.75,0), las = 1)
   if(!("data.frame" %in% class(mod))) {
@@ -164,12 +164,39 @@ prior_dens <- function(x,priorvec,priorindex) {
 }
 
 plot_dens <- function(x,dens,xlim = NULL,ylim = NULL,col = rgb(0,0.5,0.7,0.25),
-                      xlab = "", ylab = "density") {
-  
-  if(is.null(ylim)) ylim = c(0,max(dens))
+                      xlab = "", ylab = "normalised density", add = FALSE, xaxs = "i") {
+  dens <- dens/max(dens)
+  if(is.null(ylim)) ylim = c(0,max(dens)*1.03)
   if(is.null(xlim)) xlim = range(x)
   
-  plot(0,0,type = "n", xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab)
+  if(add == FALSE) plot(0,0,type = "n", xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab, xaxs = xaxs, yaxs = "i")
   polygon(c(x[1],x,x[length(x)]),c(0,dens,0), col = col, border = NA)
   
+}
+
+fastRandomPoints <- function(r, n) {
+  if(raster::nlayers(r) > 1) r <- r[[1]]
+  v <- raster::getValues(r)
+  v.notNA <- which(!is.na(v))
+  x <- sample(v.notNA, n)
+  pts <- raster::xyFromCell(r, x)
+  return(pts)
+}
+fastRandomPoints_lat <- function(r, n, min, max) {
+  #if(raster::nlayers(r) > 1) r <- r[[1]]
+  #row = raster::rowFromY(r, c(min,max))
+  #row = row[1]:row[2]
+  #cells = raster::cellFromRow(r, row)
+  #r <- raster::rasterFromCells(r, cells, values = FALSE)
+  extent <- c(-180,180,min,max)
+  r <- raster::crop(r,extent)
+  v <- raster::getValues(r)
+  v.notNA <- which(!is.na(v))
+  x <- sample(v.notNA, n)
+  pts <- raster::xyFromCell(r, x)
+  return(pts)
+}
+map2color<-function(x,pal,limits=NULL){
+  if(is.null(limits)) limits=range(x)
+  pal[findInterval(x,seq(limits[1],limits[2],length.out=length(pal)+1), all.inside=TRUE)]
 }
