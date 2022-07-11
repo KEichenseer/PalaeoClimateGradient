@@ -4,6 +4,9 @@ library(sf)
 # Mean Annual Sea Surface Temperature
 # Source: https://www.bio-oracle.org/index.php
 sst <- raster("./data/raw/climate/BioOracle_20220711/Present.Surface.Temperature.Mean.asc")
+vals <- getValues(sst)
+hist(vals, main = "Available sea surface temperature",
+     xlab = "Mean sea surface temperature (\u00b0C)")
 
 # Load coral reef data 
 # Source: https://data.unep-wcmc.org/datasets/1
