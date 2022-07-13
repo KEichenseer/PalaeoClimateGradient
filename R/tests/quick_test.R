@@ -1,4 +1,9 @@
 ### Straightforward test
+# check for missing packages and install if needed
+list.of.packages <- c("cli", "doParallel","foreach","parallel","mvnfast","truncnorm")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 
 # load isotope data
 iso <- readRDS("data/processed/StabisoDB_processed_26_06_2022.rds")
