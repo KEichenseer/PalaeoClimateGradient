@@ -1,12 +1,13 @@
 ### load climate data
 # Mean annual sea surface temperatures (Bio-Oracle)
-source("R/subscripts/AuxiliaryFunctions.R")
 
 sstm <- sdmpredictors::load_layers(c("BO21_tempmean_ss")) 
 
-
+# sample points randomly from the raster (within specified latitudinal limits) 
+source("R/subscripts/AuxiliaryFunctions.R")
 coords <- fastRandomPoints_lat(sstm$BO21_tempmean_ss,10000,-90,90)
 
+# extract temperatures from the sampled points
 sstr <- raster::extract(sstm,coords)
 
 plot(abs(coords[,2]),sstr, pch = 19
