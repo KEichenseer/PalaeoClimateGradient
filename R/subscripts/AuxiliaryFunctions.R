@@ -127,7 +127,7 @@ plot_chains <- function(mod, params = 1:4, nthin = NULL, logQ = TRUE) {
   nplot <- length(params)
   cols <- c(rgb(0,0.5,0.75,0.7),
             rgb(0.75,0,0.5,0.7),
-            rgb(0.7,0.8,0,0.7),
+            rgb(0.77,0.67,0,0.7),
             rgb(0,0.75,0,0.7))
   par(mfrow = c(nplot,1), mar  = c(3.5,3.5,0.5,0.5), mgp = c(2.25,0.75,0), las = 1)
   if(!("data.frame" %in% class(mod))) {

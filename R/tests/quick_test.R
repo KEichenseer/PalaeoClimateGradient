@@ -8,7 +8,7 @@ coral <- readRDS("data/processed/PARED_coralreefs_processed_02_07_2022.rds")
 source("R/subscripts/AuxiliaryFunctions.R")
 
 
-stage <- "Cenomanian"
+stage <- "Ypresian"
 
 obsmat <- iso_obsmat(iso,stage)
 distrmat <- coral_distrmat(coral,stage)
@@ -26,10 +26,15 @@ cl <- parallel::makeCluster(3)
 doParallel::registerDoParallel(cl)
 
 mod3 <- climate_parallel(nChains = 3, nIter = 20000, obsmat = obsmat, distrmat = distrmat)
-stopImplicitCluster()
+parallel::stopCluster(cl)
 
+
+### check chains
+plot_chains(mod3)
+par(mfrow=c(1,1),mar = c(4,4,1,1))
+
+### Plot result
 mod <-  mod3[[1]]
-### Plot
 plot_gradient(mod, ylim = c(-5,40))
 plot_data(obsmat,add = T)
 plot_distr(distrmat)
