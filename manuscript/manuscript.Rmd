@@ -1,5 +1,5 @@
 ---
-title: "Eocene temperature gradients from integrated multiple proxies"
+title: "The Early Eocene Climate Optimum reconstructed with Bayesian multi-proxy integration"
 author: 
   - Kilian Eichenseer^[Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom] and Lewis A. Jones^[Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Universidade de Vigo, 36310 Vigo, Spain]
 output: 
@@ -19,6 +19,8 @@ Abstract
 Here goes the abstract
 
 # Introduction
+
+The early Eocene climate optimum (EECO, ~ 53 - 49 million years ago) is thought to have been the warmest episode ever since. The EECO has received much attention due to its use as an analogue for extreme warming scenarios, depicting a possible future high-CO2 world. To reconstruct the climate of EECO, a variety of proxy data and Earth System Models have been used. Early modellers have soon noticed that their models struggle to reproduce the climate indicated by proxy data: Without unrealistically high concentrations of atmospheric CO2, early climate models struggled to reproduce the equitable polar climates indicated by early Eocene proxy data, e.g. the occurrence of mangroves in polar latitudes, and d18O data from x indicates a temperature of ~ y at latitude z.  
 
 Example reference [@R-base]
 
