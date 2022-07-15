@@ -5,7 +5,7 @@ sstm <- sdmpredictors::load_layers(c("BO21_tempmean_ss"))
 
 # sample points randomly from the raster (within specified latitudinal limits) 
 source("R/subscripts/AuxiliaryFunctions.R")
-coords <- fastRandomPoints_lat(sstm$BO21_tempmean_ss,10000,-90,90)
+coords <- fastRandomPoints_lat(sstm$BO21_tempmean_ss,200,-90,90)
 
 # extract temperatures from the sampled points
 sstr <- raster::extract(sstm,coords)
@@ -63,7 +63,7 @@ cl <- parallel::makeCluster(3)
 doParallel::registerDoParallel(cl)
 
 mod0b <- climate_simple_parallel(3,40000,NULL,NULL,priorvec)
-mod10c <- climate_simple_parallel(3,40000,abs(coords[,2][1:10]),c(sstr[1:10]), priorvec,
+mod10c <- climate_simple_parallel(3,20000,abs(coords[,2]),c(sstr), priorvec,
                                 adapt_sd_decay = 100, adapt_sd = 4000)
 doParallel::stopImplicitCluster()
 

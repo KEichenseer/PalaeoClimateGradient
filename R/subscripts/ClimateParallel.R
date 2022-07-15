@@ -24,7 +24,7 @@ climate_parallel <- function(nChains = 3, nIter = 1000, obsmat = NULL, distrmat 
       distrmat$location + distrmat$scale * sqrt(2/pi) * 
         distrmat$shape/sqrt(1+distrmat$shape^2) )
     }
-    if(!(is.null(distrmat)) & is.null(sdyest_inits)) sdyest_inits <- rep(2,length(unique(obsmat$sample)))
+    if(!(is.null(obsmat)) & is.null(sdyest_inits)) sdyest_inits <- rep(2,length(unique(obsmat$sample)))
     
     run_MCMC(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits = coeff_inits, sdy_init = sdy_init, 
              yest_inits = yest_inits, sdyest_inits = sdyest_inits,
