@@ -63,7 +63,7 @@ loglik_norm_sd <- function(x, yest, ymean, sdyest, coeff, sdy, new_y) {
   
   pred = A + DKA/((1+(exp(Q*(x-M)))))
   ll2 <- sum(dnorm(yest, mean = pred, sd = sdy, log = TRUE))
-  return(c(ll2+ll1+ll0))
+  return(c(ll2)) #+ll1+ll0))  ### is it possible that we only need the lik. of the params?!?!
 }
 
 
@@ -295,10 +295,18 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
     if(any(is.numeric(obsmat$sd))) {
       for(k in 1:length(ylist_sd)){
         if(any(!(is.na(ylist_sd[[k]])))){
-      obs_yestimate[[k]][i,] = rnorm(length(ylist_sd[[k]][ylist_sd_ind[[k]]]),
-                                sdyest[i-1,k]^2/(ylist_sd[[k]][ylist_sd_ind[[k]]]^2+sdyest[i-1,k]^2)*ylist[[k]][ylist_sd_ind[[k]]] + 
-                                  ylist_sd[[k]][ylist_sd_ind[[k]]]^2/(ylist_sd[[k]][ylist_sd_ind[[k]]]^2+sdyest[i-1,k]^2)*yestimate[i-1,k],
-                                      sqrt(1/sdyest[i-1,k]^2 + 1/ylist_sd[[k]][ylist_sd_ind[[k]]]^2))
+          
+          n_obs0 <- length(ylist_sd[[k]][ylist_sd_ind[[k]]])
+          sdyest1 <-  sdyest[i-1,k]
+          sdyobs0 <-  ylist_sd[[k]][ylist_sd_ind[[k]]]
+          musdyobs0 <- ylist[[k]][ylist_sd_ind[[k]]]
+          muyest1 <- yestimate[i-1,k]
+          
+         ## careful check this line!!!!!!!!
+          
+      obs_yestimate[[k]][i,] =   rnorm(n_obs0,
+                                       sdyest1^2/(sdyobs0^2+sdyest1^2)*musdyobs0 + sdyobs0^2/(sdyobs0^2+sdyest1^2)*muyest1,
+                                       sqrt(1/(1/sdyest1^2 + 1/sdyobs0^2))) 
         }
       }
     
@@ -332,7 +340,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
     if(n_norm != 0) {
       yestimate[i,n_norm_ind] = rnorm(n_norm,
                                       sdy[i-1]^2/(ynorm_sd^2+sdy[i-1]^2)*ynorm_mu + ynorm_sd^2/(ynorm_sd^2+sdy[i-1]^2)*pred[n_norm_ind],
-                                      sqrt(1/sdy[i-1]^2 + 1/ynorm_sd^2))
+                                      sqrt(1/(1/sdy[i-1]^2 + 1/ynorm_sd^2))) ## careful check this line!!!!!!!!
     }
     ### 1.3. Gibbs steps for data that have location, scale and shape parameter given (skew-normal). Estimate global mean only
     ## 1.3.a Gibbs step to estimate yestimate
@@ -360,9 +368,9 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
       # Hastings ratio of the proposal
       logpostold = 0
       
-      if(n_p != 0) logpostold <- logpostold + logposterior_norm_sd(x = x[n_p_ind], yest = yestimate[i,n_p_ind], ymean = yobs_mean_old,
+      if(n_p != 0) logpostold <- logpostold + logposterior_norm_sd(x = x[n_p_ind], yest = yestimate[i,n_p_ind], ymean = yobs_mean,
                                                                 sdyest = sdyest[i,], coeff = coefficients[i-1,],
-                                                                sdy = sdy[i],new_y =new_y_old)
+                                                                sdy = sdy[i],new_y =new_y)
       if(n_norm != 0) logpostold <- logpostold + logposterior_norm(x = x[n_norm_ind], yest = yestimate[i,n_norm_ind], ymean = ynorm_mu,
                                                                    sdyest = ynorm_sd, coeff = coefficients[i-1,],
                                                                    sdy = sdy[i])

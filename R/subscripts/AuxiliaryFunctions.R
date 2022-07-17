@@ -36,6 +36,25 @@ plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint
   }
 }
 
+plot_sample_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
+                          ylim = NULL, line_col = rgb(0,0.33,1,0.33), n_samples = 8) {
+  # select only params
+  if("params" %in% names(model_out)) model_out <- model_out$params
+  
+  nIter <- nrow(model_out)
+  if(is.null(burnin)) burnin = round(nrow(model_out)*12/100)+1
+  #if(is.null(confint_n)) confint_n = min(5000,length(burnin:nIter))
+  
+  sample_it <- sample(burnin:nIter,n_samples)
+  
+  
+  grads <- gradient(lat,model_out[sample_it,1:4],0)
+  
+  for(i in 1:n_samples) points(lat, grads[i,],
+           type = "l", lwd = 2, col = line_col)
+  
+}
+
 plot_distr <- function(distrmat, lat = seq(0,90,0.2), trange = c(-10,100), distrwidth = 0.01,
                        col = rgb(0.15,0,0.7,0.25)) {
   
