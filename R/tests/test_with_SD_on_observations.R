@@ -1,10 +1,10 @@
 ### test ClimategradientModelwithSDonOBS
 
 obsmat = data.frame(
-  sample = c(1,1,1,2,2,2,3,3,3,4,4,4,5,5,6),
-  latitude = c(9,9,9,11,11,11,13,13,13,30,30,30,60,60,40),
-  temperature = c(30,33,30,40,43,40,29,30,29.5,22,24,23,8,9,19),
-  sd = c(NA,NA,NA,2,3,2,1,1,1,1,1,NA,1,1,2))
+  sample = c(1,1,1,2,2,2,3,3,3,4,4,4,5,5,6,7,7),
+  latitude = c(9,9,9,11,11,11,13,13,13,30,30,30,60,60,40,70,70),
+  temperature = c(30,33,30,30,33,30,29,30,29.5,22,24,23,8,9,19,6,5),
+  sd = c(NA,NA,NA,2,3,2,1,1,1,1,1,NA,1,1,2,1,NA))
 
 distrmat = NULL
 
@@ -36,7 +36,7 @@ if((!(is.null(distrmat)) | !(is.null(obsmat))) & is.null(yest_inits)) {
 if(!(is.null(obsmat)) & is.null(sdyest_inits)) sdyest_inits <- rep(2,length(unique(obsmat$sample)))
 
 
-test12 <- run_MCMC_sd_obs(nIter = 40000, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
+test14 <- run_MCMC_sd_obs(nIter = 40000, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                             proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.33 * nIter),
                             adapt_sd_decay = max(floor(0.01*nIter),1), quiet = FALSE)
 
@@ -46,22 +46,22 @@ test3 <- run_MCMC(nIter = 40000, obsmat = obsmat, distrmat = NULL, coeff_inits, 
 plot_gradient(test6, ylim = c(-1,43), add = F)
 plot_gradient(test3, ylim = c(-1,43), add = T, burnin = 15000)
 #plot_gradient(test7, ylim = c(-1,43), add = T, burnin = 22000, line_col = rgb(0.75,.5,0,.7),confint_col = rgb(0.75,.5,0,0.2))
-plot_gradient(test11, ylim = c(-1,43), add = T, burnin = 15000, line_col = rgb(0,.75,0,.7),confint_col = rgb(0,.75,0,0.2))
-plot_gradient(test12, ylim = c(-1,43), add = T, burnin = 15000, line_col = rgb(0.75,0,0,.7),confint_col = rgb(0.75,0,0,0.2))
-plot_gradient(test10, ylim = c(-1,43), add = F, burnin = 15000, line_col = rgb(0,0,0.75,.7),confint_col = rgb(0,0,0.75,0.2))
+plot_gradient(test14, ylim = c(-1,43), add = T, burnin = 15000, line_col = rgb(0,.75,0,.7),confint_col = rgb(0,.75,0,0.2))
+plot_gradient(test12, ylim = c(-1,43), add = F, burnin = 15000, line_col = rgb(0.75,0,0,.7),confint_col = rgb(0.75,0,0,0.2))
+plot_gradient(test13, ylim = c(-1,43), add = T, burnin = 15000, line_col = rgb(0,0,0.75,.7),confint_col = rgb(0,0,0.75,0.2))
 
 plot_sample_gradient(test8, line_col  = rgb(0,0.7,0.3,0.33))
 plot_sample_gradient(test3, line_col  = rgb(0,0.3,0.7,0.33))
 
 plot_gradient(test3, ylim = c(-1,43), add = T, line_col = rgb(0,.7,1,.7),confint_col = rgb(0,.7,1,0.2))
 plot_posterior(test3, col_obs = rgb(0,0.3,1,0.75))
-plot_posterior(test11, col_obs = rgb(0,1,0,0.75))
+plot_posterior(test14, col_obs = rgb(0,1,0,0.75))
 plot_posterior(test12, col_obs = rgb(1,0,0,0.75))
-plot_posterior(test10, col_obs = rgb(0,0,1,0.75))
+plot_posterior(test13, col_obs = rgb(0,0,1,0.75))
 
 plot(test9$params$A[21000:30000], test9$params$DKA[21000:30000], type = "o", col = rgb(0,0,0,0.2))
 
-points(obsmat$latitude,obsmat$temperature, pch = 19, col = rgb(0.5,0,0,0.33))
+points(obsmat$latitude,obsmat$temperature, pch = 19, col = rgb(0,0,0,0.33))
 plot(test$yestimate[,3])
 plot(test$obs_yestimate[[2]][,1])
 

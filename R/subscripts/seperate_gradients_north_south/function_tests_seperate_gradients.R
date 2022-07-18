@@ -18,7 +18,7 @@ plot(lat,(DKA-A2)/(-(1+(exp(Q2*(lat-M2))))))
 lat <- seq(-90,90,1)
 grad1 <- gradient1(lat,0,30,.075,45)
 #grad2 <- gradient2(lat,0,30,.1,-45)
-grad2a <- gradient_two_A(lat,10,-10,30,.1,45,.1,-45)
+grad2a <- gradient_two_A(lat,10,-20,30,.1,35,.1,-55)
 grad1a <- gradient_one_A(lat,-10,30,.1,45,.1,-35)
 
 plot(lat,grad1,type = "l", ylim = c(-10,60))
@@ -28,3 +28,8 @@ points(lat,grad2a,type = "l", lty = 1, lwd = 2, col = rgb(0,0,0.75,0.5))
 
 abline(v=0)
 abline(h=29)
+
+# this can result in whacky gradients where the highest temperatures are far from the equator, especially at low Q.
+#
+# How about instead of parameter 1 and 2 have parameter 1 on one side, and have parameter 1 + 2 on the other side,
+# with a relatively narrow prior, centred on 0, for parameter 2? This should prevent the gradients from diverging very far.
