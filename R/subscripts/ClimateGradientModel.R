@@ -43,7 +43,8 @@ loglik_norm <- function(x, yest, ymean, sdyest, coeff, sdy) {
   
   pred = A + DKA/((1+(exp(Q*(x-M)))))
   ll2 <- sum(dnorm(yest, mean = pred, sd = sdy, log = TRUE))
-  return(c(ll2+ll1))
+  return(c(ll2))#+ll1)) ### it doesn't matter whether we use ll2 or ll2+ll1 -
+  # ll1 is the same in old and new anyway, as we only change the proposal!!!
 }
 
 

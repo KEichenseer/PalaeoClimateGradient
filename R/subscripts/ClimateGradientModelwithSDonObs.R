@@ -53,13 +53,13 @@ loglik_norm_sd <- function(x, yest, ymean, sdyest, coeff, sdy, new_y) {
   DKA = coeff[2]
   M = coeff[3]
   Q = coeff[4]
-  yest0 <- new_y[sd_obs_ind]
-  ymean0 <- obsmat$temperature[sd_obs_ind]
-  ysd0 <- obsmat$sd[sd_obs_ind]
+ # yest0 <- new_y[sd_obs_ind]
+ # ymean0 <- obsmat$temperature[sd_obs_ind]
+ # ysd0 <- obsmat$sd[sd_obs_ind]
   
-  ll0 <- sum(dnorm(yest0, ymean0, ysd0,log=TRUE),na.rm=T)
-  
-  ll1 <- sum(dnorm(yest, ymean, sdyest,log=TRUE),na.rm=T)
+ # ll0 <- sum(dnorm(yest0, ymean0, ysd0,log=TRUE),na.rm=T)
+ # 
+ # ll1 <- sum(dnorm(yest, ymean, sdyest,log=TRUE),na.rm=T)
   
   pred = A + DKA/((1+(exp(Q*(x-M)))))
   ll2 <- sum(dnorm(yest, mean = pred, sd = sdy, log = TRUE))
@@ -190,7 +190,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
     n_p_ind <- 1:n_p
     
     ## extra for observations with SD
-    if(any(is.numeric(obsmat$sd))) {
+    if(any(!is.na(obsmat$sd))) {
       
       new_y <- ylist
       
@@ -198,7 +198,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
       
       ylist_sd_ind <- lapply(ylist_sd,function(x) which(!(is.na(as.numeric(x)))))
     
-      sd_obs_ind <- which(!is.na(as.numeric(obsmat$sd)))
+      sd_obs_ind <- which(!is.na((obsmat$sd)))
     #sd_obs <- obsmat$sd[sd_obs_ind]
     #mean_obs <- obsmat$temperature[sd_obs_ind]
     #n_sd_obs <- length(sd_obs_ind)
@@ -292,7 +292,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
     ## extra for observations with SD
      
       
-    if(any(is.numeric(obsmat$sd))) {
+    if(any(!(is.na(obsmat$sd)))) {
       for(k in 1:length(ylist_sd)){
         if(any(!(is.na(ylist_sd[[k]])))){
           
@@ -302,8 +302,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
           musdyobs0 <- ylist[[k]][ylist_sd_ind[[k]]]
           muyest1 <- yestimate[i-1,k]
           
-         ## careful check this line!!!!!!!!
-          
+
       obs_yestimate[[k]][i,] =   rnorm(n_obs0,
                                        sdyest1^2/(sdyobs0^2+sdyest1^2)*musdyobs0 + sdyobs0^2/(sdyobs0^2+sdyest1^2)*muyest1,
                                        sqrt(1/(1/sdyest1^2 + 1/sdyobs0^2))) 
@@ -362,7 +361,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
     if(i > adapt_sd) proposal_coeff = c(coefficients[i-1,1:3],log(coefficients[i-1,4])) + proposal_innovation[i-adapt_sd,]
     proposal_coeff[4] <- exp(proposal_coeff[4])
     
-    if(any(proposal_coeff[4] <= 0) | i == 2) {
+    if(any(proposal_coeff[4] <= 0)) { # | i == 2
       HR = 0
     } else {# Q needs to be >0
       # Hastings ratio of the proposal
@@ -449,6 +448,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
                 yestimate = yestimate,
                 sdyest = sdyest,
                 obs_yestimate = obs_yestimate,
-                lat = x)
+                lat = x,
+                proposal_cov = proposal_cov)
   return(output)
 }

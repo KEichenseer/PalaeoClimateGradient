@@ -172,6 +172,55 @@ for(i in 1:length(datr)) {
 
 }  
 View(dat)
-dat$Timeslice[which(is.na(as.numeric(dat$Age)))] <- dat$Age[which(is.na(as.numeric(dat$Age)))]
+dat$Timeslice[which(is.na(as.numeric(dat$Age)) & !is.na(dat$Age) & is.na(dat$Timeslice))] <- 
+  dat$Age[which(is.na(as.numeric(dat$Age)) & !is.na(dat$Age) & is.na(dat$Timeslice))]
 dat$Age[which(is.na(as.numeric(dat$Age)))] <- NA 
+
+datloc <- lapply(2:20,function(x) readxl::read_excel("data/raw/Eocene/Hollis2019SI/SDF06_TEX86.xlsx", sheet = x, skip = 0, trim_ws = T, n_max = 9))
+
+locpar <- matrix(NA,nrow=length(datloc), ncol = 6)
+for(i in 1:length(datloc)) {
+locpar[i,] <- unlist(c(colnames(datloc[[i]])[2],datloc[[i]][1:5,2]))
+
+}
+
+# clean references
+locpar[16,3] <- "Hollis et al. 2009; Hollis et al. 2012"
+locpar[1,3] <- "Sluijs et al. 2006; 2008; 2009"    
+locpar[9,3] <- "Keating-Bitonti et al. 2011" 
+locpar[,3] <- gsub(",","",locpar[,3])
+locpar[,2] <- gsub("Eastern USA","USA",locpar[,2]) # use USA to conform to the other data
+
+locpar <- data.frame(locpar)
+locpar[,4] <- as.numeric(locpar[,4])
+locpar[,5] <- as.numeric(locpar[,5])
+
+dat$Location <- NA
+dat$Region <- NA
+dat$Latitude <- NA
+dat$Longitude <- NA
+dat$Setting <- NA
+dat$Reference <- NA
+
+for(i in 1:nrow(locpar)) {
+  dat$Location[(ind[i]+1):(ind[i+1])] <-  locpar[i,1]
+  dat$Region[(ind[i]+1):(ind[i+1])] <-  locpar[i,2]
+  dat$Latitude[(ind[i]+1):(ind[i+1])] <-  locpar[i,4]
+  dat$Longitude[(ind[i]+1):(ind[i+1])] <-  locpar[i,5]
+  dat$Setting[(ind[i]+1):(ind[i+1])] <-  locpar[i,6]
+  dat$Reference[(ind[i]+1):(ind[i+1])] <-  locpar[i,3]
+}
+
+### EECO could be 53.3 - 49.2 Ma (according to the figures in Hollis et al 2019)
+### However, data between range(as.numeric(dat$Age[which(dat$Timeslice=="EECO")]),na.rm=T)
+### i.e. from 48.57246 to 53.48746 has been assigned to EECO in their database. Hence, we use that
+dat$Timeslice[which(is.na(dat$Timeslice) & (as.numeric(dat$Age) >= 48.57246 | as.numeric(dat$Age) <= 53.48746))] <- "EECO"
+
+saveRDS(dat,"data/processed/Hollis_2019_TEX86_2022_07_18.rds")
+
+#########################################################
+### D47 data (already manually brought into a nice table)
+
+d47 <- readxl::read_excel("data/raw/Eocene/Hollis2019SI/Hollis2019_D47_locations_and_values.xlsx")
+saveRDS(d47,"data/processed/Hollis_2019_D47_2022_07_18.rds")
 
