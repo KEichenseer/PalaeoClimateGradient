@@ -313,7 +313,8 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
       yobs_mean_old <- yobs_mean
       
       new_y <- ylist
-      for(k in 1:length(ylist)) new_y[[k]][ylist_sd_ind[[k]]] <- obs_yestimate[[k]][i,ylist_sd_ind[[k]]]
+      for(k in 1:length(ylist)) new_y[[k]][ylist_sd_ind[[k]]] <- obs_yestimate[[k]][i,]
+      
       yobs_mean= c(sapply(new_y,mean))
       sumobs <- sapply(new_y,sum)
       new_y <- unlist(new_y)

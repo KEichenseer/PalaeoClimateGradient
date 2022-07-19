@@ -57,6 +57,7 @@ organism = c(rep("planktic foraminifera",(nrow(d18O))), rep("planktic foraminife
 species = c(d18O$Species, MgCa$Species, d47$Species,  rep("unknown", nrow(TEX86))),
 preservation = c(d18O$Preservation, MgCa$Preservation, rep(NA, nrow(d47)),  rep(NA, nrow(TEX86))),
 setting = c(d18O$Setting,MgCa$Setting,d47$Setting, TEX86$Setting),
+depth_habitat = c(d18O$Depth_habitat,rep(NA,nrow(MgCa)), rep(NA,nrow(d47)), rep(NA,nrow(TEX86))),
 temperature = c(d18O$Temperature, MgCa$SST_median, d47$Temp, TEX86$SST_median),
 temperature_detail = c(rep("estimate",nrow(d18O)), rep("median and 2.5 and 97.5 percentiles", nrow(MgCa)),
                        rep("mean value and SD?",nrow(d47)), rep("mean and 5 and 95 percentiles",nrow(TEX86))),
@@ -92,4 +93,13 @@ dat$temperature_sd[which(dat$proxy=="MgCa")] <-
 # TEX86 offers 5 and 95 percentiles, so the range between 95 and 50 denotes 1.645 * SD
 dat$temperature_sd[which(dat$proxy=="TEX86")] <- 
   (dat$temperature_upper-dat$temperature)[which(dat$proxy=="TEX86")]/1.645
+
+### add palaeolat
+source("D://Github/palaeoverse/R/palaeorotate.R")
+palcords <- palaeorotate(data.frame(lat = dat$latitude,lng = dat$longitude, age = 51.45))
+
+dat$paleolat_Meredith <- palcords$p_lat
+dat$paleolon_Meredith <- palcords$p_lng
+
+saveRDS(dat,"data/processed/Hollis_processed_2022_07_19.rds")
 
