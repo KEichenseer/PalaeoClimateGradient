@@ -20,11 +20,13 @@ Here goes the abstract
 
 # Introduction
 
-The early Eocene climate optimum (EECO, ~ 53 - 49 million years ago) is thought to have been the warmest episode ever since. The EECO has received much attention due to its use as an analogue for extreme warming scenarios, depicting a possible future high-CO2 world. To reconstruct the climate of EECO, a variety of proxy data and Earth System Models have been used. Early modellers have soon noticed that their models struggle to reproduce the climate indicated by proxy data: Without unrealistically high concentrations of atmospheric CO2, early climate models struggled to reproduce the equitable polar climates indicated by early Eocene proxy data, e.g. the occurrence of mangroves in polar latitudes, and d18O data from x indicates a temperature of ~ y at latitude z.  
+The early Eocene climate optimum (EECO, ~ 53 - 49 million years ago) is thought to have been the warmest episode ever since. The EECO has received much attention due to its use as an analogue for extreme warming scenarios, depicting a possible future high-CO2 world. To reconstruct the climate of EECO, a variety of proxy data and Earth System Models have been used. Early modelers have soon noticed that their models struggle to reproduce the climate indicated by proxy data: Without unrealistically high concentrations of atmospheric CO2, early climate models struggled to reproduce the equitable polar climates indicated by early Eocene proxy data, e.g. the occurrence of mangroves in polar latitudes, and d18O data from x indicates a temperature of ~ y at latitude z.  
 
 Example reference [@R-base]
 
 # Materials & Methods
+
+- alternative to current implementation: prior on (A+DKA) instead of on DKA? Then constrain DKA to be positive by proposing it in the log-space? This would allow for putting a direct prior on the upper temperature limit
 
 # Results
 
@@ -32,7 +34,13 @@ Example reference [@R-base]
 ## Fig 2 - Eocene example
 ## Fig 3 - Showing influence of changing model assumptions
 
+- x1 Draw samples from the posterior gradient to get a latitudinal gradient of deg C / deg lat with uncertainty (intercept gradient at 0 and 90 deg lat)
+
+- x2 generate global average temperature, and tropical, temperate, polar temperatures in a similar way, accounting for area
+
 # Discussion
+
+- x1 compare lat gradient to literature estimates, e.g. Zhang2019
 
 # Conclusions
 

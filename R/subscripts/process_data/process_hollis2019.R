@@ -79,8 +79,8 @@ for(i in 1:length(datr)) {
   datr[[i]] <- datr[[i]][1:(which(sapply(1:nrow(datr[[i]]), function(x) all(is.na(datr[[i]][x,]))))[1]-1),]
 }
 
-dat <- data.frame(matrix(NA,nrow = sum(sapply(datr,nrow)),ncol = 7))
-colnames(dat) <- c("Timeslice", "Age", "MgCa", "SST_median", "SST_025", "SST_975", "Species")
+dat <- data.frame(matrix(NA,nrow = sum(sapply(datr,nrow)),ncol = 8))
+colnames(dat) <- c("Timeslice", "Age", "MgCa", "SST_median", "SST_025", "SST_975", "Species", "Preservation")
 ind <- c(0,cumsum(sapply(datr,nrow)))
 for(i in 1:length(datr)) {
   if("Age" %in% colnames(datr[[i]])) {
@@ -95,6 +95,7 @@ for(i in 1:length(datr)) {
   dat$SST_025[(ind[i]+1):(ind[i+1])] <- datr[[i]]$`2.5`
   dat$SST_975[(ind[i]+1):(ind[i+1])] <- datr[[i]]$`97.5`
   dat$Species[(ind[i]+1):(ind[i+1])] <- datr[[i]]$Species
+  dat$Preservation[(ind[i]+1):(ind[i+1])] <- datr[[i]]$Preservation
   
 }  
 
@@ -214,7 +215,8 @@ for(i in 1:nrow(locpar)) {
 ### EECO could be 53.3 - 49.2 Ma (according to the figures in Hollis et al 2019)
 ### However, data between range(as.numeric(dat$Age[which(dat$Timeslice=="EECO")]),na.rm=T)
 ### i.e. from 48.57246 to 53.48746 has been assigned to EECO in their database. Hence, we use that
-dat$Timeslice[which(is.na(dat$Timeslice) & (as.numeric(dat$Age) >= 48.57246 | as.numeric(dat$Age) <= 53.48746))] <- "EECO"
+#dat$Timeslice[which(is.na(dat$Timeslice) & (as.numeric(dat$Age) >= 48.57246 | as.numeric(dat$Age) <= 53.48746))] <- "EECO"
+# DON'T DO THIS IT IS WRONG, WILL BE TAKEN CARE OF IN THE SYNTHESIZE SCRIPT
 
 saveRDS(dat,"data/processed/Hollis_2019_TEX86_2022_07_18.rds")
 
