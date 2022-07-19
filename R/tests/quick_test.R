@@ -30,16 +30,16 @@ library(doParallel)
 cl <- parallel::makeCluster(3)
 doParallel::registerDoParallel(cl)
 
-mod3 <- climate_parallel(nChains = 3, nIter = 20000, obsmat = obsmat, distrmat = distrmat)
+mod1 <- climate_parallel(nChains = 3, nIter = 20000, obsmat = obsmat, distrmat = NULL)
 parallel::stopCluster(cl)
 
 
 ### check chains
-plot_chains(mod3)
+plot_chains(mod1)
 par(mfrow=c(1,1),mar = c(4,4,1,1))
 
 ### Plot result
-mod <-  mod3[[1]]
+mod <-  mod1[[1]]
 plot_gradient(mod, ylim = c(-5,40))
 plot_data(obsmat,add = T)
 plot_distr(distrmat)

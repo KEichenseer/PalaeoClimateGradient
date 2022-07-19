@@ -8,6 +8,13 @@ hist(dat$temperature,100)
   data_sub <- subset(dat,EECO == 1 & !(is.na(temperature)) & !(is.na(paleolat_Meredith)) &
                        (is.na(depth_habitat) | depth_habitat %in% c("Mixed-layer",     "Mixed layer")))
   data_sub <- data_sub[with(data_sub, order(abs(paleolat_Meredith), longitude)),]
+  
+  
+  plot(data_sub$latitude,data_sub$temperature,xlim=c(-90,90))
+  points(data_sub$latitude[which(data_sub$preservation %in% c("recrystallised","Recrystallized"))],
+         data_sub$temperature[which(data_sub$preservation %in% c("recrystallised","Recrystallized"))],
+         col = NA, pch = 21, bg = rgb(1,0,0,0.5))
+  
   # prepare for use in the model
   obsmat <- data.frame(sample = (paste(abs(data_sub$paleolat_Meredith),data_sub$longitude)),
                          latitude = abs(data_sub$paleolat_Meredith), temperature = data_sub$temperature,
@@ -44,11 +51,13 @@ hist(dat$temperature,100)
   if(!(is.null(obsmat)) & is.null(sdyest_inits)) sdyest_inits <- rep(2,length(unique(obsmat$sample)))
   
   source("R/subscripts/ClimateGradientModelwithSDonObs.R")
+  source("R/subscripts/AuxiliaryFunctions.R")
+  
   modh1 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                                proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
                                adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   # only mixed layer d18O
-  modh2 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
+  modh3 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                            proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
                            adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   plot(modh1$params$sdy)
@@ -56,14 +65,18 @@ plot_gradient(modh1, ylim = c(2,42))
 points(obsmat$latitude,obsmat$temperature, col = NA, bg = rgb(0,0.4,0.5,0.33), pch = 21, cex = 0.8)
 plot_posterior(modh1)
 
-plot_gradient(modh2, ylim = c(2,42), add = F, line_col = rgb(0,0.8,0,1), confint_col = rgb(0,0.8,0,0.2))  
+plot_gradient(modh2, ylim = c(2,42), add = T, line_col = rgb(0,0.8,0,1), confint_col = rgb(0,0.8,0,0.2))  
 points(obsmat$latitude,obsmat$temperature, col = NA, bg = rgb(0,0.4,0.5,0.33), pch = 21, cex = 0.8)
 plot_posterior(modh2, col_obs  = rgb(0,1,0,0.5))
 
-plot_sample_gradient(modh2, burnin = 25000)
 
-graddat <- plot_sample_gradient(modh2, burnin = 25000, n_samples = 2000, return_data = T, plot = FALSE)
+plot_gradient(modh3, ylim = c(2,42), add = T, line_col = rgb(0.8,0,0,1), confint_col = rgb(0.8,0,0,0.2))  
+plot_posterior(modh3, col_obs  = rgb(1,0,0,0.75))
+
+plot_sample_gradient(modh1, burnin = 25000)
+
+graddat <- plot_sample_gradient(modh2, burnin = 25000, n_samples = 5000, return_data = T, plot = FALSE)
 
 graddiff <- apply(graddat,1,function(x) abs(diff(range(x))))
-hist(graddiff)
-quantile(graddiff,probs = c(0.025,0.5,0.975))
+hist(graddiff,seq(0,40,1))
+abline(v=quantile(graddiff,probs = c(0.025,0.5,0.975)),col = "red", lwd = c(2,3,2), lty=c(3,2,3))

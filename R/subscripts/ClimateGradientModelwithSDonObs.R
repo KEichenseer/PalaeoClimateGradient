@@ -86,9 +86,11 @@ logprior <- function(coeff) {
   coeff = unlist(coeff)
   return(sum(c(
     dsnorm(coeff[1],location = -2.7, scale = 16, alpha = 16, log = TRUE), # prior on A
-    dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on DKA
-    dnorm(coeff[3], 45, 15, log = TRUE), # prior on M
-    dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on Q
+    #dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on DKA
+    dtnorm(coeff[1]+coeff[2], coeff[1], Inf,30,7, log = TRUE), # prior on A+DKA
+    dnorm(coeff[3], 45, 12, log = TRUE), # prior on M
+    dlnorm(coeff[4], -2.4, 0.6, log = TRUE)))) # prior on Q     dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on Q
+
 }
 
 # function to generate truncated normal
