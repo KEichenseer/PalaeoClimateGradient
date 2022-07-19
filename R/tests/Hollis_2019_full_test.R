@@ -9,7 +9,7 @@ hist(dat$temperature,100)
                        (is.na(depth_habitat) | depth_habitat %in% c("Mixed-layer",     "Mixed layer")))
   data_sub <- data_sub[with(data_sub, order(abs(paleolat_Meredith), longitude)),]
   
-  
+  data_sub <- subset(data_sub,proxy=="d18O")
   plot(data_sub$latitude,data_sub$temperature,xlim=c(-90,90))
   points(data_sub$latitude[which(data_sub$preservation %in% c("recrystallised","Recrystallized"))],
          data_sub$temperature[which(data_sub$preservation %in% c("recrystallised","Recrystallized"))],
@@ -57,18 +57,30 @@ hist(dat$temperature,100)
                                proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
                                adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   # only mixed layer d18O
-  modh3 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
+  modh_dO18 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                            proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
                            adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   plot(modh1$params$sdy)
-plot_gradient(modh1, ylim = c(2,42))  
+plot_gradient(modh3, ylim = c(2,42))  
 points(obsmat$latitude,obsmat$temperature, col = NA, bg = rgb(0,0.4,0.5,0.33), pch = 21, cex = 0.8)
 plot_posterior(modh1)
 
 plot_gradient(modh2, ylim = c(2,42), add = T, line_col = rgb(0,0.8,0,1), confint_col = rgb(0,0.8,0,0.2))  
-points(obsmat$latitude,obsmat$temperature, col = NA, bg = rgb(0,0.4,0.5,0.33), pch = 21, cex = 0.8)
-plot_posterior(modh2, col_obs  = rgb(0,1,0,0.5))
 
+cols <- c(rgb(1,0,0,0.4),rgb(0.8,0.5,0,0.5),rgb(0,1,0,0.4), rgb(0,0,1,0.4))
+pchs = c(21,22,23,24)
+colindex <- sapply(data_sub$proxy,function(x) which(x==c("d18O","d47","MgCa","TEX86")))
+
+plot_gradient(modh3, ylim = c(2,42))  
+mtext("EECO - Hollis et al. 2019 data", cex = 1.2)
+points(obsmat$latitude,obsmat$temperature, col = NA, bg = cols[colindex], pch = pchs[colindex], cex = 0.8)
+plot_posterior(modh3, col_obs  = rgb(0,0,0,0.35))
+
+legend("topright",c("d18O", "MgCa", "D47", "TEX86", "post. estimate"), pch = c(21,23,22,24,24), 
+       col = NA, pt.bg  = c(cols[c(1,3,2,4)],rgb(0,0,0,0.35)),pt.cex = 1.3)
+
+
+plot_gradient(modh_dO18, ylim = c(2,42), add = T, line_col = rgb(1,0,0,1), confint_col = rgb(1,0,0,0.2))  
 
 plot_gradient(modh3, ylim = c(2,42), add = T, line_col = rgb(0.8,0,0,1), confint_col = rgb(0.8,0,0,0.2))  
 plot_posterior(modh3, col_obs  = rgb(1,0,0,0.75))

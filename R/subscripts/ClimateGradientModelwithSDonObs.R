@@ -1,6 +1,9 @@
 ############## Climate gradient model
 ############## 26/06/2022
 
+### !! Careful still need to make the obsmat sd checks conditional on obsmat not being NULL !!
+
+
 gradient <- function(x, coeff, sdy) { # parametrise with difference between cold and hot end instead
   if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
   if(is.data.frame(coeff) | is.matrix(coeff)) {
@@ -450,8 +453,8 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
                            logpost = logpost),
                 yestimate = yestimate,
                 sdyest = sdyest,
-                obs_yestimate = obs_yestimate,
                 lat = x,
                 proposal_cov = proposal_cov)
+  if(any(!(is.na(obsmat$sd)))) output$obs_yestimate = obs_yestimate
   return(output)
 }
