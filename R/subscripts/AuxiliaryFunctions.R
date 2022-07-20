@@ -91,14 +91,15 @@ plot_data <- function(obsmat = NULL, distrmat = NULL, lat = seq(0,90,0.2), add =
 }
 
 plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
-                           ylim = NULL, col_obs = rgb(.85,0.3,0,0.75), col_dist = rgb(0.6,0,.9,0.75)) {
+                           ylim = NULL, col_obs = rgb(.85,0.3,0,0.75), col_dist = rgb(0.6,0,.9,0.75),
+                           cex = 1, pch = 17) {
   nIter <- nrow(mod$params)
   if(is.null(burnin)) burnin = round(nrow(mod$params)*12/100)+1
   
   if(!(is.null(mod$sdyest))) {
   nobsloc <- dim(mod$sdyest)[2]
   samples <- 1:dim(mod$sdyest)[2]
-  invisible(sapply(samples,function(x) points(mod$lat[x], mean(mod$yestimate[burnin:nIter,x]), pch = 17, col = col_obs)))
+  invisible(sapply(samples,function(x) points(mod$lat[x], mean(mod$yestimate[burnin:nIter,x]), pch = pch, col = col_obs, cex = cex)))
   invisible(sapply(samples,function(x) points(rep(mod$lat[x],2), quantile(mod$yestimate[burnin:nIter,x], probs = c(0.05,0.95)), 
                                     type = "l", col = col_obs)))
   } else nobsloc <- 0
@@ -109,7 +110,7 @@ plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = N
     
   
   distr_ind <- (nobsloc+1):ndistrloc
-  invisible(sapply(distr_ind,function(x) points(mod$lat[x], median(mod$yestimate[burnin:nIter,x]), pch = 17, col = col_dist)))
+  invisible(sapply(distr_ind,function(x) points(mod$lat[x], median(mod$yestimate[burnin:nIter,x]), pch = pch, col = col_dist, cex = cex)))
   invisible(sapply(distr_ind,function(x) points(rep(mod$lat[x],2), quantile(mod$yestimate[burnin:nIter,x], probs = c(0.05,0.95)), 
                                                 type = "l", col = col_dist)))
   }

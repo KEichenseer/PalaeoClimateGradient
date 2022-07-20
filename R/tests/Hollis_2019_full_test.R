@@ -53,17 +53,26 @@ hist(dat$temperature,100)
   source("R/subscripts/ClimateGradientModelwithSDonObs.R")
   source("R/subscripts/AuxiliaryFunctions.R")
   
-  modh1 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
+  mod_nod18O <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                                proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
                                adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   # only mixed layer d18O
-  modh_dO18 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
+  mod_dO18 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                            proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
                            adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   plot(modh1$params$sdy)
-plot_gradient(modh3, ylim = c(2,42))  
-points(obsmat$latitude,obsmat$temperature, col = NA, bg = rgb(0,0.4,0.5,0.33), pch = 21, cex = 0.8)
-plot_posterior(modh1)
+plot_gradient(mod_nod18O, ylim = c(2,42), line_col = rgb(0,0.8,0,1), confint_col = rgb(0,0.8,0,0.2) )  
+points(obsmat2$latitude,obsmat2$temperature, col = NA, bg = rgb(0,0.7,0.2,0.33), pch = 21, cex = 1)
+plot_posterior(mod_nod18O,col_obs = rgb(0,0.5,0.8,0.7))
+
+plot_gradient(mod_dO18, ylim = c(2,42), line_col = rgb(0.8,0,0.1,1), confint_col = rgb(0.8,0,0.1,0.175), add = T)  
+points(obsmat$latitude,obsmat$temperature, col = NA, bg = rgb(0.7,0,0.1,0.33), pch = 22, cex = 1)
+plot_posterior(mod_dO18,col_obs = rgb(0.85,0.75,0,0.7),cex = 1.1)
+
+legend("topright",c("d18O", "MgCa, D47 and TEX86"), lty = c(1,1), lwd = c(2,2), col = c(rgb(0.8,0,0,1),rgb(0,0.8,0,1)))
+
+
+
 
 plot_gradient(modh2, ylim = c(2,42), add = T, line_col = rgb(0,0.8,0,1), confint_col = rgb(0,0.8,0,0.2))  
 
