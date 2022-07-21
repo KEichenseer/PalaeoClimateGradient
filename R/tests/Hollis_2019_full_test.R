@@ -1,7 +1,27 @@
 dat <- readRDS("data/processed/Hollis_processed_2022_07_19.rds")
+dat$proxy_value <- as.numeric(dat$proxy_value)
 hist(dat$temperature,100)
 
-### generate obsmat
+
+dat_sub <- subset(dat,proxy=="d18O")
+dat_sub$mineral = "calcite"
+dat_sub$fossil_group = "foraminifera"
+dat_sub$d18O_sw_ice <- -1.08
+
+grosman_t <- get_temperature(d18O_sample = dat_sub$proxy_value,
+                             d18O_sw_ice = dat_sub$d18O_sw_ice, lat = abs(dat_sub$palaeolat_ori),
+                             mineral = dat_sub$mineral, fossil_group = dat_sub$organism)
+
+plot(grosman_t,dat_sub$temperature)
+     hist(dat$proxy_value)
+     abline(lm(dat_sub$temperature~grosman_t), col = "red")
+     
+     dat$grosman_t <- NA
+     dat$grosman_t[which(dat$proxy=="d18O")] <- grosman_t
+     
+  mean(grosman_t-dat_sub$temperature)   
+     
+  ### generate obsmat
 
 
   # select data from one stage to test, exclude NA data
@@ -10,11 +30,13 @@ hist(dat$temperature,100)
   data_sub <- data_sub[with(data_sub, order(abs(paleolat_Meredith), longitude)),]
   
   data_sub <- subset(data_sub,proxy=="d18O")
-  plot(data_sub$latitude,data_sub$temperature,xlim=c(-90,90))
+  plot(data_sub$latitude,data_sub$temperature,xlim=c(-90,90), pch = 17, col = rgb(1,0,0,0.5), ylim = c(0,45))
   points(data_sub$latitude[which(data_sub$preservation %in% c("recrystallised","Recrystallized"))],
          data_sub$temperature[which(data_sub$preservation %in% c("recrystallised","Recrystallized"))],
          col = NA, pch = 21, bg = rgb(1,0,0,0.5))
-  
+  points(data_sub$latitude,
+         data_sub$grosman_t,
+         col = NA, pch = 21, bg = rgb(0,1,0,0.5))
   # prepare for use in the model
   obsmat <- data.frame(sample = (paste(abs(data_sub$paleolat_Meredith),data_sub$longitude)),
                          latitude = abs(data_sub$paleolat_Meredith), temperature = data_sub$temperature,
@@ -81,7 +103,7 @@ pchs = c(21,22,23,24)
 colindex <- sapply(data_sub$proxy,function(x) which(x==c("d18O","d47","MgCa","TEX86")))
 
 plot_gradient(modh3, ylim = c(2,42))  
-mtext("EECO - Hollis et al. 2019 data", cex = 1.2)
+mtext("EECO - Hollis et al. 2019 data, Grosman comparison", cex = 1.2)
 points(obsmat$latitude,obsmat$temperature, col = NA, bg = cols[colindex], pch = pchs[colindex], cex = 0.8)
 plot_posterior(modh3, col_obs  = rgb(0,0,0,0.35))
 
