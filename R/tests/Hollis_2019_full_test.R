@@ -1,7 +1,9 @@
+
+
 dat <- readRDS("data/processed/Hollis_processed_2022_07_19.rds")
 dat$proxy_value <- as.numeric(dat$proxy_value)
 hist(dat$temperature,100)
-
+dat$preservation[which(dat$preservation=="Recrystallized")] <- "recrystallised"
 
 dat_sub <- subset(dat,proxy=="d18O")
 dat_sub$mineral = "calcite"
@@ -29,8 +31,10 @@ plot(grosman_t,dat_sub$temperature)
                        (is.na(depth_habitat) | depth_habitat %in% c("Mixed-layer",     "Mixed layer")))
   data_sub <- data_sub[with(data_sub, order(abs(paleolat_Meredith), longitude)),]
   
-  data_sub <- subset(data_sub,proxy=="d18O")
+  #data_sub <- subset(data_sub,proxy=="MgCa")
   plot(data_sub$latitude,data_sub$temperature,xlim=c(-90,90), pch = 17, col = rgb(1,0,0,0.5), ylim = c(0,45))
+  plot(data_sub$latitude,data_sub$temperature,xlim=c(-90,90), pch = 17, col = rgb(data_sub$preservation=="recrystallised",0,0,0.5), ylim = c(0,45))
+
   points(data_sub$latitude[which(data_sub$preservation %in% c("recrystallised","Recrystallized"))],
          data_sub$temperature[which(data_sub$preservation %in% c("recrystallised","Recrystallized"))],
          col = NA, pch = 21, bg = rgb(1,0,0,0.5))
@@ -40,11 +44,43 @@ plot(grosman_t,dat_sub$temperature)
   # prepare for use in the model
   obsmat <- data.frame(sample = (paste(abs(data_sub$paleolat_Meredith),data_sub$longitude)),
                          latitude = abs(data_sub$paleolat_Meredith), temperature = data_sub$temperature,
-                         sd = data_sub$temperature_sd)
+                         sd = data_sub$temperature_sd,
+                       proxy = data_sub$proxy)
+  proxy_location_ordered <- sapply(unique(obsmat$sample), function(x) unique(obsmat$proxy[which(obsmat$sample==x)]))
+  proxy_location_ordered
 
-
-  distrmat = NULL
+  proxy_type_loc <- matrix(NA,length(proxy_location_ordered),4) 
+  proxy_type_loc[,1] <- as.numeric(sapply(proxy_location_ordered,function(x) "d18O" %in% x))*0.9
+  proxy_type_loc[,2] <- as.numeric(sapply(proxy_location_ordered,function(x) "MgCa" %in% x))*0.9
+  proxy_type_loc[,3] <- as.numeric(sapply(proxy_location_ordered,function(x) "d47" %in% x))
+  proxy_type_loc[,4] <- as.numeric(sapply(proxy_location_ordered,function(x) "TEX86" %in% x))*0.9
   
+  proxy_type_loc[which(proxy_type_loc==0)] <- 0.25
+  proxy_type_loc[which(apply(proxy_type_loc[,c(1,2,4)],1,function(x) all(x==1*0.9))),] <- c(.7,.6,0,.2)
+  
+  proxy_to_col <- apply(proxy_type_loc,1,function(x) rgb(x[1],x[2],x[4],0.75))
+  
+  
+  ### Add Siberian mangroves (Suan et al 2017)
+  # test some distributions -- M
+  temp <- seq(5,30,0.01)
+  y <- dsnorm(temp,mean(c(15.6,20.8)),1.33,0,log=F)
+  plot(temp,y,type ="l", yaxs = "i", lwd = 2)
+  temp[which.max(y)]
+  abline(v=temp[which(y<max(y)*0.05)], col = rgb(0,0,0,0.1))
+  abline(h=0)
+  abline(v=c(15.6,20.8))
+  sum(y[which(temp<15.6)])/sum(y)
+  
+  # use normal distribution with mean between minimum Avicieann T and minimum Rhizophora T
+  
+
+  distrmat = data.frame(latitude = 79.4 , ## palaeorotated from Faddeevsky Islabnd: palaeorotate(data.frame(lat = 75.5, lng = 144, age = 52))
+                        location = mean(c(15.6,20.8)),
+                        scale = 1.33,
+                        shape = NA,
+                        distribution = "normal")
+#  distrmat = NULL
   nIter = 50000
   obsmat = obsmat
   proposal_var_inits = c(2,2,2,0.2)
@@ -75,13 +111,40 @@ plot(grosman_t,dat_sub$temperature)
   source("R/subscripts/ClimateGradientModelwithSDonObs.R")
   source("R/subscripts/AuxiliaryFunctions.R")
   
-  mod_nod18O <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
+  mod4 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                                proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
                                adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   # only mixed layer d18O
-  mod_dO18 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
+  mod2 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                            proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
                            adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
+  
+  plot_gradient(mod1, ylim = c(2,42), line_col = rgb(0,0.8,0.2,1), confint_col = rgb(0,0.8,0.2,0.2) )  
+  
+  plot_gradient(mod2, ylim = c(2,42), line_col = rgb(0.8,0,0.2,1), confint_col = rgb(0.8,0,0,0.2), add = T)  
+  
+  plot_gradient(mod3, ylim = c(2,42), line_col = rgb(0,0,1,1), confint_col = rgb(0,0,1,0.2), add = T)  
+  
+  
+  plot_gradient(mod4, ylim = c(2,42), line_col = rgb(1,0,0,1), confint_col = rgb(1,0,0,0.2), add = T)  
+  
+  plot_gradient(mod1, ylim = c(2,42), line_col = rgb(0,0,0,1), confint_col = rgb(0,0,0,0.15) )  
+  plot_data(obsmat,distrmat, add = T,col=rgb(0,0,0,0.2))
+  plot_distr(distrmat,col=rgb(0,0.7,0.7,0.3))
+  
+  plot_posterior(mod1,col_obs = proxy_to_col, col_dist = rgb(0,0.6,0,0.7))
+  
+  plot_posterior(mod2,col_obs = rgb(0.5,0,0.8,0.7), col_dist = rgb(0.5,0,0.8,0.7))
+  
+  plot_posterior(mod3,col_obs = rgb(0,0.7,1,0.7), col_dist = rgb(0,0.7,1,0.7))
+  
+  plot_posterior(mod4,col_obs = rgb(1,0.5,0.5,0.6), col_dist = rgb(1,0,0.5,0.6))
+  
+  
+  plot(mod1$yestimate[,26],mod1$params$sdy)
+  abline(h=18.2,col="red")
+  dim(mod1$yestimate)
+  
   plot(modh1$params$sdy)
 plot_gradient(mod_nod18O, ylim = c(2,42), line_col = rgb(0,0.8,0,1), confint_col = rgb(0,0.8,0,0.2) )  
 points(obsmat2$latitude,obsmat2$temperature, col = NA, bg = rgb(0,0.7,0.2,0.33), pch = 21, cex = 1)
@@ -118,8 +181,8 @@ plot_posterior(modh3, col_obs  = rgb(1,0,0,0.75))
 
 plot_sample_gradient(modh1, burnin = 25000)
 
-graddat <- plot_sample_gradient(modh2, burnin = 25000, n_samples = 5000, return_data = T, plot = FALSE)
+graddat <- plot_sample_gradient(mod2, burnin = 25000, n_samples = 5000, return_data = T, plot = FALSE)
 
 graddiff <- apply(graddat,1,function(x) abs(diff(range(x))))
 hist(graddiff,seq(0,40,1))
-abline(v=quantile(graddiff,probs = c(0.025,0.5,0.975)),col = "red", lwd = c(2,3,2), lty=c(3,2,3))
+abline(v=quantile(graddiff,probs = c(0.025,0.5,0.975)),col = "blue", lwd = c(2,3,2), lty=c(3,2,3))

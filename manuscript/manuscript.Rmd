@@ -30,16 +30,39 @@ Example reference [@R-base]
 
 # Materials & Methods
 
+We chose a range of proxies for marine, shallow water temperatures
 proxies: d18O, D47, Mg/Ca, TEX86
 mangroves, corals, sharks?
+
+## early Eocene SST proxies ##
+
+**d18O.**
+
+**d47.**
+
+**Mg/Ca.**
+
+**TEX86.**
+
+**Mangroves.** Recent mangroves predominantly occur in the tropics - subtropics. Although many factors besides temperature determine the extent of mangrove distributions, empirical temperature limits have been established for the genera *Avicennia* and *Rhizophora*, with lower mean annual SST limits of 15.6 degC and 20.8 degC, respectively [@Quisthoudt2012]. Both *Avicennia* and members of the Rhizophoraceae family were widespread in the early Eocene, but only *Avicennia* occurred in polar latitudes [@Suan2017; @Popescu2021]. Assuming that Eocene members of these mangrove taxa observed similar climatic requirements as their modern relatives, the presence and absence of *Avicennia* and Rhizophoraceae pollen can be used as a temperature proxy. To translate mangrove occurrences from the compilation by @Popescu2021 to a quantitative temperature proxy, we allocate locations at which *Avicennia* pollen, but no Rhizophoraceae pollen were found, a mean temperature between the lower *Avicennia* and Rhizophoraceae limit (18.2 degC), with a standard deviation of 1.33 degC, thus placing 95 % of the probability density within that interval (see Fig. 1x). For locations at which both *Avicennia* and Rhizophoraceae pollen were found, the range of plausible temperatures is very wide and was not used in the analysis, as both mangrove taxa occur in temperatures > 32 deC in the modern.
+
+**Corals.**
+
+
+[Fig 1: In this part we can show a figure with the proxy data and the distributions of temperature proxies we specify, like mangroves]
+
+## A hierarchical model of latitudinal temperature gradients ##
+
+
+[Fig 2: In this part we can show a figure with the model structure and the priors we put on the parameters. Also, try it on the modern data? Alternatively, this figure goes to the SI]
+
 
 - alternative to current implementation: prior on (A+DKA) instead of on DKA? Then constrain DKA to be positive by proposing it in the log-space? This would allow for putting a direct prior on the upper temperature limit
 
 # Results
 
-## Fig 1 - Model structure and proof of concept with modern data
-## Fig 2 - Eocene example
-## Fig 3 - Showing influence of changing model assumptions
+## Fig 3 - Eocene gradient
+## Fig 4 - compare Eocene gradient with previous reconstructions / ES models
 
 - x1 Draw samples from the posterior gradient to get a latitudinal gradient of deg C / deg lat with uncertainty (intercept gradient at 0 and 90 deg lat)
 

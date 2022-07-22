@@ -99,9 +99,13 @@ plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = N
   if(!(is.null(mod$sdyest))) {
   nobsloc <- dim(mod$sdyest)[2]
   samples <- 1:dim(mod$sdyest)[2]
-  invisible(sapply(samples,function(x) points(mod$lat[x], mean(mod$yestimate[burnin:nIter,x]), pch = pch, col = col_obs, cex = cex)))
+  if(length(col_obs)!=nobsloc)  col_obs <- rep(col_obs[1],nobsloc)
+  
+  invisible(sapply(samples,function(x) points(mod$lat[x], mean(mod$yestimate[burnin:nIter,x]), pch = pch, col = col_obs[x], cex = cex)))
+  
   invisible(sapply(samples,function(x) points(rep(mod$lat[x],2), quantile(mod$yestimate[burnin:nIter,x], probs = c(0.05,0.95)), 
-                                    type = "l", col = col_obs)))
+                                    type = "l", col = col_obs[x])))
+ 
   } else nobsloc <- 0
   
   if(dim(mod$yestimate)[2] > nobsloc) {
