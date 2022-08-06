@@ -1,5 +1,5 @@
 ############## Climate gradient model
-############## 26/06/2022
+############## 26/06/2022 # updated July 2022 to add SD on observations
 
 ### !! Careful still need to make the obsmat sd checks conditional on obsmat not being NULL !!
 
@@ -178,7 +178,7 @@ weighted_cov <- function(x, weights) { # takes 2.5 times as long as cov()
 # Main MCMCM function
 run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                      proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.1 * nIter),
-                     adapt_sd_decay = max(floor(0.01*nIter),1), quiet = FALSE){
+                     adapt_sd_decay = max(floor(0.01*nIter),1),  start_adapt = 101, quiet = FALSE){
   ### Initialisation
   coefficients = array(dim = c(nIter,4)) # set up array to store coefficients
   coefficients[1,] = coeff_inits # initialise coefficients
@@ -296,7 +296,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
     ## 1.0 Gibbs step for data that have SD on point estimates
     ## extra for observations with SD
      
-      
+  if(n_p != 0) {  
     if(any(!(is.na(obsmat$sd)))) {
       for(k in 1:length(ylist_sd)){
         if(any(!(is.na(ylist_sd[[k]])))){
@@ -326,6 +326,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
 
       
     } 
+  }
       
     ## 1.1.a Gibbs step to estimate yestimate (from data points)
     if(n_p != 0) {
@@ -363,7 +364,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
                            (B_sdy+0.5*sum((yestimate[i,]-pred)^2))))
     
     ## 4. Metropolis-Hastings step to estimate the regression coefficients
-    if(i <= adapt_sd) proposal_coeff = MH_propose_multi(1,coefficients[i-1,],proposal_cov =  proposal_cov) # new proposed values
+    if(i <= adapt_sd & i) proposal_coeff = MH_propose_multi(1,coefficients[i-1,],proposal_cov =  proposal_cov) # new proposed values
     if(i > adapt_sd) proposal_coeff = c(coefficients[i-1,1:3],log(coefficients[i-1,4])) + proposal_innovation[i-adapt_sd,]
     proposal_coeff[4] <- exp(proposal_coeff[4])
     
@@ -418,7 +419,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
     ###
     ###
     ### Adaptation step
-    if(i <= adapt_sd & i>=3) {
+    if(i <= adapt_sd & i>=start_adapt) {
       weights = all_weights[(adapt_sd-i+1):adapt_sd]
       proposal_cov <- weighted_cov(cbind(coefficients[1:i,1:3],log(coefficients[1:i,4])),weights = weights)
       if(any(diag(proposal_cov)==0)) proposal_cov <- proposal_var_inits/i

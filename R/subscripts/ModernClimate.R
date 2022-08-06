@@ -69,7 +69,7 @@ doParallel::stopImplicitCluster()
 
 
 
-plot_chains(mod4)
+plot_chains(mod0b)
 par(mfrow=c(1,1))
 plot_gradient(mod0b[[2]], add = F, ylim = c(-5,55), line_col = rgb(0,0,0,0.5), confint_col = rgb(0,0,0,0.1))
 plot_gradient(mod2[[2]], add = T, line_col = rgb(0,0.3,0.8,1), confint_col = rgb(0,0.3,0.8,0.2))

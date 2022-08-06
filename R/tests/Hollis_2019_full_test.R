@@ -126,7 +126,7 @@ plot(grosman_t,dat_sub$temperature)
   plot_gradient(mod3, ylim = c(2,42), line_col = rgb(0,0,1,1), confint_col = rgb(0,0,1,0.2), add = T)  
   
   
-  plot_gradient(mod4, ylim = c(2,42), line_col = rgb(1,0,0,1), confint_col = rgb(1,0,0,0.2), add = T)  
+  plot_gradient(mod4, ylim = c(2,42), line_col = rgb(1,0,0,1), confint_col = rgb(1,0,0,0.2), add = F)  
   
   plot_gradient(mod1, ylim = c(2,42), line_col = rgb(0,0,0,1), confint_col = rgb(0,0,0,0.15) )  
   plot_data(obsmat,distrmat, add = T,col=rgb(0,0,0,0.2))
@@ -140,7 +140,7 @@ plot(grosman_t,dat_sub$temperature)
   
   plot_posterior(mod4,col_obs = rgb(1,0.5,0.5,0.6), col_dist = rgb(1,0,0.5,0.6))
   
-  
+  plot_chains(list(mod4))
   plot(mod1$yestimate[,26],mod1$params$sdy)
   abline(h=18.2,col="red")
   dim(mod1$yestimate)

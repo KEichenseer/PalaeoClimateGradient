@@ -16,6 +16,7 @@ obsmat = obsmat
 proposal_var_inits = c(2,2,2,0.2)
 adapt_sd = floor(0.1 * nIter)
 adapt_sd_decay = max(floor(0.01*nIter),1)
+start_adapt = 101
 quiet = FALSE
 yest_inits = NULL
 sdyest_inits = NULL
@@ -41,7 +42,7 @@ if(!(is.null(obsmat)) & is.null(sdyest_inits)) sdyest_inits <- rep(2,length(uniq
 source("R/subscripts/ClimateGradientModelwithSDonObs.R")
 test4.4sd <- run_MCMC_sd_obs(nIter = 20000, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                                proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
-                               adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
+                               adapt_sd_decay = max(floor(0.005*nIter),1),start_adapt = start_adapt, quiet = FALSE)
 
 
 source("R/subscripts/ClimateGradientModel.R")
@@ -49,11 +50,11 @@ test1.2 <- run_MCMC(nIter = 20000, obsmat = obsmat, distrmat = NULL, coeff_inits
                          proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
                          adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
 
-points(test1.2$params$A,col=rgb(1,0,0,0.4))
+plot(test4.4sd$params$A[1:400],col=rgb(1,0,0,0.4))
 points(test4.3nosd$params$A,col=rgb(1,0,1,0.4))
 
 plot_gradient(test4.3nosd, ylim = c(-1,43), add = F, burnin = 5000, line_col = rgb(0,0,0.75,.7),confint_col = rgb(0,0,0.75,0.2))
-plot_gradient(test4.4sd, ylim = c(-1,43), add = T, burnin = 5000, line_col = rgb(0.75,0,0,.7),confint_col = rgb(0.75,0,0,0.2))
+plot_gradient(test4.4sd, ylim = c(-1,43), add = F, burnin = 5000, line_col = rgb(0.75,0,0,.7),confint_col = rgb(0.75,0,0,0.2))
 plot_gradient(test4.3sdlf, ylim = c(-1,43), add = T, burnin = 5000, line_col = rgb(0,0.75,0,.7),confint_col = rgb(0,0.75,0,0.2))
 
 
