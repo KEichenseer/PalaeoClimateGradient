@@ -85,16 +85,31 @@ loglik_skew <- function(x, yest, mu, sigma, lambda, coeff, sdy) {
   return(c(ll2+ll1))
 }
 
-logprior <- function(coeff) {
-  coeff = unlist(coeff)
-  return(sum(c(
-    dsnorm(coeff[1],location = -2.7, scale = 16, alpha = 16, log = TRUE), # prior on A
-    #dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on DKA
-    dtnorm(coeff[1]+coeff[2], coeff[1], Inf,30,7, log = TRUE), # prior on A+DKA
-    dnorm(coeff[3], 45, 12, log = TRUE), # prior on M
-    dlnorm(coeff[4], -2.4, 0.6, log = TRUE)))) # prior on Q     dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on Q
+# logprior <- function(coeff) {
+#   coeff = unlist(coeff)
+#   return(sum(c(
+#     dsnorm(coeff[1],location = -2.7, scale = 16, alpha = 16, log = TRUE), # prior on A
+#     #dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on DKA
+#     dtnorm(coeff[1]+coeff[2], coeff[1], Inf,30,7, log = TRUE), # prior on A+DKA
+#     dnorm(coeff[3], 45, 12, log = TRUE), # prior on M
+#     dlnorm(coeff[4], -2.4, 0.6, log = TRUE)))) # prior on Q     dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on Q
+# 
+# }
 
+
+write_logprior <- function(prior_fun,log=TRUE) {
+  out <- function(coeff) {
+    coeff = unlist(coeff)
+    
+    return(sum(c(
+      prior_fun$f1(x=coeff[1],log=log),
+      prior_fun$f2(x=coeff[1]+coeff[2],lower=coeff[1],log=log),
+      prior_fun$f3(x=coeff[3],log=log),
+      prior_fun$f4(x=coeff[4],log=log))))
+  }
+  return(out)
 }
+
 
 # function to generate truncated normal
 dtnorm <- function(x,lower,upper,mean,sd, log = FALSE) {
@@ -177,6 +192,7 @@ weighted_cov <- function(x, weights) { # takes 2.5 times as long as cov()
 #
 # Main MCMCM function
 run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
+                            logprior = logprior,
                      proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.1 * nIter),
                      adapt_sd_decay = max(floor(0.01*nIter),1),  start_adapt = 101, quiet = FALSE){
   ### Initialisation

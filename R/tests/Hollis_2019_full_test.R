@@ -1,5 +1,5 @@
 
-
+source("R/subscripts/AuxiliaryFunctions.R") 
 dat <- readRDS("data/processed/Hollis_processed_2022_07_19.rds")
 dat$proxy_value <- as.numeric(dat$proxy_value)
 hist(dat$temperature,100)
@@ -80,9 +80,9 @@ plot(grosman_t,dat_sub$temperature)
                         scale = 1.33,
                         shape = NA,
                         distribution = "normal")
-#  distrmat = NULL
+  distrmat = NULL
   nIter = 50000
-  obsmat = obsmat
+  obsmat = NULL
   proposal_var_inits = c(2,2,2,0.2)
   adapt_sd = floor(0.1 * nIter)
   adapt_sd_decay = max(floor(0.01*nIter),1)
@@ -109,19 +109,36 @@ plot(grosman_t,dat_sub$temperature)
   if(!(is.null(obsmat)) & is.null(sdyest_inits)) sdyest_inits <- rep(2,length(unique(obsmat$sample)))
   
   source("R/subscripts/ClimateGradientModelwithSDonObs.R")
+  source("R/subscripts/ClimateParallelSD.R")
+  
   source("R/subscripts/AuxiliaryFunctions.R")
   
-  mod4 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits, sdy_init, yest_inits, sdyest_inits,
-                               proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
+prior_fun <- list(  
+    f1 = function(x,log) dsnorm(x,location = -2.66, scale = 15, alpha = 15, log = log), # prior on A (lower asymptote)
+    f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 30, sd = 10, log = log), # prior on upper asymptote
+    f3 = function(x,log) dnorm(x, mean = 45, sd = 12, log = log), # prior on M
+    f4 = function(x,log) dlnorm(x, mean = -2.4, sd = 0.6, log = log)# prior on Q
+)
+logprior <- write_logprior(prior_fun,log = TRUE)
+prior <- write_logprior(prior_fun,log = FALSE)
+
+xval <- list(seq(-5,40,0.1),seq(-5,60,0.1),seq(0,90,0.2),seq(0,0.5,0.01))
+plot_prior(prior,xval)
+
+
+mod_prior <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits =  coeff_inits,
+                               sdy_init  = sdy_init, yest_inits = yest_inits, sdyest_inits = sdyest_inits,
+                              logprior = logprior,
+                               proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter), start_adapt = 101,
                                adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   # only mixed layer d18O
   mod2 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                            proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
                            adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   
-  plot_gradient(mod1, ylim = c(2,42), line_col = rgb(0,0.8,0.2,1), confint_col = rgb(0,0.8,0.2,0.2) )  
+  plot_gradient(mod_prior, ylim = c(2,42), line_col = rgb(0,0,0.2,1), confint_col = rgb(0,0,0.2,0.2) )  
   
-  plot_gradient(mod2, ylim = c(2,42), line_col = rgb(0.8,0,0.2,1), confint_col = rgb(0.8,0,0,0.2), add = T)  
+  plot_gradient(mod0, ylim = c(2,42), line_col = rgb(0.8,0,0.2,1), confint_col = rgb(0.8,0,0,0.2), add = T)  
   
   plot_gradient(mod3, ylim = c(2,42), line_col = rgb(0,0,1,1), confint_col = rgb(0,0,1,0.2), add = T)  
   

@@ -224,3 +224,26 @@ map2color<-function(x,pal,limits=NULL){
   if(is.null(limits)) limits=range(x)
   pal[findInterval(x,seq(limits[1],limits[2],length.out=length(pal)+1), all.inside=TRUE)]
 }
+dsnorm <- function(x,location,scale,alpha, log = TRUE) {
+  if(log == TRUE) out = log(2/scale)+dnorm((x - location)/scale,log=T)+pnorm(alpha*(x - location)/scale,log=T)
+  if(log == FALSE) out = (2/scale)*dnorm((x - location)/scale,log=F)*pnorm(alpha*(x - location)/scale,log=F)
+  return(out)
+}
+
+plot_prior <- function(prior,xval,log=FALSE) {
+  par(mfrow=c(2,2), mar = c(4.1,4.1,1,1), mgp = c(2.5,0.75,0))
+  dens <- prior_fun$f1(xval[[1]],log=log)
+  plot_dens(xval[[1]],dens,xlab = "A")
+  
+  dens <- prior_fun$f2(xval[[2]],xval[[1]][which.max(dens)],log=log)
+  plot_dens(xval[[2]],dens,xlab = "K")
+  
+  dens <- prior_fun$f3(xval[[3]],log=log)
+  plot_dens(xval[[3]],dens,xlab = "M")
+  
+  dens <- prior_fun$f4(xval[[4]],log=log)
+  plot_dens(xval[[4]],dens,xlab = "Q")
+  
+  par(mfrow=c(1,1))
+  
+}
