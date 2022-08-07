@@ -247,3 +247,11 @@ plot_prior <- function(prior,xval,log=FALSE) {
   par(mfrow=c(1,1))
   
 }
+
+plot_accept <- function(variable,binsize,return_val = FALSE) {
+  n <- floor(length(variable)/binsize)
+  out <- rep(NA,n)
+  for(i in 1:n) out[i] <- length(which(diff(variable[(binsize*(i-1)+1):(binsize*i)]) != 0))/binsize
+  plot(seq(1,n*binsize,by=binsize),out,type = "o", pch = 19, cex = 0.5)
+  if(return_val) return(out)
+}

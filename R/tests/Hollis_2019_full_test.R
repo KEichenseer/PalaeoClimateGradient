@@ -1,3 +1,4 @@
+### Careful: Add proxy type to the sample definitiion? otherwise they will be lumped
 
 source("R/subscripts/AuxiliaryFunctions.R") 
 dat <- readRDS("data/processed/Hollis_processed_2022_07_19.rds")
@@ -46,6 +47,8 @@ plot(grosman_t,dat_sub$temperature)
                          latitude = abs(data_sub$paleolat_Meredith), temperature = data_sub$temperature,
                          sd = data_sub$temperature_sd,
                        proxy = data_sub$proxy)
+
+## for plotting  
   proxy_location_ordered <- sapply(unique(obsmat$sample), function(x) unique(obsmat$proxy[which(obsmat$sample==x)]))
   proxy_location_ordered
 
@@ -59,7 +62,7 @@ plot(grosman_t,dat_sub$temperature)
   proxy_type_loc[which(apply(proxy_type_loc[,c(1,2,4)],1,function(x) all(x==1*0.9))),] <- c(.7,.6,0,.2)
   
   proxy_to_col <- apply(proxy_type_loc,1,function(x) rgb(x[1],x[2],x[4],0.75))
-  
+##  
   
   ### Add Siberian mangroves (Suan et al 2017)
   # test some distributions -- M
@@ -80,9 +83,9 @@ plot(grosman_t,dat_sub$temperature)
                         scale = 1.33,
                         shape = NA,
                         distribution = "normal")
-  distrmat = NULL
+  #distrmat = NULL
   nIter = 50000
-  obsmat = NULL
+  #obsmat = NULL
   proposal_var_inits = c(2,2,2,0.2)
   adapt_sd = floor(0.1 * nIter)
   adapt_sd_decay = max(floor(0.01*nIter),1)
@@ -126,22 +129,25 @@ xval <- list(seq(-5,40,0.1),seq(-5,60,0.1),seq(0,90,0.2),seq(0,0.5,0.01))
 plot_prior(prior,xval)
 
 
-mod_prior <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits =  coeff_inits,
+mod2<- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits =  coeff_inits,
                                sdy_init  = sdy_init, yest_inits = yest_inits, sdyest_inits = sdyest_inits,
                               logprior = logprior,
-                               proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter), start_adapt = 101,
+                               proposal_var_inits = c(50,50,50,5), adapt_sd = floor(0.2 * nIter), start_adapt = 101,
                                adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   # only mixed layer d18O
-  mod2 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits, sdy_init, yest_inits, sdyest_inits,
-                           proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
-                           adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
+ # mod2 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits, sdy_init, yest_inits, sdyest_inits,
+  #                         proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
+  #                         adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   
   plot_gradient(mod_prior, ylim = c(2,42), line_col = rgb(0,0,0.2,1), confint_col = rgb(0,0,0.2,0.2) )  
   
   plot_gradient(mod0, ylim = c(2,42), line_col = rgb(0.8,0,0.2,1), confint_col = rgb(0.8,0,0,0.2), add = T)  
   
-  plot_gradient(mod3, ylim = c(2,42), line_col = rgb(0,0,1,1), confint_col = rgb(0,0,1,0.2), add = T)  
+  plot_gradient(mod2, ylim = c(2,42), line_col = rgb(0,0,1,1), confint_col = rgb(0,0,1,0.2), add = T)  
   
+  plot_accept(mod2$params$A,100)
+  mcmcse::multiESS(mod2$params[,1:4])
+  mcmcse::multiESS(mod0$params[,1:4])
   
   plot_gradient(mod4, ylim = c(2,42), line_col = rgb(1,0,0,1), confint_col = rgb(1,0,0,0.2), add = F)  
   

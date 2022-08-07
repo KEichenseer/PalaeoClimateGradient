@@ -279,6 +279,8 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
   
   proposal_factor <- 1 # to adjust acceptance rate
   
+  adapt_it <- seq(start_adapt,adapt_sd,10) # adapt covariance only at every 10th iteration
+  
   if(n_p != 0) {
     #### Investigate these: Need to be broad for single obser
     A_sdyest = 1 # parameter for the prior on the inverse gamma distribution of sdyest
@@ -435,21 +437,21 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
     ###
     ###
     ### Adaptation step
-    if(i <= adapt_sd & i>=start_adapt) {
+    if(i <= adapt_sd & i>=start_adapt & i %in% adapt_it) {
       weights = all_weights[(adapt_sd-i+1):adapt_sd]
       proposal_cov <- weighted_cov(cbind(coefficients[1:i,1:3],log(coefficients[1:i,4])),weights = weights)
       if(any(diag(proposal_cov)==0)) proposal_cov <- proposal_var_inits/i
-      if(i %in% seq(2*floor(adapt_sd/10), adapt_sd, floor(adapt_sd/10))) {
+      #if(i %in% seq(2*floor(adapt_sd/10), adapt_sd, floor(adapt_sd/10))) {
         #
-        if(mean(accept[(i-floor(adapt_sd/10)):i]) < 0.23) proposal_factor <- proposal_factor - 0.1*proposal_factor
-        if(mean(accept[(i-floor(adapt_sd/10)):i]) > 0.45) proposal_factor <- proposal_factor + 0.1*proposal_factor
-        proposal_cov <- proposal_cov * proposal_factor
-        while(any(eigen(proposal_cov)$values <= 0.000001)) {
-          diag(proposal_cov) <- 1.25 * diag(proposal_cov)
-          # print(paste("stuck in while loop at it",i))}
-        }
-      
-      }
+      #  if(mean(accept[(i-floor(adapt_sd/10)):i]) < 0.23) proposal_factor <- proposal_factor - 0.1*proposal_factor
+      #  if(mean(accept[(i-floor(adapt_sd/10)):i]) > 0.45) proposal_factor <- proposal_factor + 0.1*proposal_factor
+       # proposal_cov <- proposal_cov * proposal_factor
+      #  while(any(eigen(proposal_cov)$values <= 0.000001)) {
+       #   diag(proposal_cov) <- 1.25 * diag(proposal_cov)
+      #    # print(paste("stuck in while loop at it",i))}
+       # }
+      #
+      #}
     }
     # create matrix of proposal innovations as this is much faster than doing it anew at every it
     if(i == adapt_sd) proposal_innovation <-   mvnfast::rmvn(n = nIter-adapt_sd, mu = rep(0,4),
@@ -459,7 +461,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
     
   } # end of the MCMC loop
     
-  rm(proposal_innovation) #delete matrix of proposal innovations to save memory
+  # rm(proposal_innovation) #delete matrix of proposal innovations to save memory # not needed
   
   ###  Function output
   output = list(params = data.frame(A = coefficients[,1],
@@ -472,6 +474,9 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
                 sdyest = sdyest,
                 lat = x,
                 proposal_cov = proposal_cov)
-  if(any(!(is.na(obsmat$sd)))) output$obs_yestimate = obs_yestimate
+  if(any(!(is.na(obsmat$sd)))) {
+    output$obs_yestimate = obs_yestimate
+    output$obs_sdy_index = which(sapply(ylist_sd,function(f) any(!(is.na(f)))))
+  }
   return(output)
 }
