@@ -18,6 +18,9 @@ obsmat <- data.frame(sample = (paste(abs(data_sub$paleolat_Meredith),data_sub$lo
 
 ### Mangrove and Coral data
 # for now use this placeholder
+
+bioprox <- readRDS("data/processed/bio_proxies_2022_08_08.RDS")
+
 distrmat = data.frame(latitude = 79.4 , ## palaeorotated from Faddeevsky Island: palaeorotate(data.frame(lat = 75.5, lng = 144, age = 52))
                       location = mean(c(15.6,20.8)),
                       scale = 1.33,
@@ -43,7 +46,7 @@ cl <- parallel::makeCluster(nClust)
 doParallel::registerDoParallel(cl)
 
 ### Run model
-mod0 <- climate_parallel_sd(nChains = nClust, nIter = 10000, nThin = 5, obsmat = NULL, distrmat = NULL, 
+mod1 <- climate_parallel_sd(nChains = nClust, nIter = 10000, nThin = 5, obsmat = obsmat, distrmat = distrmat, 
                             coeff_inits = NULL, sdy_init = NULL, 
                             yest_inits = NULL, sdyest_inits = NULL, prior_fun = prior_fun,
                             proposal_var_inits = c(2,2,2,0.2), adapt_sd = FALSE,

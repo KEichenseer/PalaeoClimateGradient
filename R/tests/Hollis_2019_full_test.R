@@ -142,7 +142,7 @@ plot_prior(prior,xval)
 mod2<- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits =  coeff_inits,
                                sdy_init  = sdy_init, yest_inits = yest_inits, sdyest_inits = sdyest_inits,
                               logprior = logprior,
-                               proposal_var_inits = c(50,50,50,5), adapt_sd = floor(0.2 * nIter), start_adapt = 101,
+                               proposal_var_inits = c(50,50,50,5), adapt_sd = 1000, start_adapt = 101,
                                adapt_sd_decay = max(floor(0.005*nIter),1), quiet = FALSE)
   # only mixed layer d18O
  # mod2 <- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits, sdy_init, yest_inits, sdyest_inits,

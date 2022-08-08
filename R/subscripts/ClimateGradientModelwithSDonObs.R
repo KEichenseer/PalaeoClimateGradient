@@ -492,6 +492,8 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
   }
     output$lat = x
     output$proposal_cov = proposal_cov
+    
+    output$call = mget(names(formals()),sys.frame(sys.nframe()))
   
   return(output)
 }

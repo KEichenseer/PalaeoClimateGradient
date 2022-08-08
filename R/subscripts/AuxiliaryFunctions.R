@@ -255,3 +255,24 @@ plot_accept <- function(variable,binsize,return_val = FALSE) {
   plot(seq(1,n*binsize,by=binsize),out,type = "o", pch = 19, cex = 0.5)
   if(return_val) return(out)
 }
+
+combine_posterior <- function(mod, burnin = NULL) {
+  nIter <- mod[[1]]$call$nIter
+  nThin <- mod[[1]]$call$nThin
+  if(is.null(burnin)) burnin <- floor(nIter/)
+  for(i in 1:length(mod))
+} ### CONTINUE!!!
+
+proxy_dist <- function(proxy, distribution = "normal", mean, sd, shape = NULL) {
+  xall <- seq(-10,60,0.02)
+if(distribution == "normal") dens <- dnorm(xall,mean,sd)
+  }
+  
+  
+  
+  data.frame(name = c("Avicennia", "Avicennia-Rhizophoraceae", "Reefs"),
+             distribution = c("normal", "normal", "normal"),
+             mean = c(mean(c(15.6,22.5)), mean(c(20.7,29.5)), 27.6),
+             sd = c((22.5-15.6)/4, c(29.5-20.7)/4, (29.5-21)/4),
+             shape = rep(NA,3)
+  )
