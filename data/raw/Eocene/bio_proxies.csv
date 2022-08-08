@@ -1,0 +1,12 @@
+id,lng,lat,location,country,location_certainty,interval,interval_certain,max_ma,min_ma,organism,taxa,type,depth,source,reference
+1,136.1774,87.8666,Site M0004A (318.86-282.05 mbsf),Arctic ocean,point,EECO,yes,54,49,tree/shrub,Avicennia,mangrove,shallow,Popescu et al. (2021),Suc et al. (2020)
+2,-134.2333,68.75,Caribou Hills Samples 12-18,Canada,point,EECO,yes,54,49,tree/shrub,Avicennia,mangrove,shallow,Popescu et al. (2021),Salpin et al. (2019)
+3,5.7727,68.7203,Site 343 (214.30-213.99 mbsf),Norway,point,EECO,yes,54,49,tree/shrub,"Avicennia, Rhizophoraceae, Xylocarpus, Scyphiphora, Excoecaria",mangrove,shallow,Popescu et al. (2021),Popescu et al. (2021)
+4,-38.6598,63.0863,Site 918 hole D (1158.21-1156.71 mbsf),Greenland,point,EECO,yes,54,49,tree/shrub,"Avicennia, Rhizophoraceae, Sonneratia-type, Brownlowia, cf. Heritiera",mangrove,shallow,Popescu et al. (2021),Popescu et al. (2021)
+5,4.2939,51.2523,Kallo 027E148 (286.50-239 m),Belgium,point,EECO,yes,54,49,tree/shrub,"Avicennia, Rhizophoraceae, Sonneratia-type, Nypa",mangrove,shallow,Popescu et al. (2021),Popescu et al. (2021)
+6,-0.2381,43.3283,Morlaˆs 1 (1462-1083 m),France,point,EECO,yes,54,49,tree/shrub,"Avicennia, Rhizophoraceae, Sonneratia-type, Nypa, Pelliciera, Xylocarpus",mangrove,shallow,Popescu et al. (2021),Popescu et al. (2021)
+7,-0.3961,43.2317,Gan Samples 1Ð2,France,point,EECO,yes,54,49,tree/shrub,"Avicennia, Rhizophoraceae, Sonneratia-type, Aegialitis, Nypa",mangrove,shallow,Popescu et al. (2021),Popescu et al. (2021)
+8,0.76,41.99,"Ager, Llmiana, Alinya sequences",Spain,local,Ilerdian,yes,56,52,coral/algal,Various,reef,shallow,Zamagni et al. (2012),Eichenseer and Luterbacher (1992)
+9,14.0859,42.0861,Majella,Italy,local,Early-Mid Eocene,yes,56,47.8,coral/algal,Various,reef,shallow,Zamagni et al. (2012),Vecsei and Moussavian (1997)
+10,59.7962,22.4847,Al hadd,Oman,regional,Late Paleocene-Early Eocene,yes,59.2,47.8,coral/algal,Various,reef,shallow,Zamagni et al. (2012),Bernecker (2005)
+11,66.9,25.58,Karachi,Pakistan,regional,Early Eocene,yes,56,47.8,coral/algal,Various,reef,shallow,Zamagni et al. (2012),Sahni and Kumar (1974)
