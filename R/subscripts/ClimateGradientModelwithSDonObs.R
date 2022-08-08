@@ -394,7 +394,6 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
       rnorm(n = 4*(nIter-adapt_sd), mean = rep(0,4),sd = 0.001)
     
     # 4.1: create proposals
-    print(i)
     if(i <= adapt_sd) proposal_coeff = MH_propose_multi(1,coefficients[i-1,],proposal_cov =  proposal_cov) # new proposed values
     if(i > adapt_sd) proposal_coeff = c(coefficients[i-1,1:3],log(coefficients[i-1,4])) + proposal_innovation[i-adapt_sd,]
     proposal_coeff[4] <- exp(proposal_coeff[4])

@@ -13,6 +13,9 @@ sstr <- raster::extract(sstm,coords)
 plot(abs(coords[,2]),sstr, pch = 19
      , col = rgb(0,0,0,0.1))
      
+
+
+
 ### Test modern data
 library(foreach)
 source("R/subscripts/ClimateParallelSimple.R")
@@ -33,7 +36,7 @@ priorvec <-
     "dlnorm(x, -2, 1, log = TRUE)") # prior on Q
 
 priorvec <- 
-  c("dsnorm(x,location = 4.3, scale = 12, alpha = 3, log = TRUE)", # prior on A
+  c("dsnorm(x,location = -2.66, scale = 10, alpha = 30, log = TRUE)", # prior on A
     "dtnorm(x, 0, Inf,16,10, log = TRUE)", # prior on DKA
     "dnorm(x, 45, 15, log = TRUE)", # prior on M
     "dlnorm(x, -2.2, 0.75, log = TRUE)")#dsnorm(x,location = 0.025, scale = 0.3, alpha = 20, log = TRUE)") # prior on Q
@@ -62,8 +65,8 @@ plot(latx,gradient(latx,c(20,30,45,0.2),0), type = "l")
 cl <- parallel::makeCluster(3)
 doParallel::registerDoParallel(cl)
 
-mod0b <- climate_simple_parallel(3,40000,NULL,NULL,priorvec)
-mod10c <- climate_simple_parallel(3,20000,abs(coords[,2]),c(sstr), priorvec,
+modm <- climate_simple_parallel(3,40000,NULL,NULL,priorvec)
+modm <- climate_simple_parallel(3,20000,abs(coords[,2]),c(sstr), priorvec,
                                 adapt_sd_decay = 100, adapt_sd = 4000)
 doParallel::stopImplicitCluster()
 
@@ -71,7 +74,7 @@ doParallel::stopImplicitCluster()
 
 plot_chains(mod0b)
 par(mfrow=c(1,1))
-plot_gradient(mod0b[[2]], add = F, ylim = c(-5,55), line_col = rgb(0,0,0,0.5), confint_col = rgb(0,0,0,0.1))
+plot_gradient(modm[[1]], add = T, ylim = c(-5,55), line_col = rgb(0,0,0,0.5), confint_col = rgb(0,0,0,0.1))
 plot_gradient(mod2[[2]], add = T, line_col = rgb(0,0.3,0.8,1), confint_col = rgb(0,0.3,0.8,0.2))
 plot_gradient(mod5[[2]], add = T, line_col = rgb(0.8,0.3,0,1), confint_col = rgb(0.8,0.3,0,0.2))
 plot_gradient(mod10[[2]], add = T, line_col = rgb(0.3,0.8,0,1), confint_col = rgb(0.3,0.8,0,0.2))

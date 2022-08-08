@@ -138,8 +138,8 @@ prior <- write_logprior(prior_fun,log = FALSE)
 xval <- list(seq(-5,40,0.1),seq(-5,60,0.1),seq(0,90,0.2),seq(0,0.5,0.01))
 plot_prior(prior,xval)
 
-
-mod2<- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coeff_inits =  coeff_inits,
+nIter = 10000
+mod2<- run_MCMC_sd_obs(nIter = nIter, obsmat = NULL, distrmat = NULL, coeff_inits =  coeff_inits,
                                sdy_init  = sdy_init, yest_inits = yest_inits, sdyest_inits = sdyest_inits,
                               logprior = logprior,
                                proposal_var_inits = c(50,50,50,5), adapt_sd = 1000, start_adapt = 101,
@@ -153,8 +153,10 @@ mod2<- run_MCMC_sd_obs(nIter = nIter, obsmat = obsmat, distrmat = distrmat, coef
   
   plot_gradient(mod0, ylim = c(2,42), line_col = rgb(0.8,0,0.2,1), confint_col = rgb(0.8,0,0,0.2), add = T)  
   
-  plot_gradient(mod2, ylim = c(2,42), line_col = rgb(0,0,1,1), confint_col = rgb(0,0,1,0.2), add = T)  
+  plot_gradient(mod2, ylim = c(-6,42), line_col = rgb(0,0,1,1), confint_col = rgb(0,0,1,0.2), add = F)  
   
+  plot_sample_gradient(mod2,1000)
+  abline(h=5)
   plot_accept(mod2$params$A,100)
   mcmcse::multiESS(mod2$params[,1:4])
   mcmcse::multiESS(mod0$params[,1:4])

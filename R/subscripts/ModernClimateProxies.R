@@ -13,7 +13,7 @@ sst <- raster("./data/raw/climate/BioOracle_20220711/Present.Surface.Temperature
 dem <- raster("./data/raw/DEM/alwdgg.tif")
 dem[dem > 0] <- NA
 dem <- abs(dem)
-dem[dem > 200] <- NA
+dem[dem > 70] <- NA
 #mask sst layer by available shallow marine habitat
 sst <- mask(x = sst, mask = dem)
 vals_sst <- getValues(sst)
