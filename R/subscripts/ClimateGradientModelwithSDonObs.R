@@ -277,11 +277,13 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
   diag(proposal_cov) <- proposal_var_inits
   proposal_var_inits <- proposal_cov
   
-  all_weights <- exp((-(adapt_sd-1)):0/adapt_sd_decay)
-  
   proposal_factor <- 1 # to adjust acceptance rate
   
+  if(is.numeric(adapt_sd)){
+  if(adapt_sd<10) stop("adapt_sd needs to be >=10")
+  all_weights <- exp((-(adapt_sd-1)):0/adapt_sd_decay)
   adapt_it <- seq(start_adapt,adapt_sd,10) # adapt covariance only at every 10th iteration
+  }
   
   if(n_p != 0) {
     #### Investigate these: Need to be broad for single obser
@@ -384,7 +386,16 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
                            (B_sdy+0.5*sum((yestimate[i,]-pred)^2))))
     
     ## 4. Metropolis-Hastings step to estimate the regression coefficients
-    if(i <= adapt_sd & i) proposal_coeff = MH_propose_multi(1,coefficients[i-1,],proposal_cov =  proposal_cov) # new proposed values
+    # 4.0: create proposal innovations
+    
+    # create matrix of proposal innovations as this is much faster than doing it anew at every it
+    if(i == adapt_sd+1 | (i==2 & adapt_sd < 2)) proposal_innovation <-   mvnfast::rmvn(
+      n = nIter-adapt_sd, mu = rep(0,4),sigma = 2.4/sqrt(4)*proposal_cov)+
+      rnorm(n = 4*(nIter-adapt_sd), mean = rep(0,4),sd = 0.001)
+    
+    # 4.1: create proposals
+    print(i)
+    if(i <= adapt_sd) proposal_coeff = MH_propose_multi(1,coefficients[i-1,],proposal_cov =  proposal_cov) # new proposed values
     if(i > adapt_sd) proposal_coeff = c(coefficients[i-1,1:3],log(coefficients[i-1,4])) + proposal_innovation[i-adapt_sd,]
     proposal_coeff[4] <- exp(proposal_coeff[4])
     
@@ -439,7 +450,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
     ###
     ###
     ### Adaptation step
-    if(i <= adapt_sd & i>=start_adapt & i %in% adapt_it) {
+    if(i <= adapt_sd && (i>=start_adapt & i %in% adapt_it)) {
       weights = all_weights[(adapt_sd-i+1):adapt_sd]
       proposal_cov <- weighted_cov(cbind(coefficients[1:i,1:3],log(coefficients[1:i,4])),weights = weights)
       if(any(diag(proposal_cov)==0)) proposal_cov <- proposal_var_inits/i
@@ -455,11 +466,6 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
       #
       #}
     }
-    # create matrix of proposal innovations as this is much faster than doing it anew at every it
-    if(i == adapt_sd) proposal_innovation <-   mvnfast::rmvn(n = nIter-adapt_sd, mu = rep(0,4),
-                                                             sigma = 2.4/sqrt(4)*proposal_cov)+
-      rnorm(n = 4*(nIter-adapt_sd), mean = rep(0,4),
-            sd = 0.001)
     
   } # end of the MCMC loop
     

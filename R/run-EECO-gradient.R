@@ -43,10 +43,10 @@ cl <- parallel::makeCluster(nClust)
 doParallel::registerDoParallel(cl)
 
 ### Run model
-mod1 <- climate_parallel_sd(nChains = nClust, nIter = 10000, nThin = 50, obsmat = obsmat, distrmat = distrmat, 
+mod0 <- climate_parallel_sd(nChains = nClust, nIter = 10000, nThin = 5, obsmat = NULL, distrmat = NULL, 
                             coeff_inits = NULL, sdy_init = NULL, 
                             yest_inits = NULL, sdyest_inits = NULL, prior_fun = prior_fun,
-                            proposal_var_inits = c(2,2,2,0.2), adapt_sd = 1000,
+                            proposal_var_inits = c(2,2,2,0.2), adapt_sd = FALSE,
                             adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE) 
 
 ### stop cluster
@@ -57,4 +57,4 @@ parallel::stopCluster(cl)
 # Assess output
 source("R/subscripts/AuxiliaryFunctions.R")
 
-plot_chains(mod1,1:4,1)
+plot_chains(mod0)

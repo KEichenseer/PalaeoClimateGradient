@@ -157,7 +157,7 @@ plot_chains <- function(mod, params = 1:4, nthin = NULL, logQ = TRUE) {
   if(!("data.frame" %in% class(mod))) {
     nchains <- length(mod)
     nIter <- nrow(mod[[1]])
-    if(is.null(nthin)) nthin <- round(nIter/2000)
+    if(is.null(nthin)) nthin <- max(c(1,round(nIter/2000)))
         iteration <- seq(1,nIter,nthin)
     for(j in 1:nplot) {
       if(j != 4 | logQ == FALSE){
