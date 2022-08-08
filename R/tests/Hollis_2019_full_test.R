@@ -2,29 +2,30 @@
 
 source("R/subscripts/AuxiliaryFunctions.R") 
 dat <- readRDS("data/processed/Hollis_processed_2022_07_19.rds")
-dat$proxy_value <- as.numeric(dat$proxy_value)
-hist(dat$temperature,100)
-dat$preservation[which(dat$preservation=="Recrystallized")] <- "recrystallised"
+#dat$proxy_value <- as.numeric(dat$proxy_value)
+#dat$preservation[which(dat$preservation=="Recrystallized")] <- "recrystallised"
+#dat$preservation[which(dat$preservation=="Recrystallization")] <- "recrystallised"
 
-dat_sub <- subset(dat,proxy=="d18O")
-dat_sub$mineral = "calcite"
-dat_sub$fossil_group = "foraminifera"
-dat_sub$d18O_sw_ice <- -1.08
-
-grosman_t <- get_temperature(d18O_sample = dat_sub$proxy_value,
-                             d18O_sw_ice = dat_sub$d18O_sw_ice, lat = abs(dat_sub$palaeolat_ori),
-                             mineral = dat_sub$mineral, fossil_group = dat_sub$organism)
-
-plot(grosman_t,dat_sub$temperature)
-     hist(dat$proxy_value)
-     abline(lm(dat_sub$temperature~grosman_t), col = "red")
-     
-     dat$grosman_t <- NA
-     dat$grosman_t[which(dat$proxy=="d18O")] <- grosman_t
-     
-  mean(grosman_t-dat_sub$temperature)   
-     
-  ### generate obsmat
+# 
+# dat_sub <- subset(dat,proxy=="d18O")
+# dat_sub$mineral = "calcite"
+# dat_sub$fossil_group = "foraminifera"
+# dat_sub$d18O_sw_ice <- -1.08
+# 
+# grosman_t <- get_temperature(d18O_sample = dat_sub$proxy_value,
+#                              d18O_sw_ice = dat_sub$d18O_sw_ice, lat = abs(dat_sub$palaeolat_ori),
+#                              mineral = dat_sub$mineral, fossil_group = dat_sub$organism)
+# 
+# plot(grosman_t,dat_sub$temperature)
+#      hist(dat$proxy_value)
+#      abline(lm(dat_sub$temperature~grosman_t), col = "red")
+#      
+#      dat$grosman_t <- NA
+#      dat$grosman_t[which(dat$proxy=="d18O")] <- grosman_t
+#      
+#   mean(grosman_t-dat_sub$temperature)   
+#      
+#   ### generate obsmat
 
 
   # select data from one stage to test, exclude NA data
@@ -78,13 +79,22 @@ plot(grosman_t,dat_sub$temperature)
   # use normal distribution with mean between minimum Avicieann T and minimum Rhizophora T
   
 
-  distrmat = data.frame(latitude = 79.4 , ## palaeorotated from Faddeevsky Islabnd: palaeorotate(data.frame(lat = 75.5, lng = 144, age = 52))
+  distrmat = data.frame(latitude = 79.4 , ## palaeorotated from Faddeevsky Island: palaeorotate(data.frame(lat = 75.5, lng = 144, age = 52))
                         location = mean(c(15.6,20.8)),
                         scale = 1.33,
                         shape = NA,
                         distribution = "normal")
+  
+  ### Parallel test
+  library(doParallel)
+  mod1 <- climate_parallel_sd(nChains = 4, nIter = 10000, obsmat = obsmat, distrmat = distrmat, coeff_inits = NULL, sdy_init = NULL, 
+                                  yest_inits = NULL, sdyest_inits = NULL, prior_fun = prior_fun,
+                                  proposal_var_inits = c(2,2,2,0.2), adapt_sd = 1000,
+                                  adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE) 
+  
+  
   #distrmat = NULL
-  nIter = 50000
+  nIter = 5000
   #obsmat = NULL
   proposal_var_inits = c(2,2,2,0.2)
   adapt_sd = floor(0.1 * nIter)

@@ -191,11 +191,13 @@ weighted_cov <- function(x, weights) { # takes 2.5 times as long as cov()
 
 #
 # Main MCMCM function
-run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
+run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                             logprior = logprior,
                      proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.1 * nIter),
                      adapt_sd_decay = max(floor(0.01*nIter),1),  start_adapt = 101, quiet = FALSE){
   ### Initialisation
+  save_it <- seq(1,nIter,nThin)
+  
   coefficients = array(dim = c(nIter,4)) # set up array to store coefficients
   coefficients[1,] = coeff_inits # initialise coefficients
   sdy = rep(NA_real_,nIter) # set up vector to store sdy
@@ -464,19 +466,26 @@ run_MCMC_sd_obs <- function(nIter = 1000, obsmat = NULL, distrmat = NULL, coeff_
   # rm(proposal_innovation) #delete matrix of proposal innovations to save memory # not needed
   
   ###  Function output
-  output = list(params = data.frame(A = coefficients[,1],
-                           DKA = coefficients[,2],
-                           M = coefficients[,3],
-                           Q = coefficients[,4],
-                           sdy = sdy,
-                           logpost = logpost),
-                yestimate = yestimate,
-                sdyest = sdyest,
-                lat = x,
-                proposal_cov = proposal_cov)
+  output = list(params = data.frame(A = coefficients[save_it,1],
+                           DKA = coefficients[save_it,2],
+                           M = coefficients[save_it,3],
+                           Q = coefficients[save_it,4],
+                           sdy = sdy[save_it],
+                           logpost = logpost[save_it])
+                )
+  if(!(is.null(obsmat))) {
+    output$yestimate = yestimate[save_it,]
+    output$sdyest = sdyest[save_it,]
+    
+  }
+    
+  
   if(any(!(is.na(obsmat$sd)))) {
-    output$obs_yestimate = obs_yestimate
+    output$obs_yestimate = lapply(1:length(obs_yestimate), function(f) obs_yestimate[[f]][save_it,])
     output$obs_sdy_index = which(sapply(ylist_sd,function(f) any(!(is.na(f)))))
   }
+    output$lat = x
+    output$proposal_cov = proposal_cov
+  
   return(output)
 }
