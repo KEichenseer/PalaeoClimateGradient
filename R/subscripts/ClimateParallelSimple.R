@@ -1,15 +1,21 @@
 # Wrapper function for parallel chains 
 # for ClimateGradientModelSimple.R
-climate_simple_parallel <- function(nChains = 3, nIter = 1000, latitude = NULL, temperature = NULL, 
-                                    priorvec = NULL,
+climate_simple_parallel <- function(nChains = 3, nIter = 1000, nThin = 1, x = NULL, y = NULL, 
                                     coeff_inits = NULL, sdy_init = NULL,
+                                    proposal_var_inits = c(2,2,2,0.2),
+                                    prior_fun = NULL,
                                     adapt_sd = floor(0.1 * nIter),
                                     adapt_sd_decay = max(floor(0.01*nIter),1),
-                                    proposal_var_inits = c(2,2,2,0.2)) {
+                                    start_adapt = min(101,nIter),
+                                    quiet = FALSE
+                                    ) {
+  
+
+  
   foreach(pc = 1:nChains) %dopar% {
     # call model functions
     source("R/subscripts/ClimateGradientModelSimple.R") 
-    make_prior(priorvec)
+    #make_prior(priorvec)
     
     # set random seed
     set.seed(pc)
@@ -22,11 +28,17 @@ climate_simple_parallel <- function(nChains = 3, nIter = 1000, latitude = NULL, 
     coeff_inits[4] = exp(rnorm(1,-2.3,0.25))
     sdy_init = exp(rnorm(1,0.7,0.25))
     
+    logprior <- write_logprior(prior_fun,log = TRUE)
     
-    run_MCMC_simple(x = latitude, y = temperature, nIter = nIter,
+    run_MCMC_simple(x = x, y = y, nIter = nIter, nThin = nThin,
                     coeff_inits = coeff_inits, sdy_init = sdy_init,
-                    adapt_sd = adapt_sd, adapt_sd_decay = adapt_sd_decay,
-                    proposal_var_inits = proposal_var_inits
+                    proposal_var_inits = proposal_var_inits,
+                    logprior = logprior,
+                    adapt_sd = adapt_sd, 
+                    adapt_sd_decay = adapt_sd_decay,
+                    start_adapt = start_adapt,
+                    quiet = TRUE
+                    
     )
   }
 }
