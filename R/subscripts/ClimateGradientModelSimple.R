@@ -9,20 +9,32 @@
 ######################################################
 ### FUNCTIONS
 
-make_prior <- function(priorvec) {
-  for(ip in 1:4) priorvec[ip] <- gsub("x",paste("coeff[",ip,"]",sep = ""),priorvec[ip])
+# make_prior <- function(priorvec) {
+#   for(ip in 1:4) priorvec[ip] <- gsub("x",paste("coeff[",ip,"]",sep = ""),priorvec[ip])
+# 
+# priortext <- paste("logprior_custom <- function(coeff) {
+#   coeff = unlist(coeff)
+#   return(sum(c(",
+#     eval(parse(text = "priorvec[1]")),",",
+#     eval(parse(text = "priorvec[2]")),",",
+#     eval(parse(text = "priorvec[3]")),",",
+#     eval(parse(text = "priorvec[4]")),
+#     ")))}",sep="")
+# eval(parse(text = priortext),envir=.GlobalEnv)
+# }
 
-priortext <- paste("logprior_custom <- function(coeff) {
-  coeff = unlist(coeff)
-  return(sum(c(",
-    eval(parse(text = "priorvec[1]")),",",
-    eval(parse(text = "priorvec[2]")),",",
-    eval(parse(text = "priorvec[3]")),",",
-    eval(parse(text = "priorvec[4]")),
-    ")))}",sep="")
-eval(parse(text = priortext),envir=.GlobalEnv)
+write_logprior <- function(prior_fun,log=TRUE) {
+  out <- function(coeff) {
+    coeff = unlist(coeff)
+    
+    return(sum(c(
+      prior_fun$f1(x=coeff[1],log=log),
+      prior_fun$f2(x=coeff[1]+coeff[2],lower=coeff[1],log=log),
+      prior_fun$f3(x=coeff[3],log=log),
+      prior_fun$f4(x=coeff[4],log=log))))
+  }
+  return(out)
 }
-
 
 
 gradient <- function(x, coeff, sdy) { # parametrise with difference between cold and hot end instead
@@ -98,10 +110,10 @@ dsnorm <- function(x,location,scale,alpha, log = TRUE) {
   if(log == FALSE) out = (2/scale)*dnorm((x - location)/scale,log=F)*pnorm(alpha*(x - location)/scale,log=F)
   return(out)
 }
-logposterior_s <- function(x, y, coeff, sdy){
+logposterior_s <- function(x, y, coeff, sdy, logprior){
   if(!is.null(y)) {
-  return (loglik_s(x, y, coeff, sdy) + logprior_custom(coeff)) # + 2*(coeff[4])
-  } else return(logprior_custom(coeff))
+  return (loglik_s(x, y, coeff, sdy) + logprior(coeff)) # + 2*(coeff[4])
+  } else return(logprior(coeff))
 }
 
 
@@ -138,11 +150,17 @@ standard_prior <-
     "dlnorm(x, -2.2, 0.8, log = TRUE)") # prior on Q
 
 # Main MCMCM function
-run_MCMC_simple <- function(x, y, nIter, coeff_inits = NULL, sdy_init = NULL,
-                            adapt_sd = floor(0.1 * nIter),
+run_MCMC_simple <- function(x, y, nIter, nThin = 1,
+                            coeff_inits = NULL, sdy_init = NULL,
+                            proposal_var_inits = c(2,2,2,0.2),
+                            logprior = NULL,
+                            adapt_sd = floor(0.1 * nIter), 
                             adapt_sd_decay = max(floor(0.005*nIter),1),
-                            proposal_var_inits = c(2,2,2,0.2)){
+                            start_adapt = 101,
+                            quiet = FALSE){
   ### Initialisation
+  save_it <- seq(1,nIter,nThin)
+  
   coefficients = array(dim = c(nIter,4)) # set up array to store coefficients
   coefficients[1,] = coeff_inits # initialise coefficients
   sdy = rep(NA_real_,nIter) # set up vector to store sdy
@@ -157,29 +175,47 @@ run_MCMC_simple <- function(x, y, nIter, coeff_inits = NULL, sdy_init = NULL,
   diag(proposal_cov) <- proposal_var_inits
   proposal_var_inits <- proposal_cov
   
-  all_weights <- exp((-(adapt_sd-1)):0/adapt_sd_decay)
+  if(is.numeric(adapt_sd)){
+    if(adapt_sd<10) stop("adapt_sd needs to be >=10")
+    all_weights <- exp((-(adapt_sd-1)):0/adapt_sd_decay)
+    adapt_it <- seq(start_adapt,adapt_sd,10) # adapt covariance only at every 10th iteration
+  }
   
   proposal_factor <- 1 # to adjust acceptance rate
   
   accept = rep(NA,nIter)
-
+  
+  # setup progress bar
+  if (!quiet) cli::cli_progress_bar('Sampling', total = nIter)
   
   ### The MCMC loop
   for (i in 2:nIter){
+    
+    # update progress bar
+    if (!quiet) cli::cli_progress_update(set = i, status = paste0('iteration ', i))
     
     ## 1. Gibbs step to estimate sdy
     sdy[i] = sqrt(1/rgamma(
       1,shape_sdy,B_sdy+0.5*sum((y-gradient(x,coefficients[i-1,],0))^2)))
     
     ## 2. Metropolis-Hastings step to estimate the regression coefficients
+    # create matrix of proposal innovations as this is much faster than doing it anew at every it
+    if(i == adapt_sd+1 | (i==2 & adapt_sd < 2)) proposal_innovation <-   mvnfast::rmvn(
+      n = nIter-adapt_sd, mu = rep(0,4),sigma = 2.4/sqrt(4)*proposal_cov)+
+        rnorm(n = 4*(nIter-adapt_sd), mean = rep(0,4),sd = 0.001)
+    # create proposals
+    if(i <= adapt_sd) proposal_coeff = MH_propose_multi(1,coefficients[i-1,],proposal_cov =  proposal_cov) # new proposed values
+    if(i > adapt_sd) proposal_coeff = c(coefficients[i-1,1:3],log(coefficients[i-1,4])) + proposal_innovation[i-adapt_sd,]
+    proposal_coeff[4] <- exp(proposal_coeff[4])
+    
     if(i <= adapt_sd) proposal_coeff = MH_propose_multi(1,coefficients[i-1,],proposal_cov =  proposal_cov) # new proposed values
     if(i > adapt_sd) proposal_coeff = c(coefficients[i-1,1:3],log(coefficients[i-1,4])) + proposal_innovation[i-adapt_sd,]
     proposal_coeff[4] <- exp(proposal_coeff[4])
     
     #if(any(proposal[4] <= 0)) HR = 0 else # Q needs to be >0
     # Hastings ratio of the proposal
-    HR = exp(logposterior_s(x = x, y = y, coeff = proposal_coeff, sdy = sdy[i]) -
-               logposterior_s(x = x, y = y, coeff = coefficients[i-1,], sdy = sdy[i]) +
+    HR = exp(logposterior_s(x = x, y = y, coeff = proposal_coeff, sdy = sdy[i], logprior = logprior) -
+               logposterior_s(x = x, y = y, coeff = coefficients[i-1,], sdy = sdy[i], logprior = logprior) +
                (-log(coefficients[i-1,4])) -
                (-log(proposal_coeff[4])))
     # accept proposal with probability = min(HR,1)
@@ -196,35 +232,39 @@ run_MCMC_simple <- function(x, y, nIter, coeff_inits = NULL, sdy_init = NULL,
     ###
     ###
     ### Adaptation step
-    if(i <= adapt_sd & i>=3) {
+    if(i <= adapt_sd && (i>=start_adapt & i %in% adapt_it)) {
       weights = all_weights[(adapt_sd-i+1):adapt_sd]
       proposal_cov <- weighted_cov(cbind(coefficients[1:i,1:3],log(coefficients[1:i,4])),weights = weights)
       if(any(diag(proposal_cov)==0)) proposal_cov <- proposal_var_inits/i
-      if(i %in% seq(2*floor(adapt_sd/10), adapt_sd, floor(adapt_sd/10))) {
-        #
-        if(mean(accept[(i-floor(adapt_sd/10)):i]) < 0.23) proposal_factor <- proposal_factor - 0.1*proposal_factor
-        if(mean(accept[(i-floor(adapt_sd/10)):i]) > 0.45) proposal_factor <- proposal_factor + 0.1*proposal_factor
-        proposal_cov <- proposal_cov * proposal_factor
-        while(any(eigen(proposal_cov)$values <= 0.000001)) {
-          diag(proposal_cov) <- 1.25 * diag(proposal_cov)
-          print(paste("stuck in while loop at it",i))}
-      }
-      
+      #if(i %in% seq(2*floor(adapt_sd/10), adapt_sd, floor(adapt_sd/10))) {
+      #
+      #  if(mean(accept[(i-floor(adapt_sd/10)):i]) < 0.23) proposal_factor <- proposal_factor - 0.1*proposal_factor
+      #  if(mean(accept[(i-floor(adapt_sd/10)):i]) > 0.45) proposal_factor <- proposal_factor + 0.1*proposal_factor
+      # proposal_cov <- proposal_cov * proposal_factor
+      #  while(any(eigen(proposal_cov)$values <= 0.000001)) {
+      #   diag(proposal_cov) <- 1.25 * diag(proposal_cov)
+      #    # print(paste("stuck in while loop at it",i))}
+      # }
+      #
+      #}
     }
-    # create matrix of proposal innovations as this is much faster than doing it anew at every it
-    if(i == adapt_sd) proposal_innovation <-   mvnfast::rmvn(n = nIter-adapt_sd, mu = rep(0,4),
-                                                             sigma = 2.4/sqrt(4)*proposal_cov)+
-      rnorm(n = 4*(nIter-adapt_sd), mean = rep(0,4),
-            sd = 0.001)
+    
+    # # create matrix of proposal innovations as this is much faster than doing it anew at every it
+    # if(i == adapt_sd) proposal_innovation <-   mvnfast::rmvn(n = nIter-adapt_sd, mu = rep(0,4),
+    #                                                          sigma = 2.4/sqrt(4)*proposal_cov)+
+    #   rnorm(n = 4*(nIter-adapt_sd), mean = rep(0,4),
+    #         sd = 0.001)
     
     
   } # end of the MCMC loop
   
   ###  Function output
-  output = data.frame(A = coefficients[,1],
-                      DKA = coefficients[,2],
-                      M = coefficients[,3],
-                      Q = coefficients[,4],
-                      sdy = sdy)
+  output = list(params = data.frame(A = coefficients[save_it,1],
+                      DKA = coefficients[save_it,2],
+                      M = coefficients[save_it,3],
+                      Q = coefficients[save_it,4],
+                      sdy = sdy[save_it]))
+  output$call = mget(names(formals()),sys.frame(sys.nframe()))
+
   return(output)
 }
