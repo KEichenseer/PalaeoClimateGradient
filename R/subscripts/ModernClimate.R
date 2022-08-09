@@ -89,7 +89,10 @@ x4[which.max(dens)]
 abline(h=0)
 # we put the maximum density on the modern estimate for B (0.11)
 
-source()
+
+### Run 100 analyses with 100 modern samples, based on the Eocene palaeolatitudes
+
+source("R/subscripts/AuxiliaryFunctions.R")
 
 ### Define the priors
 prior_fun <- list(  
@@ -100,6 +103,41 @@ prior_fun <- list(
 )
 
 # plot all priors
-plot_prior(prior_fun,xval=list(x1,x2,x3,x4))
+xlist = list(seq(-6,36,0.01),
+             seq(-5,65,0.01),
+             seq(0,90,0.1),
+             seq(0,0.62,0.001)
+             )
+plot_prior(prior_fun,xval=xlist)
 
-### Loop to run 100 time with 100 samples
+
+# read modern samples
+modt_samples <- readRDS("results/modern/modern_sample.RDS")
+
+### Run model
+# source script
+source("R/subscripts/ClimateGradientModelSimple.R")
+
+logprior <- write_logprior(prior_fun,log = TRUE)
+
+
+mods <- list(NULL)
+
+system.time({
+for(s in 1:100) {
+  
+  print(s)
+  lat = abs(modt_samples[[s]][,1])
+  temp = modt_samples[[s]][,2]
+
+  coeff_inits <- c(rnorm(3,c(5,30,45), c(3,5,7)),exp(rnorm(1,log(0.1),0.6)))
+  sdy_init <- exp(rnorm(1,log(2),0.6))
+  mods[[s]] <- run_MCMC_simple(nIter = 25000, nThin = 10,
+                                             x = lat, y = temp, 
+                                             coeff_inits = coeff_inits, sdy_init = sdy_init, 
+                                              logprior = logprior,
+                                             proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2000,
+                                             adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE)
+}
+})
+
