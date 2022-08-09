@@ -99,7 +99,7 @@ source("R/functions/palaeorotate.R")
 palcords <- palaeorotate(data.frame(lat = dat$latitude,lng = dat$longitude, age = 51.45))
 
 dat$p_lat <- palcords$p_lat
-dat$p_lat <- palcords$p_lng
+dat$p_lng <- palcords$p_lng
 
 # fix alternative spellings, make numeric
 dat$proxy_value <- as.numeric(dat$proxy_value)
