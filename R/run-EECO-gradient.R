@@ -17,28 +17,36 @@ obsmat <- data.frame(sample = (paste(abs(data_sub$paleolat_Meredith),data_sub$lo
                      proxy = data_sub$proxy)
 
 ### Mangrove and Coral data
-# for now use this placeholder
-
+# read and assign proxy type
 bioprox <- readRDS("data/processed/bio_proxies_2022_08_08.RDS")
+bioprox$proxy <- rep("Reef",nrow(bioprox))
+bioprox$proxy[which(bioprox$taxa=="Avicennia")] <- "Avicennia"
+bioprox$proxy[which(bioprox$type=="mangrove" & bioprox$taxa!="Avicennia")] <- "Avicennia-Rhizophoraceae"
 
-distrmat = data.frame(latitude = 79.4 , ## palaeorotated from Faddeevsky Island: palaeorotate(data.frame(lat = 75.5, lng = 144, age = 52))
-                      location = mean(c(15.6,20.8)),
-                      scale = 1.33,
-                      shape = NA,
-                      distribution = "normal")
+# define proxy distributions
+proxy_distributions <- data.frame(name = c("Avicennia", "Avicennia-Rhizophoraceae", "Reef"),
+               distribution = c("normal", "normal", "normal"),
+                mean = c(mean(c(15.6,22.5)), mean(c(20.7,29.5)), 27.6),
+                sd = c((22.5-15.6)/4, c(29.5-20.7)/4, (29.5-21)/4),
+                shape = rep(NA,3))
+
+# create distribution matrix for use with model
+proxy_index <- sapply(bioprox$proxy, function(f) which(proxy_distributions$name==f))
+
+distrmat = data.frame(latitude = abs(bioprox$lat), 
+                      location = proxy_distributions$mean[proxy_index],
+                      scale = proxy_distributions$sd[proxy_index],
+                      shape = proxy_distributions$shape[proxy_index],
+                      distribution = proxy_distributions$distribution[proxy_index])
 
 ### Define the priors
-prior_fun <- list(  
-  f1 = function(x,log) dsnorm(x,location = -2.66, scale = 20, alpha = 20, log = log), # prior on A (lower asymptote)
-  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 30, sd = 10, log = log), # prior on upper asymptote
-  f3 = function(x,log) dnorm(x, mean = 45, sd = 12, log = log), # prior on M
-  f4 = function(x,log) dlnorm(x, mean = -2.4, sd = 0.6, log = log)# prior on Q
-)
+prior_fun <- readRDS("results/modern/prior_from_modern_gradient.RDS")
 
 xval <- list(seq(-5,35,0.1),
              seq(-5,60,0.1),
              seq(0,90,0.1),
-             seq(0,0.5,0.01))
+             seq(0,0.6,0.01))
+source("R/subscripts/AuxiliaryFunctions.R")
 plot_prior(prior_fun,xval)
 ### Prepare for model run
 # Source model script
@@ -51,10 +59,10 @@ cl <- parallel::makeCluster(nClust)
 doParallel::registerDoParallel(cl)
 
 ### Run model
-mod2 <- climate_parallel_sd(nChains = nClust, nIter = 10000, nThin = 5, obsmat = obsmat, distrmat = distrmat, 
+mod2 <- climate_parallel_sd(nChains = nClust, nIter = 25000, nThin = 5, obsmat = obsmat, distrmat = distrmat, 
                             coeff_inits = NULL, sdy_init = NULL, 
                             yest_inits = NULL, sdyest_inits = NULL, prior_fun = prior_fun,
-                            proposal_var_inits = c(2,2,2,0.2), adapt_sd = FALSE,
+                            proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
                             adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE) 
 
 
@@ -64,9 +72,11 @@ parallel::stopCluster(cl)
 #######################################
 #
 # Assess output
-source("R/subscripts/AuxiliaryFunctions.R")
 
-plot_chains(modm)
-plot_gradient(mod1[[1]])
-plot_gradient(mod2[[1]], add = T, line_col = "red",confint_col = rgb(1,0,0,0.2))
+plot_chains(mod2)
+
+mode_all <- combine_posterior(mod2,4000)
+mcmcse::multiESS(mode_all[,1:4])
+plot_gradient(mode_all,ylim = c(12,37))
+plot_posterior(mod2[[3]])
 

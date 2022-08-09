@@ -39,7 +39,7 @@ gradient <- function(x, coeff, sdy) { # parametrise with difference between cold
 
 
 plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
-                          ylim = NULL, line_col = "black", confint_col = rgb(0,0,0,0.2)) {
+                          ylim = NULL, line_col = "black", confint_col = rgb(0,0,0,0.2), lwd = 2) {
   # select only params
   if("params" %in% names(model_out)) model_out <- model_out$params
   
@@ -58,13 +58,13 @@ plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint
   
   if(add == F) {
   plot(lat, med_grad, ylim = ylim,
-       type = "l", lwd = 2, xlab = "|latitude|", ylab = "temperature", col = line_col)
+       type = "l", lwd = lwd, xlab = "|latitude|", ylab = "temperature", col = line_col)
   error_polygon(lat,grad_q["2.5%",],grad_q["97.5%",], col = confint_col)
   }
   if(add == T) {
     error_polygon(lat,grad_q["2.5%",],grad_q["97.5%",], col = confint_col)
     points(lat, med_grad,
-           type = "l", lwd = 2, col = line_col)
+           type = "l", lwd = lwd, col = line_col)
   }
 }
 

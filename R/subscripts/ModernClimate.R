@@ -1,26 +1,26 @@
 ### load climate data
 # Mean annual sea surface temperatures (Bio-Oracle)
+set.seed(1)
 
 sst <- raster("./data/raw/climate/BioOracle_20220711/Present.Surface.Temperature.Mean.asc")
 
 # sample points randomly from the raster (within specified latitudinal limits) 
 source("R/subscripts/AuxiliaryFunctions.R")
-coords <- fastRandomPoints_lat(sst$Present.Surface.Temperature.Mean,2000,-90,90)
+coords <- fastRandomPoints_lat(sst$Present.Surface.Temperature.Mean,10000,-90,90)
 
 # extract temperatures from the sampled points
 sstr <- raster::extract(sst,coords)
 
 lat <- abs(coords[,2])
 
-plot(lat,sstr, pch = 19
-     , col = rgb(0,0,0,0.1))
+plot(lat,sstr, pch = 21,col=NA, bg = rgb(0,0,0,0.1))
 
 ### Define the priors
 prior_fun <- list(  
-  f1 = function(x,log) dsnorm(x,location = -2.66, scale = 20, alpha = 20, log = log), # prior on A (lower asymptote)
-  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 30, sd = 10, log = log), # prior on upper asymptote
-  f3 = function(x,log) dnorm(x, mean = 45, sd = 12, log = log), # prior on M
-  f4 = function(x,log) dlnorm(x, mean = -2.4, sd = 0.6, log = log)# prior on Q
+  f1 = function(x,log) dsnorm(x,location = -2.93, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
+  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.3, sd = 10, log = log), # prior on upper asymptote
+  f3 = function(x,log) dnorm(x, mean = 42.1, sd = 12, log = log), # prior on M
+  f4 = function(x,log) dgamma(x, shape = 3.2, rate = 20, log = log)# prior on Q
 )
 
 # set up clusters for parallel computing
@@ -37,7 +37,7 @@ system.time({modm <- climate_simple_parallel(nChains = nClust, nIter = 100000, n
                                 x = lat, y = sstr, 
                                 coeff_inits = NULL, sdy_init = NULL, 
                                 prior_fun = prior_fun,
-                                proposal_var_inits = c(2,2,2,0.2), adapt_sd = 2000,
+                                proposal_var_inits = c(2,2,2,0.2), adapt_sd = 2500,
                                 adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE)})
 
 ### stop cluster
@@ -49,7 +49,11 @@ plot_chains(modm)
 plot_gradient(modm[[1]],burnin = 1000, ylim = c(-2,30))
 plot_gradient(modm[[2]],burnin = 1000, add = T, confint_col = rgb(0,0.5,1,0.2), line_col = rgb(0,0.5,1,1))
 points(lat,sstr, pch = 21, bg = rgb(0,0,0,0.2), col = NA)
-mod_all <- combine_posterior(modm,10000)
+
+# discard 10k iterations as burnin each, and combine the results of the 4 chains
+mod_all <- combine_posterior(modm,burnin = 10000)
+
+saveRDS(mod_all,"results/modern/modern_gradient_with_10k_samples.RDS")
 
 # mean coefficient values:
 apply(mod_all,2,mean)
@@ -59,23 +63,23 @@ apply(mod_all,2,mean)
 
 # parameter A - skew normal distribution (avoiding estimating A values below freezing point of sea water)
 x1 <- seq(-6,36,0.01)
-dens <- dsnorm(x1,location = -3.13, scale = 12, alpha = 30,log = FALSE)
+dens <- dsnorm(x1,location = -2.93, scale = 12, alpha = 30,log = FALSE)
 plot(x1,dens,type = "l",lwd = 2)
 abline(v = c(-4,-2,0),lty = 2)
 x1[which.max(dens)]
-# we put the maximum density on the modern estimate for A (-1.9)
+# we put the maximum density on the modern estimate for A (-1.7)
 
 # parameter K - normal distribution
 x2 <- seq(-5,65,0.01)
-dens <- dnorm(x2,mean = 30, sd = 10)
+dens <- dnorm(x2,mean = 28.3, sd = 10)
 plot(x2,dens,type = "l",lwd = 2)
 x2[which.max(dens)]
-# we put the maximum density on the modern estimate for K (30.0)
+# we put the maximum density on the modern estimate for K+A (28.3)
 
 # parameter M - normal distribution
 x3 <- seq(0,90,0.1)
 dens <- dnorm(x3,mean = 42.1, sd = 12)
-plot(x,dens,type = "l",lwd = 2)
+plot(x3,dens,type = "l",lwd = 2)
 x3[which.max(dens)]
 # we put the maximum density on the modern estimate for M (42.1)
 
@@ -96,11 +100,13 @@ source("R/subscripts/AuxiliaryFunctions.R")
 
 ### Define the priors
 prior_fun <- list(  
-  f1 = function(x,log) dsnorm(x,location = -3.13, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
-  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 30, sd = 10, log = log), # prior on upper asymptote
+  f1 = function(x,log) dsnorm(x,location = -2.93, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
+  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.3, sd = 10, log = log), # prior on upper asymptote
   f3 = function(x,log) dnorm(x, mean = 42.1, sd = 12, log = log), # prior on M
   f4 = function(x,log) dgamma(x, shape = 3.2, rate = 20, log = log)# prior on Q
 )
+
+saveRDS(prior_fun,"results/modern/prior_from_modern_gradient.RDS")
 
 # plot all priors
 xlist = list(seq(-6,36,0.01),
@@ -136,8 +142,40 @@ for(s in 1:100) {
                                              x = lat, y = temp, 
                                              coeff_inits = coeff_inits, sdy_init = sdy_init, 
                                               logprior = logprior,
-                                             proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2000,
+                                             proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
                                              adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE)
 }
 })
 
+saveRDS(mods,"results/modern/100_modern_gradients_with_modern_T_and_Eocene_palaeolats.RDS")
+mods_all <- combine_posterior(mods,5000)
+saveRDS(mods_all,"results/modern/combined_100_modern_gradients_with_modern_T_and_Eocene_palaeolats.RDS")
+
+mcmcse::multiESS(mods[[100]]$params[,1:4])
+nIter = 25000
+burnin = 5000
+nThin = 10
+# plot results
+latx <- seq(0,90,0.1)
+
+med_grad <- array(NA_real_,dim = c(100,length(latx)))
+for(i in 1:100) {
+  print(i)
+  grads <- gradient(latx,mods[[i]]$params[(burnin/nThin):(nIter/nThin),1:4],0)
+  med_grad[i,] <- apply(grads,2,median)
+}
+### Plot the gradients
+ngrad <- 100
+s <- 2
+plot(0,0,type = "n", xlim = c(0,90), ylim = c(-5,35), xlab = "|latitude|", ylab = "temperature (deg C)")
+#points(abs(coords[,2]),sstr, pch = 21, bg = rgb(0,0,0,0.1), col = NA)
+
+for(i in 1:100) points(latx,med_grad[i,],type = "l", col = rgb(i/ngrad,0.25,((ngrad-i+1)/ngrad),0.5),lwd = 2)
+points(modt_samples[[i]][,1],modt_samples[[i]][,2],pch = 21, bg = rgb(0,0,0.8,0.33), col = NA)
+
+plot_gradient(modm[[1]],burnin = 1000, add = T, confint_col = rgb(0,0,0,0.2), line_col = rgb(0,0,0,1), lwd = 4)
+
+mean(modm[[1]]$params$sdy)
+
+mods_all <- combine_posterior(mods,5000)
+plot_gradient(mods_all,add=T)

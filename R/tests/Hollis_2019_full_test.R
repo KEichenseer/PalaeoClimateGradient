@@ -63,7 +63,9 @@ dat <- readRDS("data/processed/Hollis_processed_2022_07_19.rds")
   proxy_type_loc[which(apply(proxy_type_loc[,c(1,2,4)],1,function(x) all(x==1*0.9))),] <- c(.7,.6,0,.2)
   
   proxy_to_col <- apply(proxy_type_loc,1,function(x) rgb(x[1],x[2],x[4],0.75))
-##  
+  
+
+  ##  
   
   ### Add Siberian mangroves (Suan et al 2017)
   # test some distributions -- M
@@ -167,7 +169,7 @@ mod2<- run_MCMC_sd_obs(nIter = nIter, obsmat = NULL, distrmat = NULL, coeff_init
   plot_data(obsmat,distrmat, add = T,col=rgb(0,0,0,0.2))
   plot_distr(distrmat,col=rgb(0,0.7,0.7,0.3))
   
-  plot_posterior(mod1,col_obs = proxy_to_col, col_dist = rgb(0,0.6,0,0.7))
+  plot_posterior(mod2[[1]],col_obs = proxy_to_col, col_dist = rgb(0,0.6,0,0.7))
   
   plot_posterior(mod2,col_obs = rgb(0.5,0,0.8,0.7), col_dist = rgb(0.5,0,0.8,0.7))
   
