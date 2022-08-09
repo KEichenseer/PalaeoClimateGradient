@@ -259,10 +259,12 @@ run_MCMC_simple <- function(x, y, nIter, nThin = 1,
   } # end of the MCMC loop
   
   ###  Function output
-  output = data.frame(A = coefficients[save_it,1],
+  output = list(params = data.frame(A = coefficients[save_it,1],
                       DKA = coefficients[save_it,2],
                       M = coefficients[save_it,3],
                       Q = coefficients[save_it,4],
-                      sdy = sdy[save_it])
+                      sdy = sdy[save_it]))
+  output$call = mget(names(formals()),sys.frame(sys.nframe()))
+
   return(output)
 }

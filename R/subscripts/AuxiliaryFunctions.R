@@ -6,6 +6,38 @@ error_polygon <- function(x,en,ep,color=rgb(0,0,0,0.2)) {
            border = NA, col = color)
 }
 
+
+gradient <- function(x, coeff, sdy) { # parametrise with difference between cold and hot end instead
+  if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
+  if(is.data.frame(coeff) | is.matrix(coeff)) {
+    A = coeff[,1]
+    DKA = coeff[,2]
+    M = coeff[,3]
+    Q = coeff[,4]
+    
+    lat = t(data.frame(lat=x))
+    lat = lat[rep(1, each=length(A)),]
+    
+    if(sdy == 0) {out = A + DKA/((1+(exp(Q*(lat-M)))))
+    } else {
+      out = A + DKA/((1+(exp(Q*(lat-M)))))+ rnorm(length(x),0,sdy)
+    }
+    
+  } else {
+    A = coeff[1]
+    DKA = coeff[2]
+    M = coeff[3]
+    Q = coeff[4]
+    
+    if(sdy == 0) {return(A + DKA/((1+(exp(Q*(x-M))))))
+    } else {
+      out = A + DKA/((1+(exp(Q*(x-M)))))+ rnorm(length(x),0,sdy)
+    }
+  }
+  return(out)
+}
+
+
 plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
                           ylim = NULL, line_col = "black", confint_col = rgb(0,0,0,0.2)) {
   # select only params
@@ -230,6 +262,28 @@ dsnorm <- function(x,location,scale,alpha, log = TRUE) {
   return(out)
 }
 
+
+# function to generate truncated normal
+dtnorm <- function(x,lower,upper,mean,sd, log = FALSE) {
+  ret <- numeric(length(x))
+  ret[x < lower | x > upper] <- if (log)
+    -Inf
+  else 0
+  ret[upper < lower] <- NaN
+  ind <- x >= lower & x <= upper
+  if (any(ind)) {
+    denom <- pnorm(upper, mean, sd) - pnorm(lower, mean,
+                                            sd)
+    xtmp <- dnorm(x, mean, sd, log)
+    if (log)
+      xtmp <- xtmp - log(denom)
+    else xtmp <- xtmp/denom
+    ret[x >= lower & x <= upper] <- xtmp[ind]
+  }
+  ret
+} # from msm
+
+
 plot_prior <- function(prior,xval,log=FALSE) {
   par(mfrow=c(2,2), mar = c(4.1,4.1,1,1), mgp = c(2.5,0.75,0))
   dens <- prior_fun$f1(xval[[1]],log=log)
@@ -257,22 +311,22 @@ plot_accept <- function(variable,binsize,return_val = FALSE) {
 }
 
 combine_posterior <- function(mod, burnin = NULL) {
-  nIter <- mod[[1]]$call$nIter
   nThin <- mod[[1]]$call$nThin
-  if(is.null(burnin)) burnin <- floor(nIter/)
-  for(i in 1:length(mod))
+  nIter <- floor(mod[[1]]$call$nIter/nThin)
+  if(is.null(burnin)) burnin <- 0 else burnin <- floor(burnin/nThin)
+  out <- do.call(rbind,lapply(1:length(mod),function(f) mod[[f]]$params[(burnin+1):nIter,]))
 } ### CONTINUE!!!
-
-proxy_dist <- function(proxy, distribution = "normal", mean, sd, shape = NULL) {
-  xall <- seq(-10,60,0.02)
-if(distribution == "normal") dens <- dnorm(xall,mean,sd)
-  }
-  
-  
-  
-  data.frame(name = c("Avicennia", "Avicennia-Rhizophoraceae", "Reefs"),
-             distribution = c("normal", "normal", "normal"),
-             mean = c(mean(c(15.6,22.5)), mean(c(20.7,29.5)), 27.6),
-             sd = c((22.5-15.6)/4, c(29.5-20.7)/4, (29.5-21)/4),
-             shape = rep(NA,3)
-  )
+# 
+# proxy_dist <- function(proxy, distribution = "normal", mean, sd, shape = NULL) {
+#   xall <- seq(-10,60,0.02)
+# if(distribution == "normal") dens <- dnorm(xall,mean,sd)
+#   }
+#   
+#   
+#   
+#   data.frame(name = c("Avicennia", "Avicennia-Rhizophoraceae", "Reefs"),
+#              distribution = c("normal", "normal", "normal"),
+#              mean = c(mean(c(15.6,22.5)), mean(c(20.7,29.5)), 27.6),
+#              sd = c((22.5-15.6)/4, c(29.5-20.7)/4, (29.5-21)/4),
+#              shape = rep(NA,3)
+#   )
