@@ -3,50 +3,70 @@ library(raster)
 library(tmap)
 library(sp)
 # Read data -------------------------------------------------------------------
-chem <- readRDS("./data/processed/Hollis_processed_2022_07_19.rds")
+chem <- readRDS("./data/processed/Hollis_processed_EECO_2022_07_19.rds")
 bio <- readRDS("./data/processed/bio_proxies_2022_08_08.RDS")
-world <- read_sf(system.file("shapes/world.gpkg", package = "spData"))
+# Cao et al 2017 Palaeogeog:
+# https://www.earthbyte.org/improving-global-paleogeography-since-the-late-paleozoic-using-paleobiology/
+pgeog <- raster("./data/raw/palaeogeog/PaleogeogRecon_Matthews2016_53Ma.tiff")
 # Data prep -------------------------------------------------------------------
-chem <- chem[, c("longitude", "latitude", "proxy")]
-chem$shape <- 23
-bio <- bio[, c("lng", "lat", "type")]
-bio$shape <- 21
+# Remove deep ocean
+pgeog[pgeog == 0] <- NA
+# Set shallow ocean to 0
+pgeog[pgeog == 173] <- 0
+pgeog[pgeog == 153] <- 0
+# Set land to 1
+pgeog[pgeog > 0] <- 1
+# Resample raster for plotting
+#r <- raster(res = 0.5)
+#pgeog <- resample(x = pgeog, y = r, method = "bilinear")
+# Set land to 1
+#pgeog[pgeog > 0] <- 1
+# Filter data
+chem <- chem[, c("p_lng", "p_lat", "proxy")]
+chem$shape <- 1
+bio <- bio[, c("p_lng", "p_lat", "type")]
+bio$shape <- 2
 # Rename data
 bio[which(bio$type == "reef"), c("type")] <- "Coral reef"
 bio[which(bio$type == "mangrove"), c("type")] <- "Mangrove"
 # Rename cols 
-names(chem) <- c("lng", "lat", "Proxy type", "shape")
-names(bio) <- c("lng", "lat", "Proxy type", "shape")
+names(chem) <- c("p_lng", "p_lat", "Proxy type", "shape")
+names(bio) <- c("p_lng", "p_lat", "Proxy type", "shape")
 # Bind data
 locs <- rbind.data.frame(chem, bio)
 locs <- unique(locs)
-locs$uni <- paste(locs$lng, locs$lat)
+locs$unique <- paste(locs$p_lng, locs$p_lat)
 filt <- names(which(table(locs$uni) > 1))
 locs[which(locs$uni %in% filt), c("Proxy type")] <- c("Various")
+locs[which(locs$uni %in% filt), c("shape")] <- 3
 
 # Set factors
 locs[, c("Proxy type")] <- factor(locs[, c("Proxy type")],
                                   levels = c("Coral reef", "Mangrove", "d18O",
                                              "d47", "TEX86","MgCa", "Various"))
 # Shift point for visualisation
-locs[which.max(locs$lat), c("lat")] <- 86
+locs[which.max(locs$p_lat), c("p_lat")] <- 86
 
 # Reformat data for plotting
-locs <- st_as_sf(x = locs, coords = c("lng", "lat"), crs = 4326)
+locs <- st_as_sf(x = locs, coords = c("p_lng", "p_lat"), crs = 4326)
 # Plot ------------------------------------------------------------------------
+my_colors = c("#e0e0e0", "#bababa")
 # Create base map
-m <- tm_shape(world) +
-  tm_fill()  +
-  tm_borders()
-  
+m <- tm_shape(pgeog) +
+      tm_raster(style = "cat", 
+                interpolate = TRUE,
+                palette = my_colors,
+                legend.show = FALSE)
+
+
 m <- m + tm_shape(locs) +
-  tm_dots(col = "Proxy type", palette = "Dark2",
-          shape = "shape", shapes = c(21, 21, 23, 23, 23, 23, 23), 
+  tm_dots(col = "Proxy type", palette = "-Dark2",
+          shape = "Proxy type", shapes = c(21, 22, 23, 24, 25, 10, 8), 
           legend.shape.show = FALSE,
           legend.col.reverse = FALSE,
-          border.col = "black", size = 0.1, alpha = 0.7,
-          shapes.legend = c(21, 21, 23, 23, 23, 23, 23)) +
-  tm_legend(position = c(0.02, 0.1)) +
+          border.col = "black", size = 0.15, alpha = 0.8,
+          shapes.legend = c(21, 22, 23, 24, 25, 10, 8)) +
+  tm_legend(position = c(0.9, 0.65)) +
   tm_layout(frame = FALSE)
 
 tmap_save(m, "./figures/data_distribution.jpg",
