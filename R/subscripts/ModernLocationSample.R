@@ -56,5 +56,5 @@ for(i in 1:reps){
   l[[i]] <- m
 }
 # Save data
-saveRDS(samples, "./results/modern/modern_sample.RDS")
+saveRDS(l, "./results/modern/modern_sample.RDS")
 

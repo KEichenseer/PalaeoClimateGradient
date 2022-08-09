@@ -35,10 +35,10 @@ m <- m + tm_shape(locs) +
 m
 
 locs <- locs[which(locs$uni %in% filt),] 
-locs[, c("Proxy type")] <- c("")
+locs[, c("Proxy type")] <- c("Various")
 
 m <- m + tm_shape(locs) +
-  tm_dots(col = "green", shape = 21, border.col = "black", size = 0.1) +
+  tm_dots(col = "black", shape = 21, border.col = "black", size = 0.1) +
   tm_legend(position = c(0.02, 0.1))
 
 m
