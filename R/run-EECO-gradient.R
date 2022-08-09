@@ -1,14 +1,9 @@
 
 ### Hollis data
 
-dat <- readRDS("data/processed/Hollis_processed_2022_07_19.rds")
+dat <- readRDS("data/processed/Hollis_processed_EECO_2022_07_19.rds")
 
-# select data from one stage to test, exclude NA data
-data_sub <- subset(dat,EECO == 1 & !(is.na(temperature)) & !(is.na(paleolat_Meredith)) &
-                     (is.na(depth_habitat) | depth_habitat %in% c("Mixed-layer",     "Mixed layer")))
 
-# order data
-data_sub <- data_sub[with(data_sub, order(abs(paleolat_Meredith), longitude)),]
 
 # prepare for use in the model
 obsmat <- data.frame(sample = (paste(abs(data_sub$paleolat_Meredith),data_sub$longitude, data_sub$proxy)),
