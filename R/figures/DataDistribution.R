@@ -28,6 +28,9 @@ locs[which(locs$uni %in% filt), c("Proxy type")] <- c("Various")
 locs[, c("Proxy type")] <- factor(locs[, c("Proxy type")],
                                   levels = c("Coral reef", "Mangrove", "d18O",
                                              "d47", "TEX86","MgCa", "Various"))
+# Shift point for visualisation
+locs[which.max(locs$lat), c("lat")] <- 86
+
 # Reformat data for plotting
 locs <- st_as_sf(x = locs, coords = c("lng", "lat"), crs = 4326)
 # Plot ------------------------------------------------------------------------
@@ -43,7 +46,8 @@ m <- m + tm_shape(locs) +
           legend.col.reverse = FALSE,
           border.col = "black", size = 0.1, alpha = 0.7,
           shapes.legend = c(21, 21, 23, 23, 23, 23, 23)) +
-  tm_legend(position = c(0.02, 0.1))
+  tm_legend(position = c(0.02, 0.1)) +
+  tm_layout(frame = FALSE)
 
 tmap_save(m, "./figures/data_distribution.jpg",
           units = "mm",

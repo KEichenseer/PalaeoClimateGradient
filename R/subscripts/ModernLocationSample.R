@@ -1,5 +1,6 @@
 # Load libraries --------------------------------------------------------------
 library(raster)
+source("./R/functions/palaeorotate.R")
 # Set options
 reps = 100
 # Read data -------------------------------------------------------------------
@@ -9,14 +10,14 @@ chem <- readRDS("./data/processed/Hollis_processed_2022_07_19.rds")
 bio <- readRDS("./data/processed/bio_proxies_2022_08_08.RDS")
 # Data processing -------------------------------------------------------------
 # Unique locations
-chem <- unique(chem[, c("longitude", "latitude")])
-bio <- unique(bio[, c("lng", "lat")])
+chem <- unique(chem[, c("longitude", "latitude", "proxy")])
+bio <- unique(bio[, c("lng", "lat", "type")])
 # Rename cols to conform
-names(chem) <- c("lng", "lat")
+names(chem) <- c("lng", "lat", "type")
 # Bind data
 locs <- rbind.data.frame(chem, bio)
 # Round off data
-locs <- round(locs, digits = 2)
+locs[, c("lng", "lat")] <- round(locs[, c("lng", "lat")], digits = 2)
 locs <- unique(locs)
 # Order by latitude
 locs <- locs[order(locs$lat),]
