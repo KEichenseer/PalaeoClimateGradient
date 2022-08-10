@@ -17,7 +17,7 @@ hierarchical_model <- function(n_iter = 1000, n_thin = 1, obsmat = NULL,
                                yest_inits = NULL, sdyest_inits = NULL,
                      proposal_var_inits = NULL, adapt_sd = NULL,
                      adapt_sd_decay = NULL,  start_adapt = NULL, 
-                     A_sdy = 10, B_sdy = 10,
+                     A_sdy = 1, B_sdy = 1,
                      quiet = FALSE){
   
   ### Load functions
