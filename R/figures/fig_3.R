@@ -42,7 +42,7 @@ p1 <- ggplot() +
              aes(x = lat,
                      y = SST),
                      colour = "grey80",
-             size = 1, 
+             size = 0.7, 
              alpha = 0.7) +
   geom_line(data = grad,
             aes(x = lat,
@@ -53,10 +53,10 @@ p1 <- ggplot() +
   geom_line(data = modern_sample,
             aes(x = lat, 
                 y = median,
-                colour = "Modelled gradient"),
+                colour = "Modelled gradient - \nFull distribution"),
             size = 1.5, 
             alpha = 0.85) +
-  xlab("Latitude (\u00B0)") +
+  xlab("") +
   scale_x_continuous(limits = c(0, 90),
                      breaks = seq(0, 90, 30),
                      labels = seq(0, 90, 30)) +
@@ -82,11 +82,17 @@ p2 <- ggplot() +
                       y = median,
                       ymin = min,
                       ymax = max),
-                  colour = "grey80",
-                  size = 1,
-                  shape = 21,
+                  colour = "#54278f",
+                  size = 0.7,
                   fatten = 1,
-                  alpha = 0.7) +
+                  alpha = 0.35) +
+  geom_ribbon(data = eocene_sample,
+              aes(x = lat,
+                  ymin = l_ci_95,
+                  ymax = u_ci_95),
+              fill = "#54278f",
+              colour = NA,
+              alpha = 0.3) +
   geom_line(data = grad,
             aes(x = lat,
                 y = SST,
@@ -96,9 +102,9 @@ p2 <- ggplot() +
   geom_line(data = eocene_sample,
             aes(x = lat, 
                 y = median,
-                colour = "Modelled gradient"),
+                colour = "Modelled gradient - \nEECO distribution"),
             size = 1.5, 
-            alpha = 0.7) +
+            alpha = 0.9) +
   xlab("Latitude (\u00B0)") +
   scale_x_continuous(limits = c(0, 90),
                      breaks = seq(0, 90, 30),
@@ -120,7 +126,7 @@ p2 <- p2 + scale_color_manual(values = c("black", "#54278f"))
 # Combine plots and save ------------------------------------------------------
 p <- ggarrange(p1, p2,
                ncol = 1,
-               labels = "auto")
+               labels = "AUTO")
 
 ggsave("./figures/fig_3.jpg",
        plot = p,

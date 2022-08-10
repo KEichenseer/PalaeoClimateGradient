@@ -1,7 +1,7 @@
 # Load libraries --------------------------------------------------------------
 library(raster)
 library(tmap)
-library(sp)
+library(sf)
 # Read data -------------------------------------------------------------------
 chem <- readRDS("./data/processed/Hollis_processed_EECO_2022_07_19.rds")
 bio <- readRDS("./data/processed/bio_proxies_2022_08_08.RDS")
@@ -36,7 +36,7 @@ locs[, c("Proxy type")] <- factor(locs[, c("Proxy type")],
 locs[which.max(locs$p_lat), c("p_lat")] <- 86
 
 # Reformat data for plotting
-locs <- st_as_sf(x = locs, coords = c("p_lng", "p_lat"), crs = 4326)
+locs <- sf::st_as_sf(x = locs, coords = c("p_lng", "p_lat"), crs = 4326)
 # Plot ------------------------------------------------------------------------
 my_colors = c("#9ecae1", "black", "#c6dbef", "#bababa")
 # Create base map

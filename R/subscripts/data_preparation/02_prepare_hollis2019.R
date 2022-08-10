@@ -94,13 +94,6 @@ dat$temperature_sd[which(dat$proxy=="MgCa")] <-
 dat$temperature_sd[which(dat$proxy=="TEX86")] <- 
   (dat$temperature_upper-dat$temperature)[which(dat$proxy=="TEX86")]/1.645
 
-### add palaeolat
-source("R/functions/palaeorotate.R")
-palcords <- palaeorotate(data.frame(lat = dat$latitude,lng = dat$longitude, age = 51.45))
-
-dat$p_lat <- palcords$p_lat
-dat$p_lng <- palcords$p_lng
-
 # fix alternative spellings, make numeric
 dat$proxy_value <- as.numeric(dat$proxy_value)
 dat$preservation[which(dat$preservation=="Recrystallized")] <- "recrystallised"
@@ -109,9 +102,6 @@ dat$preservation[which(dat$preservation=="Recrystallization")] <- "recrystallise
 # select data from one stage to test, exclude NA data
 data_sub <- subset(dat,EECO == 1 & !(is.na(temperature))  &
                      (is.na(depth_habitat) | depth_habitat %in% c("Mixed-layer",     "Mixed layer")))
-
-# order data
-data_sub <- data_sub[with(data_sub, order(abs(p_lat), longitude)),]
 
 saveRDS(data_sub,"data/processed/Hollis_processed_EECO_2022_07_19.rds")
 
