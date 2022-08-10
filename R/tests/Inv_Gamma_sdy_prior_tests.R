@@ -44,7 +44,12 @@ hist(sqrt(1/rgamma(10000,
               shape_sdy,
               B_sdy+0.5*sum(deviation^2))),100)
 
-hist(sqrt(1/rgamma(10000,
+alpha <- 20+nbin/2
+beta <- 20+0.5*sum(5*nbin)
+beta^2 /((alpha-1)^2*(alpha-2))
+beta/(alpha-1)
+
+mean(sqrt(1/rgamma(10000,
                    shape = shape_sdy,
                    rate = B_sdy+0.5*sum(5*nbin))),100)
 hist(sqrt(MCMCpack::rinvgamma(10000, shape_sdy, 1/(B_sdy+0.5*sum(5*nbin)))),100)
