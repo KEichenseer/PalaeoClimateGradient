@@ -144,13 +144,13 @@ system.time({
 for(s in 1:100) {
   
   print(s)
-  lat = abs(modt_samples[[s]][,1])
+  p_lat = abs(modt_samples[[s]][,1])
   temp = modt_samples[[s]][,2]
 
   coeff_inits <- c(rnorm(3,c(5,30,45), c(3,5,7)),exp(rnorm(1,log(0.1),0.6)))
   sdy_init <- exp(rnorm(1,log(2),0.6))
   mods[[s]] <- run_MCMC_simple(nIter = 25000, nThin = 10,
-                                             x = lat, y = temp, 
+                                             x = p_lat, y = temp, 
                                              coeff_inits = coeff_inits, sdy_init = sdy_init, 
                                               logprior = logprior,
                                              proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
@@ -158,7 +158,7 @@ for(s in 1:100) {
 }
 })
 
-saveRDS(mods,"results/modern/100_modern_gradients_with_modern_T_and_Eocene_palaeolats.RDS")
+saveRDS(mods,"results/modern/modern_sample_eocene_p_lat_gradient.RDS")
 mods_all <- combine_posterior(mods,5000)
 saveRDS(mods_all,"results/modern/combined_100_modern_gradients_with_modern_T_and_Eocene_palaeolats.RDS")
 
@@ -189,4 +189,4 @@ plot_gradient(modm[[1]],burnin = 1000, add = T, confint_col = rgb(0,0,0,0.2), li
 mean(modm[[1]]$params$sdy)
 
 mods_all <- combine_posterior(mods,5000)
-plot_gradient(mods_all,add=T)
+plot_gradient(mods_all,add=F)
