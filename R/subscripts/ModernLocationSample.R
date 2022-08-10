@@ -1,6 +1,5 @@
 # Load libraries --------------------------------------------------------------
 library(raster)
-source("./R/functions/palaeorotate.R")
 # Set options
 reps = 100
 # Read data -------------------------------------------------------------------
@@ -9,6 +8,9 @@ temp <- raster(
 chem <- readRDS("./data/processed/Hollis_processed_EECO_2022_07_19.rds")
 bio <- readRDS("./data/processed/bio_proxies_2022_08_08.RDS")
 # Data processing -------------------------------------------------------------
+# Reduce resolution of raster
+r <- raster(res = 1)
+temp <- resample(x = temp, y = r)
 # Unique locations
 chem <- unique(chem[, c("p_lng", "p_lat", "proxy")])
 bio <- unique(bio[, c("p_lng", "p_lat", "type")])
@@ -38,6 +40,19 @@ samples <- lapply(1:nrow(locs), function(i) {
                        size = reps,
                        na.rm = TRUE)
 })
+# Median and range calculation ------------------------------------------------
+#Create empty dataframe
+df <- data.frame(p_lat = locs$p_lat,
+                 median = rep(NA, nrow(locs)),
+                 min = rep(NA, nrow(locs)),
+                 max = rep(NA, nrow(locs)))
+# Run over number of samples
+for(i in 1:length(samples)){
+  df$median[i] <- median(samples[[i]])
+  df$min[i] <- min(samples[[i]])
+  df$max[i] <- max(samples[[i]])
+}
+saveRDS(df, "./results/modern/modern_sample_summary_stats.RDS")
 # Reformat --------------------------------------------------------------------
 # Create empty list
 l <- list()
