@@ -1,15 +1,15 @@
 ---
 title: "The Early Eocene Climate Optimum reconstructed with Bayesian multi-proxy integration"
-author: 
+author:
   - Kilian Eichenseer^[Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom] and Lewis A. Jones^[Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Universidade de Vigo, 36310 Vigo, Spain]
-output: 
+output:
   word_document:
     reference_docx: "template.docx"
 bibliography: references.bib
 csl: palaeontology.csl
 ---
 
-<!-- discarded titles: 
+<!-- discarded titles:
 Modelling latitudinal temperature gradients from geological proxies: An early Eocene example
 -->
 
@@ -38,6 +38,7 @@ mangroves, corals, sharks?
 
 
 
+
 **d18O.**
 
 **d47.**
@@ -46,7 +47,7 @@ mangroves, corals, sharks?
 
 **TEX86.**
 
-**Coral reefs.** Coral reefs built by zooxanthellate-bearing, shallow water corals are confined to the tropics - substropics. The coldest 
+**Coral reefs.** Coral reefs built by zooxanthellate-bearing, shallow water corals are confined to the tropics - substropics. The coldest
 
 
 **Mangroves.** Recent mangroves occur in the tropics - subtropics. Although many factors besides temperature determine the extent of mangrove distributions, empirical temperature limits have been established for the genera *Avicennia* and *Rhizophora*, with lower mean annual SST limits of 15.6 degC and 20.8 degC, respectively [@Quisthoudt2012]. Both *Avicennia* and members of the Rhizophoraceae family were widespread in the early Eocene, but only *Avicennia* occurred in polar latitudes [@Suan2017; @Popescu2021]. Assuming that Eocene members of these mangrove taxa had similar climatic requirements as their modern relatives, the presence and absence of *Avicennia* and Rhizophoraceae pollen can be used as a temperature proxy. To translate mangrove occurrences from the compilation by @Popescu2021 to a quantitative temperature proxy, we allocate locations at which *Avicennia* pollen, but no Rhizophoraceae pollen were found, a mean temperature between the lower *Avicennia* and Rhizophoraceae limit (18.2 degC), with a standard deviation of 1.33 degC, thus placing 95 % of the probability density within that interval (see Fig. 1x). The range of temperatures in which both taxa occur in the modern is very wide (20.8 and 28 deC), hence occurrences of both *Avicennia* and Rhizophoraceae pollen were not used in the analysis.
@@ -85,4 +86,3 @@ mangroves, corals, sharks?
 # Data accessibility
 
 # References
-

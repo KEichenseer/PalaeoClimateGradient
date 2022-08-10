@@ -152,29 +152,6 @@ plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = N
   }
 }
 
-coral_distrmat <- function(data,stage) { # for PARED
-  
-  data_sub <- subset(data,early_stage == stage & !(is.na(pal_lat_scotese)))#table(iso$stage_2020)
-  data_sub <- data_sub[with(data_sub, order(abs(pal_lat_scotese), longit)),]
-  # prepare for use in the model
-  if(nrow(data_sub) >= 1) {data_distrmat <- data.frame(latitude = abs(data_sub$pal_lat_scotese),
-                                                         location = 22.8,
-                                                         scale = 10,
-                                                         shape = 4,
-                                                         distribution = "skew-normal")
-  } else data_distrmat <- data.frame(NULL)
-  
-}
-  
-iso_obsmat <- function(data, stage) { # for StabisoDB
-  # select data from one stage to test, exclude NA data
-  data_sub <- subset(data,stage_2020 == stage & !(is.na(paleolat)) & !(is.na(temperature)))
-  data_sub <- data_sub[with(data_sub, order(abs(paleolat), longitude)),]
-  # prepare for use in the model
-  data_mod <- data.frame(sample = (paste(abs(data_sub$paleolat),data_sub$longitude)),
-                        latitude = abs(data_sub$paleolat), temperature = data_sub$temperature)
-  return(data_mod)
-}
 
 
 plot_chains <- function(mod, params = 1:4, nthin = NULL, logQ = TRUE) {
@@ -230,28 +207,6 @@ plot_dens <- function(x,dens,xlim = NULL,ylim = NULL,col = rgb(0,0.5,0.7,0.25),
   
 }
 
-fastRandomPoints <- function(r, n) {
-  if(raster::nlayers(r) > 1) r <- r[[1]]
-  v <- raster::getValues(r)
-  v.notNA <- which(!is.na(v))
-  x <- sample(v.notNA, n)
-  pts <- raster::xyFromCell(r, x)
-  return(pts)
-}
-fastRandomPoints_lat <- function(r, n, min, max) {
-  #if(raster::nlayers(r) > 1) r <- r[[1]]
-  #row = raster::rowFromY(r, c(min,max))
-  #row = row[1]:row[2]
-  #cells = raster::cellFromRow(r, row)
-  #r <- raster::rasterFromCells(r, cells, values = FALSE)
-  extent <- c(-180,180,min,max)
-  r <- raster::crop(r,extent)
-  v <- raster::getValues(r)
-  v.notNA <- which(!is.na(v))
-  x <- sample(v.notNA, n)
-  pts <- raster::xyFromCell(r, x)
-  return(pts)
-}
 map2color<-function(x,pal,limits=NULL){
   if(is.null(limits)) limits=range(x)
   pal[findInterval(x,seq(limits[1],limits[2],length.out=length(pal)+1), all.inside=TRUE)]
@@ -315,18 +270,4 @@ combine_posterior <- function(mod, burnin = NULL) {
   nIter <- floor(mod[[1]]$call$nIter/nThin)
   if(is.null(burnin)) burnin <- 0 else burnin <- floor(burnin/nThin)
   out <- do.call(rbind,lapply(1:length(mod),function(f) mod[[f]]$params[(burnin+1):nIter,]))
-} ### CONTINUE!!!
-# 
-# proxy_dist <- function(proxy, distribution = "normal", mean, sd, shape = NULL) {
-#   xall <- seq(-10,60,0.02)
-# if(distribution == "normal") dens <- dnorm(xall,mean,sd)
-#   }
-#   
-#   
-#   
-#   data.frame(name = c("Avicennia", "Avicennia-Rhizophoraceae", "Reefs"),
-#              distribution = c("normal", "normal", "normal"),
-#              mean = c(mean(c(15.6,22.5)), mean(c(20.7,29.5)), 27.6),
-#              sd = c((22.5-15.6)/4, c(29.5-20.7)/4, (29.5-21)/4),
-#              shape = rep(NA,3)
-#   )
+}

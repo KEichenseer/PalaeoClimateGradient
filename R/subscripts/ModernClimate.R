@@ -2,18 +2,21 @@
 # Mean annual sea surface temperatures (Bio-Oracle)
 set.seed(1)
 
-sst <- raster("./data/raw/climate/BioOracle_20220711/Present.Surface.Temperature.Mean.asc")
+sst <- raster::raster("./data/raw/climate/BioOracle_20220711/Present.Surface.Temperature.Mean.asc")
 
 # sample points randomly from the raster (within specified latitudinal limits) 
 source("R/subscripts/AuxiliaryFunctions.R")
-coords <- fastRandomPoints_lat(sst$Present.Surface.Temperature.Mean,10000,-90,90)
 
-# extract temperatures from the sampled points
-sstr <- raster::extract(sst,coords)
+coords <- raster::sampleRandom(x = sst, 
+                                            size = 1000,
+                                            na.rm = TRUE,
+                                            xy=T)
+# temperatures from the sampled points
+ssts <- coords[,3]
 
 lat <- abs(coords[,2])
 
-plot(lat,sstr, pch = 21,col=NA, bg = rgb(0,0,0,0.1))
+plot(lat,ssts, pch = 21,col=NA, bg = rgb(0,0,0,0.1))
 
 ### Define the priors
 prior_fun <- list(  
@@ -34,7 +37,7 @@ doParallel::registerDoParallel(cl)
 source("R/subscripts/ClimateParallelSimple.R")
 #run
 system.time({modm <- climate_simple_parallel(nChains = nClust, nIter = 100000, nThin = 10,
-                                x = lat, y = sstr, 
+                                x = lat, y = ssts, 
                                 coeff_inits = NULL, sdy_init = NULL, 
                                 prior_fun = prior_fun,
                                 proposal_var_inits = c(2,2,2,0.2), adapt_sd = 2500,
@@ -48,7 +51,7 @@ parallel::stopCluster(cl)
 plot_chains(modm)
 plot_gradient(modm[[1]],burnin = 1000, ylim = c(-2,30))
 plot_gradient(modm[[2]],burnin = 1000, add = T, confint_col = rgb(0,0.5,1,0.2), line_col = rgb(0,0.5,1,1))
-points(lat,sstr, pch = 21, bg = rgb(0,0,0,0.2), col = NA)
+points(lat,ssts, pch = 21, bg = rgb(0,0,0,0.2), col = NA)
 
 # discard 10k iterations as burnin each, and combine the results of the 4 chains
 mod_all <- combine_posterior(modm,burnin = 10000)
@@ -168,7 +171,7 @@ for(i in 1:100) {
 ngrad <- 100
 s <- 2
 plot(0,0,type = "n", xlim = c(0,90), ylim = c(-5,35), xlab = "|latitude|", ylab = "temperature (deg C)")
-#points(abs(coords[,2]),sstr, pch = 21, bg = rgb(0,0,0,0.1), col = NA)
+#points(abs(coords[,2]),ssts, pch = 21, bg = rgb(0,0,0,0.1), col = NA)
 
 for(i in 1:100) points(latx,med_grad[i,],type = "l", col = rgb(i/ngrad,0.25,((ngrad-i+1)/ngrad),0.5),lwd = 2)
 points(modt_samples[[i]][,1],modt_samples[[i]][,2],pch = 21, bg = rgb(0,0,0.8,0.33), col = NA)

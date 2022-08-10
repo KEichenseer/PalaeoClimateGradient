@@ -6,8 +6,8 @@ dat <- readRDS("data/processed/Hollis_processed_EECO_2022_07_19.rds")
 
 
 # prepare for use in the model
-obsmat <- data.frame(sample = (paste(abs(data_sub$paleolat_Meredith),data_sub$longitude, data_sub$proxy)),
-                     latitude = abs(data_sub$paleolat_Meredith), temperature = data_sub$temperature,
+obsmat <- data.frame(sample = (paste(abs(data_sub$p_lat),data_sub$longitude, data_sub$proxy)),
+                     latitude = abs(data_sub$p_lat), temperature = data_sub$temperature,
                      sd = data_sub$temperature_sd,
                      proxy = data_sub$proxy)
 
@@ -28,7 +28,7 @@ proxy_distributions <- data.frame(name = c("Avicennia", "Avicennia-Rhizophoracea
 # create distribution matrix for use with model
 proxy_index <- sapply(bioprox$proxy, function(f) which(proxy_distributions$name==f))
 
-distrmat = data.frame(latitude = abs(bioprox$lat), 
+distrmat = data.frame(latitude = abs(bioprox$p_lat), 
                       location = proxy_distributions$mean[proxy_index],
                       scale = proxy_distributions$sd[proxy_index],
                       shape = proxy_distributions$shape[proxy_index],
@@ -54,11 +54,25 @@ cl <- parallel::makeCluster(nClust)
 doParallel::registerDoParallel(cl)
 
 ### Run model
-mod2 <- climate_parallel_sd(nChains = nClust, nIter = 25000, nThin = 5, obsmat = obsmat, distrmat = distrmat, 
+mode <- climate_parallel_sd(nChains = nClust, nIter = 25000, nThin = 5, obsmat = obsmat, distrmat = distrmat, 
                             coeff_inits = NULL, sdy_init = NULL, 
                             yest_inits = NULL, sdyest_inits = NULL, prior_fun = prior_fun,
                             proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
                             adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE) 
+# Run model without bio proxies
+mode_nobio <- climate_parallel_sd(nChains = nClust, nIter = 25000, nThin = 5, obsmat = obsmat, distrmat = NULL, 
+                            coeff_inits = NULL, sdy_init = NULL, 
+                            yest_inits = NULL, sdyest_inits = NULL, prior_fun = prior_fun,
+                            proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
+                            adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE) 
+
+# Run model with no sd on observations
+obsmat$sd <- NA
+mode_nosd <- climate_parallel_sd(nChains = nClust, nIter = 25000, nThin = 5, obsmat = obsmat, distrmat = distrmat, 
+                                  coeff_inits = NULL, sdy_init = NULL, 
+                                  yest_inits = NULL, sdyest_inits = NULL, prior_fun = prior_fun,
+                                  proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
+                                  adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE) 
 
 
 ### stop cluster
@@ -68,10 +82,17 @@ parallel::stopCluster(cl)
 #
 # Assess output
 
-plot_chains(mod2)
+plot_chains(mode_nosd)
 
-mode_all <- combine_posterior(mod2,4000)
+mode_all <- combine_posterior(mode,4000)
+mode_all_nobio <- combine_posterior(mode_nobio,4000)
+mode_all_nosd <- combine_posterior(mode_nosd,4000)
+
+
 mcmcse::multiESS(mode_all[,1:4])
-plot_gradient(mode_all,ylim = c(12,37))
-plot_posterior(mod2[[3]])
+plot_gradient(mode_all,ylim = c(10,37))
+plot_gradient(mode_all_nobio,ylim = c(10,37), confint_col = rgb(0,.7,0.5,0.2),line_col = rgb(0,.7,0.5,1), add = T)
+plot_gradient(mode_all_nosd,ylim = c(10,37), confint_col = rgb(0.7,0,0.5,0.2),line_col = rgb(0.7,0,0.5,1), add = T)
+
+plot_posterior(mode[[3]])
 

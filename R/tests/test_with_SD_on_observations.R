@@ -6,8 +6,10 @@ source("R/subscripts/AuxiliaryFunctions.R")
 obsmat = data.frame(
   sample = c(1,1,1,2,2,2,3,3,3,4,4,4,5,5,6,7,7),
   latitude = c(9,9,9,11,11,11,13,13,13,30,30,30,60,60,40,70,70),
-  temperature = c(30,33,30,36,39,36,29,30,29.5,22,24,23,8,9,19,6,5),
-  sd = c(NA,NA,NA,2,3,2,1,1,1,1,1,NA,1,1,2,1,NA))
+  temperature = c(30,33,30,38.3,38.5,38.7,29,30,29.5,22,24,23,8,9,19,6,5),
+  sd = c(NA,NA,NA,3,3,3,1,1,1,1,1,NA,1,1,2,1,NA))
+#obsmat$sd = NA
+plot(obsmat$latitude,obsmat$temperature)
 
 distrmat = NULL
 
@@ -37,14 +39,22 @@ if((!(is.null(distrmat)) | !(is.null(obsmat))) & is.null(yest_inits)) {
                   distrmat$location + distrmat$scale * sqrt(2/pi) * 
                     distrmat$shape/sqrt(1+distrmat$shape^2) )
 }
+
 if(!(is.null(obsmat)) & is.null(sdyest_inits)) sdyest_inits <- rep(2,length(unique(obsmat$sample)))
+prior_fun <- readRDS("results/modern/prior_from_modern_gradient.RDS")
+logprior <- write_logprior(prior_fun,log = TRUE)
 
 source("R/subscripts/ClimateGradientModelwithSDonObs.R")
-test4.4sd <- run_MCMC_sd_obs(nIter = 20000, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
+test4.5sd <- run_MCMC_sd_obs(nIter = 20000, nThin = 1, obsmat = obsmat, distrmat = NULL, coeff_inits = coeff_inits, 
+                             sdy_init = sdy_init, yest_inits = yest_inits, sdyest_inits = sdyest_inits, logprior = logprior,
                                proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),
                                adapt_sd_decay = max(floor(0.005*nIter),1),start_adapt = start_adapt, quiet = FALSE)
 
+plot_gradient(test4.4sd)
+plot_posterior(test4.4sd)
 
+plot_gradient(test4.5sd, add = T, confint_col = rgb(0,0.3,1,0.2), line_col = rgb(0,0.3,1,1))
+plot_posterior(test4.5sd)
 source("R/subscripts/ClimateGradientModel.R")
 test1.2 <- run_MCMC(nIter = 20000, obsmat = obsmat, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
                          proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.2 * nIter),

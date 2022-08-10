@@ -207,6 +207,9 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
   accept = rep(NA,nIter)
   x = NULL
   if(!is.null(obsmat)) {
+    if(is.list(sapply(unique(obsmat$sample), function(x) unique(obsmat$latitude[which(obsmat$sample == x)])))) warning(
+      "something is wrong with the observation matrix. Do all obs from one sample have the same latitude?")
+    
     ylist <- lapply(unique(obsmat$sample), function(x) obsmat$temperature[which(obsmat$sample == x)])
     x <- as.numeric(sapply(unique(obsmat$sample), function(x) unique(obsmat$latitude[which(obsmat$sample == x)])))
     n_p <- length(ylist)
