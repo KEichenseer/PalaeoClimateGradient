@@ -20,9 +20,9 @@ plot(lat,temp, pch = 21,col=NA, bg = rgb(0,0,0,0.1))
 
 ### Define the priors
 prior_fun <- list(  
-  f1 = function(x,log) dsnorm(x,location = -2.93, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
-  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.2, sd = 10, log = log), # prior on upper asymptote
-  f3 = function(x,log) dnorm(x, mean = 42.0, sd = 12, log = log), # prior on M
+  f1 = function(x,log) dsnorm(x,location = -3.03, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
+  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.3, sd = 10, log = log), # prior on upper asymptote
+  f3 = function(x,log) dnorm(x, mean = 42.1, sd = 12, log = log), # prior on M
   f4 = function(x,log) dgamma(x, shape = 3.2, rate = 20, log = log)# prior on Q
 )
 
@@ -77,7 +77,7 @@ apply(mod_all,2,median)
 
 # parameter A - skew normal distribution (avoiding estimating A values below freezing point of sea water)
 x1 <- seq(-6,36,0.01)
-dens <- dsnorm(x1,location = -2.93, scale = 12, alpha = 30,log = FALSE)
+dens <- dsnorm(x1,location = -3.03, scale = 12, alpha = 30,log = FALSE)
 plot(x1,dens,type = "l",lwd = 2)
 abline(v = c(-4,-2,0),lty = 2)
 x1[which.max(dens)]
@@ -85,17 +85,17 @@ x1[which.max(dens)]
 
 # parameter K - normal distribution
 x2 <- seq(-5,65,0.01)
-dens <- dnorm(x2,mean = 28.2, sd = 10)
+dens <- dnorm(x2,mean = 28.3, sd = 10)
 plot(x2,dens,type = "l",lwd = 2)
 x2[which.max(dens)]
-# we put the maximum density on the modern estimate for K+A (28.2)
+# we put the maximum density on the modern estimate for K+A (28.3)
 
 # parameter M - normal distribution
 x3 <- seq(0,90,0.1)
-dens <- dnorm(x3,mean = 42.0, sd = 12)
+dens <- dnorm(x3,mean = 42.1, sd = 12)
 plot(x3,dens,type = "l",lwd = 2)
 x3[which.max(dens)]
-# we put the maximum density on the modern estimate for M (42.0)
+# we put the maximum density on the modern estimate for M (42.1)
 
 # parameter B - gamma distribution
 x4 <- seq(0,0.62,0.001)
@@ -110,13 +110,12 @@ abline(h=0)
 
 ### Run 100 analyses with 100 modern samples, based on the Eocene palaeolatitudes
 
-source("R/subscripts/AuxiliaryFunctions.R")
 
 ### Define the priors
 prior_fun <- list(  
-  f1 = function(x,log) dsnorm(x,location = -2.93, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
-  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.2, sd = 10, log = log), # prior on upper asymptote
-  f3 = function(x,log) dnorm(x, mean = 42.0, sd = 12, log = log), # prior on M
+  f1 = function(x,log) dsnorm(x,location = -3.03, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
+  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.3, sd = 10, log = log), # prior on upper asymptote
+  f3 = function(x,log) dnorm(x, mean = 42.1, sd = 12, log = log), # prior on M
   f4 = function(x,log) dgamma(x, shape = 3.2, rate = 20, log = log)# prior on Q
 )
 
@@ -138,8 +137,6 @@ modt_samples <- readRDS("results/modern/modern_sample.RDS")
 # source script
 source("R/subscripts/models/modern_climate_model.R")
 
-logprior <- write_logprior(prior_fun,log = TRUE)
-
 
 mods <- list(NULL)
 
@@ -157,15 +154,19 @@ for(s in 1:100) {
   mods[[s]] <- run_MCMC_simple(nIter = 25000, nThin = 10,
                                              x = p_lat, y = temp, 
                                              coeff_inits = coeff_inits, sdy_init = sdy_init, 
-                                              logprior = logprior,
+                                             logprior_input  = prior_fun,
                                              proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
                                              adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE)
 }
 })
 
 saveRDS(mods,"results/modern/modern_sample_eocene_p_lat_gradient.RDS")
+
+# assess posterior of some chains 
+plot_chains(mods[1:4])
 mods_all <- combine_posterior(mods,5000)
-saveRDS(mods_all,"results/modern/combined_100_modern_gradients_with_modern_T_and_Eocene_palaeolats.RDS")
+plot_gradient(mods_all)
+#saveRDS(mods_all,"results/modern/combined_100_modern_gradients_with_modern_T_and_Eocene_palaeolats.RDS")
 
 mcmcse::multiESS(mods[[100]]$params[,1:4])
 nIter = 25000
