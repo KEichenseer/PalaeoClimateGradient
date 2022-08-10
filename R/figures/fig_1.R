@@ -2,12 +2,14 @@
 library(raster)
 library(tmap)
 library(sf)
+library(chronosphere)
 # Read data -------------------------------------------------------------------
 chem <- readRDS("./data/processed/Hollis_processed_EECO_2022_07_19.rds")
 bio <- readRDS("./data/processed/bio_proxies_2022_08_08.RDS")
-# Cao et al 2017 Palaeogeog:
-# https://www.earthbyte.org/improving-global-paleogeography-since-the-late-paleozoic-using-paleobiology/
-pgeog <- raster("./data/raw/palaeogeog/PaleogeogRecon_Matthews2016_53Ma.tiff")
+# PALEOMAP Palaeogeography
+pgeog <- raster("./data/raw/DEM/early_eocene.tif")
+shp <- fetch(dat = "paleomap", var = "paleocoastlines")
+shp <- shp[11]
 # Data prep -------------------------------------------------------------------
 # Filter data
 chem <- chem[, c("p_lng", "p_lat", "proxy")]
@@ -38,13 +40,20 @@ locs[which.max(locs$p_lat), c("p_lat")] <- 86
 # Reformat data for plotting
 locs <- sf::st_as_sf(x = locs, coords = c("p_lng", "p_lat"), crs = 4326)
 # Plot ------------------------------------------------------------------------
-my_colors = c("#9ecae1", "black", "#c6dbef", "#bababa")
+my_colours = rev(c(rgb(0.825,0.725,0.625), 
+              rgb(0.9,0.8,0.7), 
+              rgb(0.85,0.99,0.99), 
+              rgb(0.6,0.85,0.2)))
 # Create base map
 m <- tm_shape(pgeog) +
-      tm_raster(style = "cat", 
-                palette = my_colors,
-                legend.show = FALSE)
+  tm_raster(palette = "Blues",
+            style = "pretty",
+            legend.show = FALSE)
 
+m <- m + tm_shape(shp) +
+  tm_polygons(col = my_colours[4], alpha = 0.5)
+
+m
 m <- m + tm_shape(locs) +
   tm_dots(col = "Proxy type", palette = "-Dark2",
           shape = "Proxy type", shapes = c(21, 22, 23, 24, 25, 10, 8), 
@@ -56,7 +65,7 @@ m <- m + tm_shape(locs) +
           title = "") +
   tm_legend(legend.position = c(0.9, 0.4),
             legend.frame = TRUE,
-            legend.bg.color = "transparent")
+            legend.bg.color = "transparent") +
   tm_layout(frame = TRUE)
 
 tmap_save(m, "./figures/fig_1.jpg",
