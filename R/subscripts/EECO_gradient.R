@@ -57,15 +57,15 @@ doParallel::registerDoParallel(cl)
 nChains = nClust
 ### Run model
 # source script
-mode20 <- foreach(pc = 1:nChains) %dopar% {
+mode10 <- foreach(pc = 1:nChains) %dopar% {
   # call model functions
   source("R/subscripts/models/EECO_climate_model.R")
   # set random seed
   set.seed(pc)
-  test <- hierarchical_model(n_iter = 35000, n_thin = 5,
+  test1 <- hierarchical_model(n_iter = 35000, n_thin = 5,
                   obsmat = obsmat, distrmat = distrmat, 
                   logprior_input = prior_fun,adapt_sd = 3000,
-                  adapt_sd_decay = 100, A_sdy = 30, B_sdy = 30)
+                  adapt_sd_decay = 100, A_sdy = 1, B_sdy = 1)
 }
 
 ### stop cluster
@@ -88,11 +88,13 @@ mode_all_nosd <- combine_posterior(mode_nosd,4000)
 
 
 mcmcse::multiESS(mode_all_s10[,1:4])
-plot_gradient(test,ylim = c(13,39))
-plot_gradient(mode_all_s3,ylim = c(10,37), confint_col = rgb(0,.7,0.5,0.2),line_col = rgb(0,.7,0.5,1), add = T)
+plot_gradient(test,burnin = 1000,ylim = c(13,39))
+plot_gradient(test1,burnin = 1000,ylim = c(10,37), confint_col = rgb(0,.7,0.5,0.2),line_col = rgb(0,.7,0.5,1), add = T)
 plot_gradient(mode_all_s10,ylim = c(10,37), confint_col = rgb(0.7,0,0.5,0.2),line_col = rgb(0.7,0,0.5,1), add = T)
 
 plot_posterior(test)
 plot_posterior(mode_s10[[3]], col_obs = rgb(.5,1,0,0.75), col_dist = rgb(0,0,1,0.75))
 
 points(distrmat$p_lat, distrmat$mu, col = rgb(.5,0,.5,.75))
+
+legend("topright",c("wide prior on sdy", "narrow prior on sdy"))

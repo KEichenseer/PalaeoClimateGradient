@@ -66,6 +66,10 @@ hierarchical_model <- function(n_iter = 1000, n_thin = 1, obsmat = NULL,
   
   logpostold = NA
   accept = rep(NA,n_iter)
+  
+  # order observation matrix
+  if(!is.null(obsmat)) obsmat <- obsmat[with(obsmat, order(p_lat, sample)),]
+  
   x = NULL
   if(!is.null(obsmat)) {
     if(is.list(sapply(unique(obsmat$sample), function(x) unique(obsmat$p_lat[which(obsmat$sample == x)])))) warning(
