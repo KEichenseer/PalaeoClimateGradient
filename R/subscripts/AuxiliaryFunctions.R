@@ -43,11 +43,11 @@ plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint
   # select only params
   if("params" %in% names(model_out)) model_out <- model_out$params
   
-  nIter <- nrow(model_out)
+  n_iter <- nrow(model_out)
   if(is.null(burnin)) burnin = round(nrow(model_out)*12/100)+1
-  if(is.null(confint_n)) confint_n = min(5000,length(burnin:nIter))
+  if(is.null(confint_n)) confint_n = min(5000,length(burnin:n_iter))
     
-  sample_it <- sample(burnin:nIter,confint_n)
+  sample_it <- sample(burnin:n_iter,confint_n)
   grad_q <- apply(gradient(lat,model_out[sample_it,1:4],0),2,function(a) 
     quantile(a,probs = c(0.025,0.975)))
 
@@ -73,11 +73,11 @@ plot_sample_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), 
   # select only params
   if("params" %in% names(model_out)) model_out <- model_out$params
   
-  nIter <- nrow(model_out)
+  n_iter <- nrow(model_out)
   if(is.null(burnin)) burnin = round(nrow(model_out)*12/100)+1
-  #if(is.null(confint_n)) confint_n = min(5000,length(burnin:nIter))
+  #if(is.null(confint_n)) confint_n = min(5000,length(burnin:n_iter))
   
-  sample_it <- sample(burnin:nIter,n_samples)
+  sample_it <- sample(burnin:n_iter,n_samples)
   
   
   grads <- gradient(lat,model_out[sample_it,1:4],0)
@@ -125,7 +125,7 @@ plot_data <- function(obsmat = NULL, distrmat = NULL, lat = seq(0,90,0.2), add =
 plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
                            ylim = NULL, col_obs = rgb(.85,0.3,0,0.75), col_dist = rgb(0.6,0,.9,0.75),
                            cex = 1, pch = 17) {
-  nIter <- nrow(mod$params)
+  n_iter <- nrow(mod$params)
   if(is.null(burnin)) burnin = round(nrow(mod$params)*12/100)+1
   
   if(!(is.null(mod$sdyest))) {
@@ -133,9 +133,9 @@ plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = N
   samples <- 1:dim(mod$sdyest)[2]
   if(length(col_obs)!=nobsloc)  col_obs <- rep(col_obs[1],nobsloc)
   
-  invisible(sapply(samples,function(x) points(mod$lat[x], mean(mod$yestimate[burnin:nIter,x]), pch = pch, col = col_obs[x], cex = cex)))
+  invisible(sapply(samples,function(x) points(mod$lat[x], mean(mod$yestimate[burnin:n_iter,x]), pch = pch, col = col_obs[x], cex = cex)))
   
-  invisible(sapply(samples,function(x) points(rep(mod$lat[x],2), quantile(mod$yestimate[burnin:nIter,x], probs = c(0.05,0.95)), 
+  invisible(sapply(samples,function(x) points(rep(mod$lat[x],2), quantile(mod$yestimate[burnin:n_iter,x], probs = c(0.05,0.95)), 
                                     type = "l", col = col_obs[x])))
  
   } else nobsloc <- 0
@@ -146,15 +146,15 @@ plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = N
     
   
   distr_ind <- (nobsloc+1):ndistrloc
-  invisible(sapply(distr_ind,function(x) points(mod$lat[x], median(mod$yestimate[burnin:nIter,x]), pch = pch, col = col_dist, cex = cex)))
-  invisible(sapply(distr_ind,function(x) points(rep(mod$lat[x],2), quantile(mod$yestimate[burnin:nIter,x], probs = c(0.05,0.95)), 
+  invisible(sapply(distr_ind,function(x) points(mod$lat[x], median(mod$yestimate[burnin:n_iter,x]), pch = pch, col = col_dist, cex = cex)))
+  invisible(sapply(distr_ind,function(x) points(rep(mod$lat[x],2), quantile(mod$yestimate[burnin:n_iter,x], probs = c(0.05,0.95)), 
                                                 type = "l", col = col_dist)))
   }
 }
 
 
 
-plot_chains <- function(mod, params = 1:4, nthin = NULL, logQ = TRUE) {
+plot_chains <- function(mod, params = 1:4, n_thin = NULL, logQ = TRUE) {
   if("params" %in% names(mod[[1]])) mod <- lapply(mod, function(x) x$params)
   op <- par()[c("mfrow","mar","mgp")]
   nplot <- length(params)
@@ -165,9 +165,9 @@ plot_chains <- function(mod, params = 1:4, nthin = NULL, logQ = TRUE) {
   par(mfrow = c(nplot,1), mar  = c(3.5,3.5,0.5,0.5), mgp = c(2.25,0.75,0), las = 1)
   if(!("data.frame" %in% class(mod))) {
     nchains <- length(mod)
-    nIter <- nrow(mod[[1]])
-    if(is.null(nthin)) nthin <- max(c(1,round(nIter/2000)))
-        iteration <- seq(1,nIter,nthin)
+    n_iter <- nrow(mod[[1]])
+    if(is.null(n_thin)) n_thin <- max(c(1,round(n_iter/2000)))
+        iteration <- seq(1,n_iter,n_thin)
     for(j in 1:nplot) {
       if(j != 4 | logQ == FALSE){
       plot(iteration,mod[[1]][iteration,params[j]],type = "l",
@@ -266,8 +266,8 @@ plot_accept <- function(variable,binsize,return_val = FALSE) {
 }
 
 combine_posterior <- function(mod, burnin = NULL) {
-  nThin <- mod[[1]]$call$nThin
-  nIter <- floor(mod[[1]]$call$nIter/nThin)
-  if(is.null(burnin)) burnin <- 0 else burnin <- floor(burnin/nThin)
-  out <- do.call(rbind,lapply(1:length(mod),function(f) mod[[f]]$params[(burnin+1):nIter,]))
+  n_thin <- mod[[1]]$call$n_thin
+  n_iter <- floor(mod[[1]]$call$n_iter/n_thin)
+  if(is.null(burnin)) burnin <- 0 else burnin <- floor(burnin/n_thin)
+  out <- do.call(rbind,lapply(1:length(mod),function(f) mod[[f]]$params[(burnin+1):n_iter,]))
 }
