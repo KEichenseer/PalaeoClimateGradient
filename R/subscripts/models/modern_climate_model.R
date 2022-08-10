@@ -4,162 +4,45 @@
 ### Temperature Gradients - Simple version
 ###
 ### first developed: February 2022
-### revised: June - July 2022
+### revised: June - August 2022
 ######################################################
 ######################################################
-### FUNCTIONS
-
-# make_prior <- function(priorvec) {
-#   for(ip in 1:4) priorvec[ip] <- gsub("x",paste("coeff[",ip,"]",sep = ""),priorvec[ip])
-# 
-# priortext <- paste("logprior_custom <- function(coeff) {
-#   coeff = unlist(coeff)
-#   return(sum(c(",
-#     eval(parse(text = "priorvec[1]")),",",
-#     eval(parse(text = "priorvec[2]")),",",
-#     eval(parse(text = "priorvec[3]")),",",
-#     eval(parse(text = "priorvec[4]")),
-#     ")))}",sep="")
-# eval(parse(text = priortext),envir=.GlobalEnv)
-# }
-
-write_logprior <- function(prior_fun,log=TRUE) {
-  out <- function(coeff) {
-    coeff = unlist(coeff)
-    
-    return(sum(c(
-      prior_fun$f1(x=coeff[1],log=log),
-      prior_fun$f2(x=coeff[1]+coeff[2],lower=coeff[1],log=log),
-      prior_fun$f3(x=coeff[3],log=log),
-      prior_fun$f4(x=coeff[4],log=log))))
-  }
-  return(out)
-}
-
-
-gradient <- function(x, coeff, sdy) { # parametrise with difference between cold and hot end instead
-  if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
-  if(is.data.frame(coeff) | is.matrix(coeff)) {
-    A = coeff[,1]
-    dKA = coeff[,2]
-    M = coeff[,3]
-    B = coeff[,4]
-    
-    lat = t(data.frame(lat=x))
-    lat = lat[rep(1, each=length(A)),]
-    
-    if(sdy == 0) {out = A + dKA/((1+(exp(B*(lat-M)))))
-    } else {
-      out = A + dKA/((1+(exp(B*(lat-M)))))+ rnorm(length(x),0,sdy)
-    }
-    
-  } else {
-    A = coeff[1]
-    dKA = coeff[2]
-    M = coeff[3]
-    B = coeff[4]
-    
-    if(sdy == 0) {return(A + dKA/((1+(exp(B*(x-M))))))
-    } else {
-      out = A + dKA/((1+(exp(B*(x-M)))))+ rnorm(length(x),0,sdy)
-    }
-  }
-  return(out)
-}
-
-loglik_s <- function(x, y,  coeff, sdy) {
-  A = coeff[1]
-  dKA = coeff[2]
-  M = coeff[3]
-  B = coeff[4]
-  pred = A + dKA/((1+(exp(B*(x-M)))))
-  return(sum(dnorm(y, mean = pred, sd = sdy, log = TRUE)))
-}
-
-#logprior_s <- function(coeff) {
- # coeff = unlist(coeff)
-#  return(sum(c(
-#    dsnorm(coeff[1],location = -2.7, scale = 16, alpha = 16, log = TRUE), # prior on A
-#    dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on dKA
-#    dnorm(coeff[3], 45, 15, log = TRUE), # prior on M
-#    dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on B
-#}
-
-# function to generate truncated normal
-dtnorm <- function(x,lower,upper,mean,sd, log = FALSE) {
-  ret <- numeric(length(x))
-  ret[x < lower | x > upper] <- if (log)
-    -Inf
-  else 0
-  ret[upper < lower] <- NaN
-  ind <- x >= lower & x <= upper
-  if (any(ind)) {
-    denom <- pnorm(upper, mean, sd) - pnorm(lower, mean,
-                                            sd)
-    xtmp <- dnorm(x, mean, sd, log)
-    if (log)
-      xtmp <- xtmp - log(denom)
-    else xtmp <- xtmp/denom
-    ret[x >= lower & x <= upper] <- xtmp[ind]
-  }
-  ret
-} # from msm
-
-dsnorm <- function(x,location,scale,alpha, log = TRUE) {
-  if(log == TRUE) out = log(2/scale)+dnorm((x - location)/scale,log=T)+pnorm(alpha*(x - location)/scale,log=T)
-  if(log == FALSE) out = (2/scale)*dnorm((x - location)/scale,log=F)*pnorm(alpha*(x - location)/scale,log=F)
-  return(out)
-}
-logposterior_s <- function(x, y, coeff, sdy, logprior){
-  if(!is.null(y)) {
-  return (loglik_s(x, y, coeff, sdy) + logprior(coeff)) # + 2*(coeff[4])
-  } else return(logprior(coeff))
-}
-
-
-MH_propose_multi <- function(nprop,coeff,proposal_cov) {
-  
-  
-  mvnfast::rmvn(n = nprop, mu = 0.95*c(coeff[1:3],log(coeff[4])),
-                sigma = 2.4/sqrt(4)*proposal_cov)+
-    rnorm(n = 4*nprop, mean = 0.05*c(coeff[1:3],log(coeff[4])),
-          sd = 0.001)
-  
-}
-
-weighted_cov <- function(x, weights) { # takes 2.5 times as long as cov()
-  dims = ncol(x)
-  out = matrix(NA_real_,nrow = dims, ncol = dims)
-  
-  for(d in 1:dims) {
-    out[d,d] <- sum(weights*((x[,d]-sum(weights*x[,d])/sum(weights))^2))/(sum(weights))
-    if(d < dims) for(d2 in (d+1):dims) {
-      out[d,d2] <- sum(weights*((x[,d]-sum(weights*x[,d])/sum(weights))*(x[,d2]-sum(weights*x[,d2])/sum(weights))))/(sum(weights))
-      out[d2,d] <- out[d,d2]
-    }
-  }
-  diag(out) <- diag(out) + 0.000001*diag(out) # add small increment to the two variances (but not to covariance) to ensure chol decomposition does not fail
-  
-  return(out)
-}
-
-standard_prior <- 
-  c("dsnorm(x,location = -2.7, scale = 16, alpha = 16, log = TRUE)", # prior on A
-    "dtnorm(x, 0, Inf,25,12, log = TRUE)", # prior on dKA
-    "dnorm(x, 45, 15, log = TRUE)", # prior on M
-    "dlnorm(x, -2.2, 0.8, log = TRUE)") # prior on B
 
 # Main MCMCM function
 run_MCMC_simple <- function(x, y, nIter, nThin = 1,
                             coeff_inits = NULL, sdy_init = NULL,
                             proposal_var_inits = c(2,2,2,0.2),
-                            logprior = NULL,
+                            logprior_input = NULL,
                             adapt_sd = floor(0.1 * nIter), 
                             adapt_sd_decay = max(floor(0.005*nIter),1),
-                            start_adapt = 101,
+                            start_adapt = min(c(floor(adapt_sd/2),101)),
                             quiet = FALSE){
+  
+  ### Load functions
+  source("R/functions/model_components/dsnorm.R")  
+  source("R/functions/model_components/dtnorm.R")  
+  source("R/functions/model_components/gradient.R")  
+  source("R/functions/model_components/write_logprior.R")  
+  source("R/functions/model_components/loglik.R")  
+  source("R/functions/model_components/logposterior.R")  
+  source("R/functions/model_components/MH_propose_multi.R")  
+  source("R/functions/model_components/weighted_cov.R")  
+  
+  
   ### Initialisation
-  save_it <- seq(1,nIter,nThin)
+  
+  # random setting of initial values for the regression parameters
+  coeff_inits = rep(NA,4)
+  coeff_inits[1] = rnorm(1,10,3) # 20,45),c(1,2,4.5)
+  coeff_inits[2] = coeff_inits[1] + truncnorm::rtruncnorm(1,0,Inf,12,6)
+  coeff_inits[3] = rnorm(1,45,7.5)
+  coeff_inits[4] = exp(rnorm(1,-2.3,0.25))
+  sdy_init = exp(rnorm(1,0.7,0.25))
+  
+  
+  logprior <- write_logprior(prior_fun = logprior_input, log = TRUE) # create prior
+  
+  save_it <- seq(1,nIter,nThin) # iterations to save
   
   coefficients = array(dim = c(nIter,4)) # set up array to store coefficients
   coefficients[1,] = coeff_inits # initialise coefficients
@@ -214,8 +97,8 @@ run_MCMC_simple <- function(x, y, nIter, nThin = 1,
     
     #if(any(proposal[4] <= 0)) HR = 0 else # B needs to be >0
     # Hastings ratio of the proposal
-    HR = exp(logposterior_s(x = x, y = y, coeff = proposal_coeff, sdy = sdy[i], logprior = logprior) -
-               logposterior_s(x = x, y = y, coeff = coefficients[i-1,], sdy = sdy[i], logprior = logprior) +
+    HR = exp(logposterior(x = x, y = y, coeff = proposal_coeff, sdy = sdy[i], logprior = logprior) -
+               logposterior(x = x, y = y, coeff = coefficients[i-1,], sdy = sdy[i], logprior = logprior) +
                (-log(coefficients[i-1,4])) -
                (-log(proposal_coeff[4])))
     # accept proposal with probability = min(HR,1)

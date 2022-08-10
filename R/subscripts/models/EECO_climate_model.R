@@ -8,27 +8,27 @@ gradient <- function(x, coeff, sdy) { # parametrise with difference between cold
   if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
   if(is.data.frame(coeff) | is.matrix(coeff)) {
     A = coeff[,1]
-    DKA = coeff[,2]
+    dKA = coeff[,2]
     M = coeff[,3]
-    Q = coeff[,4]
+    B = coeff[,4]
     
     lat = t(data.frame(lat=x))
     lat = lat[rep(1, each=length(A)),]
 
-    if(sdy == 0) {out = A + DKA/((1+(exp(Q*(lat-M)))))
+    if(sdy == 0) {out = A + dKA/((1+(exp(B*(lat-M)))))
     } else {
-      out = A + DKA/((1+(exp(Q*(lat-M)))))+ rnorm(length(x),0,sdy)
+      out = A + dKA/((1+(exp(B*(lat-M)))))+ rnorm(length(x),0,sdy)
     }
     
   } else {
     A = coeff[1]
-    DKA = coeff[2]
+    dKA = coeff[2]
     M = coeff[3]
-    Q = coeff[4]
+    B = coeff[4]
 
-  if(sdy == 0) {return(A + DKA/((1+(exp(Q*(x-M))))))
+  if(sdy == 0) {return(A + dKA/((1+(exp(B*(x-M))))))
    } else {
-   out = A + DKA/((1+(exp(Q*(x-M)))))+ rnorm(length(x),0,sdy)
+   out = A + dKA/((1+(exp(B*(x-M)))))+ rnorm(length(x),0,sdy)
    }
   }
   return(out)
@@ -38,13 +38,13 @@ loglik_norm <- function(x, yest, ymean, sdyest, coeff, sdy) {
   # extract regression coefficients
   coeff = unlist(coeff)
   A = coeff[1]
-  DKA = coeff[2]
+  dKA = coeff[2]
   M = coeff[3]
-  Q = coeff[4]
+  B = coeff[4]
 
   ll1 <- sum(dnorm(yest, ymean, sdyest,log=TRUE),na.rm=T)
   
-  pred = A + DKA/((1+(exp(Q*(x-M)))))
+  pred = A + dKA/((1+(exp(B*(x-M)))))
   ll2 <- sum(dnorm(yest, mean = pred, sd = sdy, log = TRUE))
   return(c(ll2+ll1))
 }
@@ -53,9 +53,9 @@ loglik_norm_sd <- function(x, yest, ymean, sdyest, coeff, sdy, new_y) {
   # extract regression coefficients
   coeff = unlist(coeff)
   A = coeff[1]
-  DKA = coeff[2]
+  dKA = coeff[2]
   M = coeff[3]
-  Q = coeff[4]
+  B = coeff[4]
  # yest0 <- new_y[sd_obs_ind]
  # ymean0 <- obsmat$temperature[sd_obs_ind]
  # ysd0 <- obsmat$sd[sd_obs_ind]
@@ -64,7 +64,7 @@ loglik_norm_sd <- function(x, yest, ymean, sdyest, coeff, sdy, new_y) {
  # 
  # ll1 <- sum(dnorm(yest, ymean, sdyest,log=TRUE),na.rm=T)
   
-  pred = A + DKA/((1+(exp(Q*(x-M)))))
+  pred = A + dKA/((1+(exp(B*(x-M)))))
   ll2 <- sum(dnorm(yest, mean = pred, sd = sdy, log = TRUE))
   return(c(ll2)) #+ll1+ll0))  ### is it possible that we only need the lik. of the params?!?!
 }
@@ -74,13 +74,13 @@ loglik_skew <- function(x, yest, mu, sigma, lambda, coeff, sdy) {
   # extract regression coefficients
   coeff = unlist(coeff)
   A = coeff[1]
-  DKA = coeff[2]
+  dKA = coeff[2]
   M = coeff[3]
-  Q = coeff[4]
+  B = coeff[4]
 
   ll1 <- sum(log(2/sigma)+dnorm((yest-mu)/sigma,log=T)+pnorm(lambda*(yest-mu)/sigma,log=T))
   
-  pred = A + DKA/((1+(exp(Q*(x-M)))))
+  pred = A + dKA/((1+(exp(B*(x-M)))))
   ll2 <- sum(dnorm(yest, mean = pred, sd = sdy, log = TRUE))
   return(c(ll2+ll1))
 }
@@ -89,10 +89,10 @@ loglik_skew <- function(x, yest, mu, sigma, lambda, coeff, sdy) {
 #   coeff = unlist(coeff)
 #   return(sum(c(
 #     dsnorm(coeff[1],location = -2.7, scale = 16, alpha = 16, log = TRUE), # prior on A
-#     #dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on DKA
-#     dtnorm(coeff[1]+coeff[2], coeff[1], Inf,30,7, log = TRUE), # prior on A+DKA
+#     #dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on dKA
+#     dtnorm(coeff[1]+coeff[2], coeff[1], Inf,30,7, log = TRUE), # prior on A+dKA
 #     dnorm(coeff[3], 45, 12, log = TRUE), # prior on M
-#     dlnorm(coeff[4], -2.4, 0.6, log = TRUE)))) # prior on Q     dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on Q
+#     dlnorm(coeff[4], -2.4, 0.6, log = TRUE)))) # prior on B     dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on B
 # 
 # }
 
@@ -403,7 +403,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
     
     if(any(proposal_coeff[4] <= 0)) { # | i == 2
       HR = 0
-    } else {# Q needs to be >0
+    } else {# B needs to be >0
       # Hastings ratio of the proposal
       logpostold = 0
       
@@ -475,9 +475,9 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
   
   ###  Function output
   output = list(params = data.frame(A = coefficients[save_it,1],
-                           DKA = coefficients[save_it,2],
+                           dKA = coefficients[save_it,2],
                            M = coefficients[save_it,3],
-                           Q = coefficients[save_it,4],
+                           B = coefficients[save_it,4],
                            sdy = sdy[save_it],
                            logpost = logpost[save_it])
                 )

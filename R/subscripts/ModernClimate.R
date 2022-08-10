@@ -3,20 +3,20 @@
 set.seed(1)
 
 sst <- raster::raster("./data/raw/climate/BioOracle_20220711/Present.Surface.Temperature.Mean.asc")
+r <- raster::raster(res = 1)
+sst <- raster::resample(x = sst, y = r)
+
+sst <- raster::as.data.frame(x = sst, xy = TRUE, centroids = TRUE)
+sst <- na.omit(sst)
 
 # sample points randomly from the raster (within specified latitudinal limits) 
 source("R/subscripts/AuxiliaryFunctions.R")
 
-coords <- raster::sampleRandom(x = sst, 
-                                            size = 10000,
-                                            na.rm = TRUE,
-                                            xy=T)
-# temperatures from the sampled points
-ssts <- coords[,3]
+temp <- sst$Present.Surface.Temperature.Mean
 
-lat <- abs(coords[,2])
+lat <- abs(sst$y)
 
-plot(lat,ssts, pch = 21,col=NA, bg = rgb(0,0,0,0.1))
+plot(lat,temp, pch = 21,col=NA, bg = rgb(0,0,0,0.1))
 
 ### Define the priors
 prior_fun <- list(  
@@ -32,17 +32,22 @@ nClust <- 4
 cl <- parallel::makeCluster(nClust)
 doParallel::registerDoParallel(cl)
 
+nChains = nClust
 ### Run model
 # source script
-source("R/subscripts/models/modern_climate_model_wrapper.R")
-#run
-system.time({modm <- climate_simple_parallel(nChains = nClust, nIter = 100000, nThin = 10,
-                                x = lat, y = ssts, 
-                                coeff_inits = NULL, sdy_init = NULL, 
-                                prior_fun = prior_fun,
-                                proposal_var_inits = c(2,2,2,0.2), adapt_sd = 2500,
-                                adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE)})
-
+modm <- foreach(pc = 1:nChains) %dopar% {
+  # call model functions
+  source("R/subscripts/models/modern_climate_model.R")
+  # set random seed
+  set.seed(pc)
+  run_MCMC_simple(nIter = 100000, nThin = 10,
+                               x = lat, y = temp, 
+                               coeff_inits = NULL, sdy_init = NULL, 
+                               logprior_input = prior_fun,
+                               proposal_var_inits = c(2,2,2,0.2), adapt_sd = 2500,
+                               adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE)
+}
+                
 ### stop cluster
 parallel::stopCluster(cl)
 
