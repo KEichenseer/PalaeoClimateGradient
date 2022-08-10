@@ -5,6 +5,7 @@ library(ggpubr)
 # Load data -------------------------------------------------------------------
 temp <- raster(
   "./data/raw/climate/BioOracle_20220711/Present.Surface.Temperature.Mean.asc")
+modern_sample <- readRDS("./results/modern/modern_sample_gradient.RDS")
 # Data preparation ------------------------------------------------------------
 # Extract temperature data
 temp <- raster::as.data.frame(x = temp, xy = TRUE, centroids = TRUE)
@@ -18,7 +19,7 @@ temp$lat <- abs(temp$lat)
 # Add 1 deg latitudinal bins
 temp$bin <- ceiling(temp$lat) - 0.5
 # Calculate mean per lat bin
-gradient <- tapply(temp$SST, temp$bin, mean)
+gradient <- tapply(temp$SST, temp$bin, median)
 gradient <- data.frame(lat = as.numeric(names(gradient)), 
                        SST = as.vector(gradient))
 # Plot ------------------------------------------------------------------------
@@ -66,6 +67,24 @@ p2 <- ggplot(data = gradient, aes(x = lat, y = SST)) +
   )
 p2
 # Modern model using Eocene sample distribution (n = XXX)
+p3 <- ggplot(data = gradient, aes(x = lat, y = SST)) + 
+  geom_line(size = 1, colour = "black", alpha = 0.4) +
+  geom_line(size = 1, 
+            colour = "#1d91c0") +
+  xlab("Latitude (\u00B0)") +
+  scale_x_continuous(limits = c(0, 90),
+                     breaks = seq(0, 90, 30),
+                     labels = seq(0, 90, 30)) +
+  ylab("Temperature (\u00B0C)") +
+  theme_bw() +
+  theme(
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.ticks = element_line(colour = "grey70", size = 0.2),
+    panel.grid.major = element_line(colour = "grey70", size = 0.2),
+    panel.grid.minor = element_blank(),
+  )
+p3
 
 ggsave("./figures/fig_3.jpg",
        plot = p1,
