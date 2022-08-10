@@ -46,7 +46,7 @@ source("R/subscripts/AuxiliaryFunctions.R")
 plot_prior(prior_fun,xval)
 ### Prepare for model run
 # Source model script
-source("R/subscripts/models/EECO_climate_model_wrapper.R")
+source("R/subscripts/models/EECO_climate_model.R")
 
 # set up clusters for parallel computing
 library(doParallel)
@@ -54,39 +54,33 @@ nClust <- 4
 cl <- parallel::makeCluster(nClust)
 doParallel::registerDoParallel(cl)
 
+nChains = nClust
 ### Run model
-mode_s10 <- climate_parallel_sd(nChains = nClust, nIter = 25000, nThin = 5, obsmat = obsmat, distrmat = distrmat, 
-                            coeff_inits = NULL, sdy_init = NULL, 
-                            yest_inits = NULL, sdyest_inits = NULL, prior_fun = prior_fun,
-                            proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
-                            adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE) 
-# Run model without bio proxies
-mode_nobio <- climate_parallel_sd(nChains = nClust, nIter = 25000, nThin = 5, obsmat = obsmat, distrmat = NULL, 
-                            coeff_inits = NULL, sdy_init = NULL, 
-                            yest_inits = NULL, sdyest_inits = NULL, prior_fun = prior_fun,
-                            proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
-                            adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE) 
-
-# Run model with no sd on observations
-obsmat$sd <- NA
-mode_nosd <- climate_parallel_sd(nChains = nClust, nIter = 25000, nThin = 5, obsmat = obsmat, distrmat = distrmat, 
-                                  coeff_inits = NULL, sdy_init = NULL, 
-                                  yest_inits = NULL, sdyest_inits = NULL, prior_fun = prior_fun,
-                                  proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
-                                  adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE) 
-
+# source script
+mode20 <- foreach(pc = 1:nChains) %dopar% {
+  # call model functions
+  source("R/subscripts/models/EECO_climate_model.R")
+  # set random seed
+  set.seed(pc)
+  test <- hierarchical_model(n_iter = 35000, n_thin = 5,
+                  obsmat = obsmat, distrmat = distrmat, 
+                  logprior_input = prior_fun,adapt_sd = 3000,
+                  adapt_sd_decay = 100, A_sdy = 30, B_sdy = 30)
+}
 
 ### stop cluster
 parallel::stopCluster(cl)
+
 
 #######################################
 #
 # Assess output
 
-plot_chains(mode_s10)
+plot_chains(test)
+plot(test$params$sdy)
 
 mode_all <- combine_posterior(mode,4000)
-mode_all_s3 <- combine_posterior(mode_s3,4000)
+mode_all_s20 <- combine_posterior(mode20,4000)
 mode_all_s10 <- combine_posterior(mode_s10,4000)
 
 mode_all_nobio <- combine_posterior(mode_nobio,4000)
@@ -94,11 +88,11 @@ mode_all_nosd <- combine_posterior(mode_nosd,4000)
 
 
 mcmcse::multiESS(mode_all_s10[,1:4])
-plot_gradient(mode_all,ylim = c(13,39))
+plot_gradient(test,ylim = c(13,39))
 plot_gradient(mode_all_s3,ylim = c(10,37), confint_col = rgb(0,.7,0.5,0.2),line_col = rgb(0,.7,0.5,1), add = T)
 plot_gradient(mode_all_s10,ylim = c(10,37), confint_col = rgb(0.7,0,0.5,0.2),line_col = rgb(0.7,0,0.5,1), add = T)
 
-plot_posterior(mode[[3]])
+plot_posterior(test)
 plot_posterior(mode_s10[[3]], col_obs = rgb(.5,1,0,0.75), col_dist = rgb(0,0,1,0.75))
 
 points(distrmat$p_lat, distrmat$mu, col = rgb(.5,0,.5,.75))

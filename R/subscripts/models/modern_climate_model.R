@@ -9,13 +9,13 @@
 ######################################################
 
 # Main MCMCM function
-run_MCMC_simple <- function(x, y, nIter, nThin = 1,
+run_MCMC_simple <- function(x, y, n_iter, n_thin = 1,
                             coeff_inits = NULL, sdy_init = NULL,
-                            proposal_var_inits = c(2,2,2,0.2),
+                            proposal_var_inits = NULL,
                             logprior_input = NULL,
-                            adapt_sd = floor(0.1 * nIter), 
-                            adapt_sd_decay = max(floor(0.005*nIter),1),
-                            start_adapt = min(c(floor(adapt_sd/2),101)),
+                            adapt_sd = NULL, 
+                            adapt_sd_decay = NULL,
+                            start_adapt = NULL,
                             quiet = FALSE){
   
   ### Load functions
@@ -32,21 +32,28 @@ run_MCMC_simple <- function(x, y, nIter, nThin = 1,
   ### Initialisation
   
   # random setting of initial values for the regression parameters
-  coeff_inits = rep(NA,4)
+  if(is.null(coeff_inits)) {coeff_inits = rep(NA,4)
   coeff_inits[1] = rnorm(1,10,3) # 20,45),c(1,2,4.5)
   coeff_inits[2] = coeff_inits[1] + truncnorm::rtruncnorm(1,0,Inf,12,6)
   coeff_inits[3] = rnorm(1,45,7.5)
   coeff_inits[4] = exp(rnorm(1,-2.3,0.25))
-  sdy_init = exp(rnorm(1,0.7,0.25))
+  }
+  if(is.null(sdy_init)) sdy_init = exp(rnorm(1,0.7,0.25))
   
   
   logprior <- write_logprior(prior_fun = logprior_input, log = TRUE) # create prior
   
-  save_it <- seq(1,nIter,nThin) # iterations to save
+  if(is.null(proposal_var_inits)) proposal_var_inits <- c(2^2,2^2,2^2,0.2^2)
+  if(is.null(adapt_sd)) adapt_sd <- floor(0.1 * n_iter)
+  if(is.null(adapt_sd_decay)) adapt_sd_decay <- max(floor(0.1*adapt_sd),1)
+  if(is.null(start_adapt)) start_adapt <- max(floor(0.05*adapt_sd),1)
   
-  coefficients = array(dim = c(nIter,4)) # set up array to store coefficients
+  
+  save_it <- seq(1,n_iter,n_thin) # iterations to save
+  
+  coefficients = array(dim = c(n_iter,4)) # set up array to store coefficients
   coefficients[1,] = coeff_inits # initialise coefficients
-  sdy = rep(NA_real_,nIter) # set up vector to store sdy
+  sdy = rep(NA_real_,n_iter) # set up vector to store sdy
   sdy[1] = sdy_init # intialise sdy
   A_sdy = 1 # parameter for the prior on the inverse gamma distribution of sdy
   B_sdy = 1 # parameter for the prior on the inverse gamma distribution of sdy
@@ -66,13 +73,13 @@ run_MCMC_simple <- function(x, y, nIter, nThin = 1,
   
   proposal_factor <- 1 # to adjust acceptance rate
   
-  accept = rep(NA,nIter)
+  accept = rep(NA,n_iter)
   
   # setup progress bar
-  if (!quiet) cli::cli_progress_bar('Sampling', total = nIter)
+  if (!quiet) cli::cli_progress_bar('Sampling', total = n_iter)
   
   ### The MCMC loop
-  for (i in 2:nIter){
+  for (i in 2:n_iter){
     
     # update progress bar
     if (!quiet) cli::cli_progress_update(set = i, status = paste0('iteration ', i))
@@ -84,8 +91,8 @@ run_MCMC_simple <- function(x, y, nIter, nThin = 1,
     ## 2. Metropolis-Hastings step to estimate the regression coefficients
     # create matrix of proposal innovations as this is much faster than doing it anew at every it
     if(i == adapt_sd+1 | (i==2 & adapt_sd < 2)) proposal_innovation <-   mvnfast::rmvn(
-      n = nIter-adapt_sd, mu = rep(0,4),sigma = 2.4/sqrt(4)*proposal_cov)+
-        rnorm(n = 4*(nIter-adapt_sd), mean = rep(0,4),sd = 0.001)
+      n = n_iter-adapt_sd, mu = rep(0,4),sigma = 2.4/sqrt(4)*proposal_cov)+
+        rnorm(n = 4*(n_iter-adapt_sd), mean = rep(0,4),sd = 0.001)
     # create proposals
     if(i <= adapt_sd) proposal_coeff = MH_propose_multi(1,coefficients[i-1,],proposal_cov =  proposal_cov) # new proposed values
     if(i > adapt_sd) proposal_coeff = c(coefficients[i-1,1:3],log(coefficients[i-1,4])) + proposal_innovation[i-adapt_sd,]
@@ -133,9 +140,9 @@ run_MCMC_simple <- function(x, y, nIter, nThin = 1,
     }
     
     # # create matrix of proposal innovations as this is much faster than doing it anew at every it
-    # if(i == adapt_sd) proposal_innovation <-   mvnfast::rmvn(n = nIter-adapt_sd, mu = rep(0,4),
+    # if(i == adapt_sd) proposal_innovation <-   mvnfast::rmvn(n = n_iter-adapt_sd, mu = rep(0,4),
     #                                                          sigma = 2.4/sqrt(4)*proposal_cov)+
-    #   rnorm(n = 4*(nIter-adapt_sd), mean = rep(0,4),
+    #   rnorm(n = 4*(n_iter-adapt_sd), mean = rep(0,4),
     #         sd = 0.001)
     
     

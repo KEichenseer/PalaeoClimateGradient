@@ -1,4 +1,19 @@
 #define options
+n_iter = 100000
+# 
+n_thin = 10
+#
+n_chains = 4
+# Parallel computing
+parallel = TRUE
+#
+coeff_inits
+#
+proposal_sd
+#
+adapt_sd
+#
+
 
 dat1 <- readRDS("data/processed/Hollis_processed_2022_07_19.rds")
 

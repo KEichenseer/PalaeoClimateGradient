@@ -40,7 +40,7 @@ modm <- foreach(pc = 1:nChains) %dopar% {
   source("R/subscripts/models/modern_climate_model.R")
   # set random seed
   set.seed(pc)
-  run_MCMC_simple(nIter = 100000, nThin = 10,
+  run_MCMC_simple(n_iter = 100000, n_thin = 10,
                                x = lat, y = temp, 
                                coeff_inits = NULL, sdy_init = NULL, 
                                logprior_input = prior_fun,
@@ -151,11 +151,11 @@ for(s in 1:100) {
 
   coeff_inits <- c(rnorm(3,c(5,30,45), c(3,5,7)),exp(rnorm(1,log(0.1),0.6)))
   sdy_init <- exp(rnorm(1,log(2),0.6))
-  mods[[s]] <- run_MCMC_simple(nIter = 25000, nThin = 10,
+  mods[[s]] <- run_MCMC_simple(n_iter = 25000, n_thin = 10,
                                              x = p_lat, y = temp, 
                                              coeff_inits = coeff_inits, sdy_init = sdy_init, 
                                              logprior_input  = prior_fun,
-                                             proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
+                                            proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
                                              adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE)
 }
 })
@@ -169,16 +169,16 @@ plot_gradient(mods_all)
 #saveRDS(mods_all,"results/modern/combined_100_modern_gradients_with_modern_T_and_Eocene_palaeolats.RDS")
 
 mcmcse::multiESS(mods[[100]]$params[,1:4])
-nIter = 25000
+n_iter = 25000
 burnin = 5000
-nThin = 10
+n_thin = 10
 # plot results
 latx <- seq(0,90,0.1)
 
 med_grad <- array(NA_real_,dim = c(100,length(latx)))
 for(i in 1:100) {
   print(i)
-  grads <- gradient(latx,mods[[i]]$params[(burnin/nThin):(nIter/nThin),1:4],0)
+  grads <- gradient(latx,mods[[i]]$params[(burnin/n_thin):(n_iter/n_thin),1:4],0)
   med_grad[i,] <- apply(grads,2,median)
 }
 ### Plot the gradients

@@ -4,207 +4,68 @@
 ### !! Careful still need to make the obsmat sd checks conditional on obsmat not being NULL !!
 
 
-gradient <- function(x, coeff, sdy) { # parametrise with difference between cold and hot end instead
-  if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
-  if(is.data.frame(coeff) | is.matrix(coeff)) {
-    A = coeff[,1]
-    dKA = coeff[,2]
-    M = coeff[,3]
-    B = coeff[,4]
-    
-    lat = t(data.frame(lat=x))
-    lat = lat[rep(1, each=length(A)),]
-
-    if(sdy == 0) {out = A + dKA/((1+(exp(B*(lat-M)))))
-    } else {
-      out = A + dKA/((1+(exp(B*(lat-M)))))+ rnorm(length(x),0,sdy)
-    }
-    
-  } else {
-    A = coeff[1]
-    dKA = coeff[2]
-    M = coeff[3]
-    B = coeff[4]
-
-  if(sdy == 0) {return(A + dKA/((1+(exp(B*(x-M))))))
-   } else {
-   out = A + dKA/((1+(exp(B*(x-M)))))+ rnorm(length(x),0,sdy)
-   }
-  }
-  return(out)
-}
-
-loglik_norm <- function(x, yest, ymean, sdyest, coeff, sdy) {
-  # extract regression coefficients
-  coeff = unlist(coeff)
-  A = coeff[1]
-  dKA = coeff[2]
-  M = coeff[3]
-  B = coeff[4]
-
-  ll1 <- sum(dnorm(yest, ymean, sdyest,log=TRUE),na.rm=T)
-  
-  pred = A + dKA/((1+(exp(B*(x-M)))))
-  ll2 <- sum(dnorm(yest, mean = pred, sd = sdy, log = TRUE))
-  return(c(ll2+ll1))
-}
-
-loglik_norm_sd <- function(x, yest, ymean, sdyest, coeff, sdy, new_y) {
-  # extract regression coefficients
-  coeff = unlist(coeff)
-  A = coeff[1]
-  dKA = coeff[2]
-  M = coeff[3]
-  B = coeff[4]
- # yest0 <- new_y[sd_obs_ind]
- # ymean0 <- obsmat$temperature[sd_obs_ind]
- # ysd0 <- obsmat$sd[sd_obs_ind]
-  
- # ll0 <- sum(dnorm(yest0, ymean0, ysd0,log=TRUE),na.rm=T)
- # 
- # ll1 <- sum(dnorm(yest, ymean, sdyest,log=TRUE),na.rm=T)
-  
-  pred = A + dKA/((1+(exp(B*(x-M)))))
-  ll2 <- sum(dnorm(yest, mean = pred, sd = sdy, log = TRUE))
-  return(c(ll2)) #+ll1+ll0))  ### is it possible that we only need the lik. of the params?!?!
-}
 
 
-loglik_skew <- function(x, yest, mu, sigma, lambda, coeff, sdy) {
-  # extract regression coefficients
-  coeff = unlist(coeff)
-  A = coeff[1]
-  dKA = coeff[2]
-  M = coeff[3]
-  B = coeff[4]
-
-  ll1 <- sum(log(2/sigma)+dnorm((yest-mu)/sigma,log=T)+pnorm(lambda*(yest-mu)/sigma,log=T))
-  
-  pred = A + dKA/((1+(exp(B*(x-M)))))
-  ll2 <- sum(dnorm(yest, mean = pred, sd = sdy, log = TRUE))
-  return(c(ll2+ll1))
-}
-
-# logprior <- function(coeff) {
-#   coeff = unlist(coeff)
-#   return(sum(c(
-#     dsnorm(coeff[1],location = -2.7, scale = 16, alpha = 16, log = TRUE), # prior on A
-#     #dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on dKA
-#     dtnorm(coeff[1]+coeff[2], coeff[1], Inf,30,7, log = TRUE), # prior on A+dKA
-#     dnorm(coeff[3], 45, 12, log = TRUE), # prior on M
-#     dlnorm(coeff[4], -2.4, 0.6, log = TRUE)))) # prior on B     dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on B
-# 
-# }
 
 
-write_logprior <- function(prior_fun,log=TRUE) {
-  out <- function(coeff) {
-    coeff = unlist(coeff)
-    
-    return(sum(c(
-      prior_fun$f1(x=coeff[1],log=log),
-      prior_fun$f2(x=coeff[1]+coeff[2],lower=coeff[1],log=log),
-      prior_fun$f3(x=coeff[3],log=log),
-      prior_fun$f4(x=coeff[4],log=log))))
-  }
-  return(out)
-}
-
-
-# function to generate truncated normal
-dtnorm <- function(x,lower,upper,mean,sd, log = FALSE) {
-  ret <- numeric(length(x))
-  ret[x < lower | x > upper] <- if (log)
-    -Inf
-  else 0
-  ret[upper < lower] <- NaN
-  ind <- x >= lower & x <= upper
-  if (any(ind)) {
-    denom <- pnorm(upper, mean, sd) - pnorm(lower, mean,
-                                            sd)
-    xtmp <- dnorm(x, mean, sd, log)
-    if (log)
-      xtmp <- xtmp - log(denom)
-    else xtmp <- xtmp/denom
-    ret[x >= lower & x <= upper] <- xtmp[ind]
-  }
-  ret
-} # from msm
-
-dsnorm <- function(x,location,scale,alpha, log = TRUE) {
-  if(log == TRUE) out = log(2/scale)+dnorm((x - location)/scale,log=T)+pnorm(alpha*(x - location)/scale,log=T)
-  if(log == FALSE) out = (2/scale)*dnorm((x - location)/scale,log=F)*pnorm(alpha*(x - location)/scale,log=F)
-  return(out)
-}
-
-
-logposterior_norm_sd <- function(x, yest, ymean, sdyest, coeff, sdy,new_y){
-  return (loglik_norm_sd(x, yest, ymean, sdyest, coeff, sdy,new_y))
-}
-
-logposterior_norm <- function(x, yest, ymean, sdyest, coeff, sdy){
-  return (loglik_norm_sd(x, yest, ymean, sdyest, coeff, sdy))
-}
-
-logposterior_skew <- function(x, yest, mu, sigma, lambda, coeff, sdy){
-  return (loglik_skew(x, yest, mu, sigma, lambda, coeff, sdy))
-}
-
-
-MH_propose_multi <- function(nprop,coeff,proposal_cov) {
-  
-  
-  mvnfast::rmvn(n = nprop, mu = 0.95*c(coeff[1:3],log(coeff[4])),
-                sigma = 2.4/sqrt(4)*proposal_cov)+
-    rnorm(n = 4*nprop, mean = 0.05*c(coeff[1:3],log(coeff[4])),
-          sd = 0.001)
-  
-}
-
-
-# Gibbs sampling of mu with skew normal likelihood and normal prior
-### this is for single observations (sample mean), so no mean(x) or mean(y)
-skew_mu <- function(x, y, sigma, rho, mu_prior, sigma_prior) {
-  n1 = 1
-  rnorm(length(x),(n1*sigma_prior^2*(x-sigma*rho*y)+sigma^2*(1-rho^2)*mu_prior)/
-          (n1*sigma_prior^2+sigma^2*(1-rho^2)),
-        sqrt((sigma_prior^2*sigma^2*(1-rho^2))/(n1*sigma_prior^2+sigma^2*(1-rho^2))) )
-
-}
-
-### generate weighted covariance
-weighted_cov <- function(x, weights) { # takes 2.5 times as long as cov()
-  dims = ncol(x)
-  out = matrix(NA_real_,nrow = dims, ncol = dims)
-  
-  for(d in 1:dims) {
-    out[d,d] <- sum(weights*((x[,d]-sum(weights*x[,d])/sum(weights))^2))/(sum(weights))
-    if(d < dims) for(d2 in (d+1):dims) {
-      out[d,d2] <- sum(weights*((x[,d]-sum(weights*x[,d])/sum(weights))*(x[,d2]-sum(weights*x[,d2])/sum(weights))))/(sum(weights))
-      out[d2,d] <- out[d,d2]
-    }
-  }
-  diag(out) <- diag(out) + 0.000001*diag(out) # add small increment to the two variances (but not to covariance) to ensure chol decomposition does not fail
-  
-  return(out)
-}
 
 #
 # Main MCMCM function
-run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = NULL, coeff_inits, sdy_init, yest_inits, sdyest_inits,
-                            logprior = logprior,
-                     proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.1 * nIter),
-                     adapt_sd_decay = max(floor(0.01*nIter),1),  start_adapt = 101, quiet = FALSE){
-  ### Initialisation
-  save_it <- seq(1,nIter,nThin)
+hierarchical_model <- function(n_iter = 1000, n_thin = 1, obsmat = NULL, 
+                               distrmat = NULL, logprior_input = NULL,
+                               coeff_inits = NULL, sdy_init = NULL,
+                               yest_inits = NULL, sdyest_inits = NULL,
+                     proposal_var_inits = NULL, adapt_sd = NULL,
+                     adapt_sd_decay = NULL,  start_adapt = NULL, 
+                     A_sdy = 10, B_sdy = 10,
+                     quiet = FALSE){
   
-  coefficients = array(dim = c(nIter,4)) # set up array to store coefficients
+  ### Load functions
+  source("R/functions/model_components/dsnorm.R")  
+  source("R/functions/model_components/dtnorm.R")  
+  source("R/functions/model_components/gradient.R")  
+  source("R/functions/model_components/write_logprior.R")  
+  source("R/functions/model_components/loglik.R")  
+  source("R/functions/model_components/MH_propose_multi.R")  
+  source("R/functions/model_components/weighted_cov.R")  
+  source("R/functions/model_components/skew_mu.R")  
+  
+  ### Initialisation
+  
+  # random setting of initial values for the regression parameters
+  if(is.null(coeff_inits)) {coeff_inits = rep(NA,4)
+  coeff_inits[1] = rnorm(1,10,3) # 20,45),c(1,2,4.5)
+  coeff_inits[2] = coeff_inits[1] + truncnorm::rtruncnorm(1,0,Inf,12,6)
+  coeff_inits[3] = rnorm(1,45,7.5)
+  coeff_inits[4] = exp(rnorm(1,-2.3,0.25))
+  }
+  if(is.null(sdy_init)) sdy_init = exp(rnorm(1,0.7,0.25))
+  
+  # deterministic setting of initial values for the temperature and temperature sd estimates
+  if((!(is.null(distrmat)) | !(is.null(obsmat))) & is.null(yest_inits)) {
+    yest_inits <- c(unlist(sapply(unique(obsmat$sample), function(x) mean(obsmat$temperature[which(obsmat$sample == x)]))),
+                    distrmat$mu + distrmat$scale * sqrt(2/pi) * 
+                      distrmat$shape/sqrt(1+distrmat$shape^2) )
+  }
+  if(!(is.null(obsmat)) & is.null(sdyest_inits)) sdyest_inits <- rep(2,length(unique(obsmat$sample)))
+  
+  
+  logprior <- write_logprior(prior_fun = logprior_input, log = TRUE) # create prior
+  
+  if(is.null(proposal_var_inits)) proposal_var_inits <- c(2^2,2^2,2^2,0.2^2)
+  if(is.null(adapt_sd)) adapt_sd <- floor(0.1 * n_iter)
+  if(is.null(adapt_sd_decay)) adapt_sd_decay <- max(floor(0.1*adapt_sd),1)
+  if(is.null(start_adapt)) start_adapt <- max(floor(0.05*adapt_sd),1)
+  
+  save_it <- seq(1,n_iter,n_thin) # iterations to save
+  
+  coefficients = array(dim = c(n_iter,4)) # set up array to store coefficients
   coefficients[1,] = coeff_inits # initialise coefficients
-  sdy = rep(NA_real_,nIter) # set up vector to store sdy
+  sdy = rep(NA_real_,n_iter) # set up vector to store sdy
   sdy[1] = sdy_init # intialise sdy
   
   logpostold = NA
-  accept = rep(NA,nIter)
+  accept = rep(NA,n_iter)
   x = NULL
   if(!is.null(obsmat)) {
     if(is.list(sapply(unique(obsmat$sample), function(x) unique(obsmat$p_lat[which(obsmat$sample == x)])))) warning(
@@ -230,7 +91,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
     #n_sd_obs <- length(sd_obs_ind)
     obs_yestimate <-  list(NULL) # set up list of arrays to store estimates
     for(k in 1: length(ylist_sd)) {
-      obs_yestimate[[k]] <- array(dim = c(nIter,length(ylist_sd_ind[[k]]))) 
+      obs_yestimate[[k]] <- array(dim = c(n_iter,length(ylist_sd_ind[[k]]))) 
       obs_yestimate[[k]][1,] <- ylist[[k]][ylist_sd_ind[[k]]] # initialise coefficients with mean (or median)
     }
 
@@ -263,14 +124,14 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
   
   nbin <- n_p + n_norm + n_skew
   
-  yestimate = array(dim = c(nIter,nbin)) # set up array to store coefficients
+  yestimate = array(dim = c(n_iter,nbin)) # set up array to store coefficients
   yestimate[1,] = yest_inits # initialise coefficients
   
-  A_sdy = 10 # parameter for the prior on the inverse gamma distribution of sdy
-  B_sdy = 1 # parameter for the prior on the inverse gamma distribution of sdy
+  A_sdy = A_sdy # parameter for the prior on the inverse gamma distribution of sdy
+  B_sdy = B_sdy # parameter for the prior on the inverse gamma distribution of sdy
   shape_sdy <- A_sdy+nbin/2 # shape parameter for the inverse gamma
   
-  sdyest = array(dim = c(nIter,n_p)) # set up vector to store sdy
+  sdyest = array(dim = c(n_iter,n_p)) # set up vector to store sdy
   sdyest[1,] = sdyest_inits # intialise sdy
   
   ymean = NULL
@@ -305,12 +166,12 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
   
   if(n_skew != 0) yskew_rho <- -yskew_lambda/sqrt(1+yskew_lambda^2) # not sure why but this needs to be negative
   
-  logpost = rep(NA,nIter)
+  logpost = rep(NA,n_iter)
   # start progress bar
-  if (!quiet) cli::cli_progress_bar('Sampling', total = nIter)
+  if (!quiet) cli::cli_progress_bar('Sampling', total = n_iter)
   
   ### The MCMC loop
-  for (i in 2:nIter){
+  for (i in 2:n_iter){
     # update progress bar
     if (!quiet) cli::cli_progress_update(set = i, status = paste0('iteration ', i))
     
@@ -393,8 +254,8 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
     
     # create matrix of proposal innovations as this is much faster than doing it anew at every it
     if(i == adapt_sd+1 | (i==2 & adapt_sd < 2)) proposal_innovation <-   mvnfast::rmvn(
-      n = nIter-adapt_sd, mu = rep(0,4),sigma = 2.4/sqrt(4)*proposal_cov)+
-      rnorm(n = 4*(nIter-adapt_sd), mean = rep(0,4),sd = 0.001)
+      n = n_iter-adapt_sd, mu = rep(0,4),sigma = 2.4/sqrt(4)*proposal_cov)+
+      rnorm(n = 4*(n_iter-adapt_sd), mean = rep(0,4),sd = 0.001)
     
     # 4.1: create proposals
     if(i <= adapt_sd) proposal_coeff = MH_propose_multi(1,coefficients[i-1,],proposal_cov =  proposal_cov) # new proposed values
@@ -405,29 +266,14 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
       HR = 0
     } else {# B needs to be >0
       # Hastings ratio of the proposal
-      logpostold = 0
-      
-      if(n_p != 0) logpostold <- logpostold + logposterior_norm_sd(x = x[n_p_ind], yest = yestimate[i,n_p_ind], ymean = yobs_mean,
-                                                                sdyest = sdyest[i,], coeff = coefficients[i-1,],
-                                                                sdy = sdy[i],new_y =new_y)
-      if(n_norm != 0) logpostold <- logpostold + logposterior_norm(x = x[n_norm_ind], yest = yestimate[i,n_norm_ind], ymean = ynorm_mu,
-                                                                   sdyest = ynorm_sd, coeff = coefficients[i-1,],
-                                                                   sdy = sdy[i])
-      if(n_skew != 0) logpostold <- logpostold +  logposterior_skew(x = x[n_skew_ind], yest = yestimate[i,n_skew_ind], mu = yskew_mu, yskew_sigma, yskew_lambda,
-                                                                    coeff = coefficients[i-1,], sdy[i])
-      
+
+      logpostold <- loglik(x = x, y = yestimate[i,], 
+                           coeff = coefficients[i-1,],sdy = sdy[i])
       logpostold = logpostold + logprior(coefficients[i-1,])
       
-      logpostnew = 0
-      
-      if(n_p != 0) logpostnew <- logpostnew + logposterior_norm_sd(x = x[n_p_ind], yest = yestimate[i,n_p_ind], ymean = yobs_mean,
-                                                                sdyest = sdyest[i,], coeff = proposal_coeff,
-                                                                sdy = sdy[i],new_y =new_y)
-      if(n_norm != 0) logpostnew <- logpostnew + logposterior_norm(x = x[n_norm_ind], yest = yestimate[i,n_norm_ind], ymean = ynorm_mu,
-                                                                   sdyest = ynorm_sd, coeff = proposal_coeff,
-                                                                   sdy = sdy[i])
-      if(n_skew != 0) logpostnew <- logpostnew +  logposterior_skew(x = x[n_skew_ind], yest = yestimate[i,n_skew_ind], mu = yskew_mu, yskew_sigma, yskew_lambda,
-                                                                    coeff = proposal_coeff, sdy[i])
+
+      logpostnew <- loglik(x = x, y = yestimate[i,], 
+                          coeff = proposal_coeff,sdy = sdy[i])
       logpostnew = logpostnew + logprior(proposal_coeff)
       
       HR = exp(logpostnew -
