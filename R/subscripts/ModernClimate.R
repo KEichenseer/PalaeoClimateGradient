@@ -8,7 +8,7 @@ sst <- raster::raster("./data/raw/climate/BioOracle_20220711/Present.Surface.Tem
 source("R/subscripts/AuxiliaryFunctions.R")
 
 coords <- raster::sampleRandom(x = sst, 
-                                            size = 1000,
+                                            size = 10000,
                                             na.rm = TRUE,
                                             xy=T)
 # temperatures from the sampled points
@@ -21,8 +21,8 @@ plot(lat,ssts, pch = 21,col=NA, bg = rgb(0,0,0,0.1))
 ### Define the priors
 prior_fun <- list(  
   f1 = function(x,log) dsnorm(x,location = -2.93, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
-  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.3, sd = 10, log = log), # prior on upper asymptote
-  f3 = function(x,log) dnorm(x, mean = 42.1, sd = 12, log = log), # prior on M
+  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.2, sd = 10, log = log), # prior on upper asymptote
+  f3 = function(x,log) dnorm(x, mean = 42.0, sd = 12, log = log), # prior on M
   f4 = function(x,log) dgamma(x, shape = 3.2, rate = 20, log = log)# prior on Q
 )
 
@@ -36,7 +36,7 @@ doParallel::registerDoParallel(cl)
 # source script
 source("R/subscripts/models/modern_climate_model_wrapper.R")
 #run
-system.time({modm <- climate_simple_parallel(nChains = nClust, nIter = 20000, nThin = 10,
+system.time({modm <- climate_simple_parallel(nChains = nClust, nIter = 100000, nThin = 10,
                                 x = lat, y = ssts, 
                                 coeff_inits = NULL, sdy_init = NULL, 
                                 prior_fun = prior_fun,
@@ -55,11 +55,17 @@ points(lat,ssts, pch = 21, bg = rgb(0,0,0,0.2), col = NA)
 
 # discard 10k iterations as burnin each, and combine the results of the 4 chains
 mod_all <- combine_posterior(modm,burnin = 10000)
+mcmcse::multiESS(mod_all[,1:5])
+saveRDS(mod_all,"results/modern/modern_sample_gradient.RDS")
 
-saveRDS(mod_all,"results/modern/modern_gradient_with_10k_samples.RDS")
+lat <- seq(0,90,0.1)
+med_grad <- gradient(lat,apply(mod_all[,1:4],2,median),0)
+plot(lat,med_grad)
+
+plot_sample_gradient(modm[[1]])
 
 # mean coefficient values:
-apply(mod_all,2,mean)
+apply(mod_all,2,median)
 
 ### We will base the prior on these, but add very large uncertainties to not make the prior 
 #   dominate the analysis
@@ -74,17 +80,17 @@ x1[which.max(dens)]
 
 # parameter K - normal distribution
 x2 <- seq(-5,65,0.01)
-dens <- dnorm(x2,mean = 28.3, sd = 10)
+dens <- dnorm(x2,mean = 28.2, sd = 10)
 plot(x2,dens,type = "l",lwd = 2)
 x2[which.max(dens)]
-# we put the maximum density on the modern estimate for K+A (28.3)
+# we put the maximum density on the modern estimate for K+A (28.2)
 
 # parameter M - normal distribution
 x3 <- seq(0,90,0.1)
-dens <- dnorm(x3,mean = 42.1, sd = 12)
+dens <- dnorm(x3,mean = 42.0, sd = 12)
 plot(x3,dens,type = "l",lwd = 2)
 x3[which.max(dens)]
-# we put the maximum density on the modern estimate for M (42.1)
+# we put the maximum density on the modern estimate for M (42.0)
 
 # parameter B - gamma distribution
 x4 <- seq(0,0.62,0.001)
@@ -104,12 +110,12 @@ source("R/subscripts/AuxiliaryFunctions.R")
 ### Define the priors
 prior_fun <- list(  
   f1 = function(x,log) dsnorm(x,location = -2.93, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
-  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.3, sd = 10, log = log), # prior on upper asymptote
-  f3 = function(x,log) dnorm(x, mean = 42.1, sd = 12, log = log), # prior on M
+  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.2, sd = 10, log = log), # prior on upper asymptote
+  f3 = function(x,log) dnorm(x, mean = 42.0, sd = 12, log = log), # prior on M
   f4 = function(x,log) dgamma(x, shape = 3.2, rate = 20, log = log)# prior on Q
 )
 
-saveRDS(prior_fun,"results/modern/prior_from_modern_gradient.RDS")
+saveRDS(prior_fun,"results/modern/prior.RDS")
 
 # plot all priors
 xlist = list(seq(-6,36,0.01),
@@ -131,6 +137,8 @@ logprior <- write_logprior(prior_fun,log = TRUE)
 
 
 mods <- list(NULL)
+
+set.seed(1)
 
 system.time({
 for(s in 1:100) {

@@ -23,6 +23,9 @@
 # eval(parse(text = priortext),envir=.GlobalEnv)
 # }
 
+# load gradient function
+gradient <- source("R/functions/model_components/gradient.R")
+
 write_logprior <- function(prior_fun,log=TRUE) {
   out <- function(coeff) {
     coeff = unlist(coeff)
@@ -37,35 +40,6 @@ write_logprior <- function(prior_fun,log=TRUE) {
 }
 
 
-gradient <- function(x, coeff, sdy) { # parametrise with difference between cold and hot end instead
-  if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
-  if(is.data.frame(coeff) | is.matrix(coeff)) {
-    A = coeff[,1]
-    dKA = coeff[,2]
-    M = coeff[,3]
-    B = coeff[,4]
-    
-    lat = t(data.frame(lat=x))
-    lat = lat[rep(1, each=length(A)),]
-    
-    if(sdy == 0) {out = A + dKA/((1+(exp(B*(lat-M)))))
-    } else {
-      out = A + dKA/((1+(exp(B*(lat-M)))))+ rnorm(length(x),0,sdy)
-    }
-    
-  } else {
-    A = coeff[1]
-    dKA = coeff[2]
-    M = coeff[3]
-    B = coeff[4]
-    
-    if(sdy == 0) {return(A + dKA/((1+(exp(B*(x-M))))))
-    } else {
-      out = A + dKA/((1+(exp(B*(x-M)))))+ rnorm(length(x),0,sdy)
-    }
-  }
-  return(out)
-}
 
 loglik_s <- function(x, y,  coeff, sdy) {
   A = coeff[1]
