@@ -14,7 +14,7 @@ climate_simple_parallel <- function(nChains = 3, nIter = 1000, nThin = 1, x = NU
   
   foreach(pc = 1:nChains) %dopar% {
     # call model functions
-    source("R/subscripts/ClimateGradientModelSimple.R") 
+    source("R/subscripts/models/modern_climate_model.R")
     #make_prior(priorvec)
     
     # set random seed

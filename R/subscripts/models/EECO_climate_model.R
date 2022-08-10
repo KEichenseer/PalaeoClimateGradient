@@ -207,11 +207,11 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
   accept = rep(NA,nIter)
   x = NULL
   if(!is.null(obsmat)) {
-    if(is.list(sapply(unique(obsmat$sample), function(x) unique(obsmat$latitude[which(obsmat$sample == x)])))) warning(
-      "something is wrong with the observation matrix. Do all obs from one sample have the same latitude?")
+    if(is.list(sapply(unique(obsmat$sample), function(x) unique(obsmat$p_lat[which(obsmat$sample == x)])))) warning(
+      "something is wrong with the observation matrix. Do all obs from one sample have the same p_lat?")
     
     ylist <- lapply(unique(obsmat$sample), function(x) obsmat$temperature[which(obsmat$sample == x)])
-    x <- as.numeric(sapply(unique(obsmat$sample), function(x) unique(obsmat$latitude[which(obsmat$sample == x)])))
+    x <- as.numeric(sapply(unique(obsmat$sample), function(x) unique(obsmat$p_lat[which(obsmat$sample == x)])))
     n_p <- length(ylist)
     n_p_ind <- 1:n_p
     
@@ -239,12 +239,12 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
   
   if(!is.null(distrmat)) {
     
-    x <- c(x,as.numeric(distrmat$latitude))
+    x <- c(x,as.numeric(distrmat$p_lat))
     
-    ynorm_mu <- as.numeric(distrmat$location[which(distrmat$distribution == "normal")])
+    ynorm_mu <- as.numeric(distrmat$mu[which(distrmat$distribution == "normal")])
     ynorm_sd <- as.numeric(distrmat$scale[which(distrmat$distribution == "normal")])
     
-    yskew_mu <- as.numeric(distrmat$location[which(distrmat$distribution == "skew-normal")])
+    yskew_mu <- as.numeric(distrmat$mu[which(distrmat$distribution == "skew-normal")])
     yskew_sigma <- as.numeric(distrmat$scale[which(distrmat$distribution == "skew-normal")])
     yskew_lambda <- as.numeric(distrmat$shape[which(distrmat$distribution == "skew-normal")])
     
@@ -266,7 +266,7 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
   yestimate = array(dim = c(nIter,nbin)) # set up array to store coefficients
   yestimate[1,] = yest_inits # initialise coefficients
   
-  A_sdy = 1 # parameter for the prior on the inverse gamma distribution of sdy
+  A_sdy = 10 # parameter for the prior on the inverse gamma distribution of sdy
   B_sdy = 1 # parameter for the prior on the inverse gamma distribution of sdy
   shape_sdy <- A_sdy+nbin/2 # shape parameter for the inverse gamma
   

@@ -34,9 +34,9 @@ doParallel::registerDoParallel(cl)
 
 ### Run model
 # source script
-source("R/subscripts/ClimateParallelSimple.R")
+source("R/subscripts/models/modern_climate_model_wrapper.R")
 #run
-system.time({modm <- climate_simple_parallel(nChains = nClust, nIter = 100000, nThin = 10,
+system.time({modm <- climate_simple_parallel(nChains = nClust, nIter = 20000, nThin = 10,
                                 x = lat, y = ssts, 
                                 coeff_inits = NULL, sdy_init = NULL, 
                                 prior_fun = prior_fun,
@@ -125,7 +125,7 @@ modt_samples <- readRDS("results/modern/modern_sample.RDS")
 
 ### Run model
 # source script
-source("R/subscripts/ClimateGradientModelSimple.R")
+source("R/subscripts/models/modern_climate_model.R")
 
 logprior <- write_logprior(prior_fun,log = TRUE)
 

@@ -3,13 +3,13 @@
 
 dat <- readRDS("data/processed/Hollis_processed_EECO_2022_07_19.rds")
 
-
-
 # prepare for use in the model
-obsmat <- data.frame(sample = (paste(abs(data_sub$p_lat),data_sub$longitude, data_sub$proxy)),
-                     latitude = abs(data_sub$p_lat), temperature = data_sub$temperature,
-                     sd = data_sub$temperature_sd,
-                     proxy = data_sub$proxy)
+obsmat <- data.frame(sample = (paste(abs(dat$p_lat),dat$longitude, dat$proxy)),
+                     p_lat = abs(dat$p_lat), temperature = dat$temperature,
+                     sd = dat$temperature_sd,
+                     proxy = dat$proxy)
+
+plot(obsmat$p_lat,obsmat$temperature,xlim = c(-90,90), col = rgb(0,0,0,0.33))
 
 ### Mangrove and Coral data
 # read and assign proxy type
@@ -28,12 +28,13 @@ proxy_distributions <- data.frame(name = c("Avicennia", "Avicennia-Rhizophoracea
 # create distribution matrix for use with model
 proxy_index <- sapply(bioprox$proxy, function(f) which(proxy_distributions$name==f))
 
-distrmat = data.frame(latitude = abs(bioprox$p_lat), 
-                      location = proxy_distributions$mean[proxy_index],
+distrmat = data.frame(p_lat = abs(bioprox$p_lat), 
+                      mu = proxy_distributions$mean[proxy_index],
                       scale = proxy_distributions$sd[proxy_index],
                       shape = proxy_distributions$shape[proxy_index],
                       distribution = proxy_distributions$distribution[proxy_index])
 
+points(distrmat$p_lat,distrmat$mu,pch = 19, col = rgb(0,0.8,0.2,0.75))
 ### Define the priors
 prior_fun <- readRDS("results/modern/prior_from_modern_gradient.RDS")
 
@@ -45,7 +46,7 @@ source("R/subscripts/AuxiliaryFunctions.R")
 plot_prior(prior_fun,xval)
 ### Prepare for model run
 # Source model script
-source("R/subscripts/ClimateParallelSD.R")
+source("R/subscripts/models/EECO_climate_model_wrapper.R")
 
 # set up clusters for parallel computing
 library(doParallel)
@@ -54,7 +55,7 @@ cl <- parallel::makeCluster(nClust)
 doParallel::registerDoParallel(cl)
 
 ### Run model
-mode <- climate_parallel_sd(nChains = nClust, nIter = 25000, nThin = 5, obsmat = obsmat, distrmat = distrmat, 
+mode_s10 <- climate_parallel_sd(nChains = nClust, nIter = 25000, nThin = 5, obsmat = obsmat, distrmat = distrmat, 
                             coeff_inits = NULL, sdy_init = NULL, 
                             yest_inits = NULL, sdyest_inits = NULL, prior_fun = prior_fun,
                             proposal_var_inits = c(3,3,3,0.2), adapt_sd = 2500,
@@ -82,17 +83,22 @@ parallel::stopCluster(cl)
 #
 # Assess output
 
-plot_chains(mode_nosd)
+plot_chains(mode_s10)
 
 mode_all <- combine_posterior(mode,4000)
+mode_all_s3 <- combine_posterior(mode_s3,4000)
+mode_all_s10 <- combine_posterior(mode_s10,4000)
+
 mode_all_nobio <- combine_posterior(mode_nobio,4000)
 mode_all_nosd <- combine_posterior(mode_nosd,4000)
 
 
-mcmcse::multiESS(mode_all[,1:4])
-plot_gradient(mode_all,ylim = c(10,37))
-plot_gradient(mode_all_nobio,ylim = c(10,37), confint_col = rgb(0,.7,0.5,0.2),line_col = rgb(0,.7,0.5,1), add = T)
-plot_gradient(mode_all_nosd,ylim = c(10,37), confint_col = rgb(0.7,0,0.5,0.2),line_col = rgb(0.7,0,0.5,1), add = T)
+mcmcse::multiESS(mode_all_s10[,1:4])
+plot_gradient(mode_all,ylim = c(13,39))
+plot_gradient(mode_all_s3,ylim = c(10,37), confint_col = rgb(0,.7,0.5,0.2),line_col = rgb(0,.7,0.5,1), add = T)
+plot_gradient(mode_all_s10,ylim = c(10,37), confint_col = rgb(0.7,0,0.5,0.2),line_col = rgb(0.7,0,0.5,1), add = T)
 
 plot_posterior(mode[[3]])
+plot_posterior(mode_s10[[3]], col_obs = rgb(.5,1,0,0.75), col_dist = rgb(0,0,1,0.75))
 
+points(distrmat$p_lat, distrmat$mu, col = rgb(.5,0,.5,.75))
