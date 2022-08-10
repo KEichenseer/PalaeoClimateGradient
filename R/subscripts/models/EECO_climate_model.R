@@ -85,57 +85,8 @@ loglik_skew <- function(x, yest, mu, sigma, lambda, coeff, sdy) {
   return(c(ll2+ll1))
 }
 
-# logprior <- function(coeff) {
-#   coeff = unlist(coeff)
-#   return(sum(c(
-#     dsnorm(coeff[1],location = -2.7, scale = 16, alpha = 16, log = TRUE), # prior on A
-#     #dtnorm(coeff[2], 0, Inf,25,12, log = TRUE), # prior on dKA
-#     dtnorm(coeff[1]+coeff[2], coeff[1], Inf,30,7, log = TRUE), # prior on A+dKA
-#     dnorm(coeff[3], 45, 12, log = TRUE), # prior on M
-#     dlnorm(coeff[4], -2.4, 0.6, log = TRUE)))) # prior on B     dlnorm(coeff[4], -2.2, 0.8, log = TRUE)))) # prior on B
-# 
-# }
 
 
-write_logprior <- function(prior_fun,log=TRUE) {
-  out <- function(coeff) {
-    coeff = unlist(coeff)
-    
-    return(sum(c(
-      prior_fun$f1(x=coeff[1],log=log),
-      prior_fun$f2(x=coeff[1]+coeff[2],lower=coeff[1],log=log),
-      prior_fun$f3(x=coeff[3],log=log),
-      prior_fun$f4(x=coeff[4],log=log))))
-  }
-  return(out)
-}
-
-
-# function to generate truncated normal
-dtnorm <- function(x,lower,upper,mean,sd, log = FALSE) {
-  ret <- numeric(length(x))
-  ret[x < lower | x > upper] <- if (log)
-    -Inf
-  else 0
-  ret[upper < lower] <- NaN
-  ind <- x >= lower & x <= upper
-  if (any(ind)) {
-    denom <- pnorm(upper, mean, sd) - pnorm(lower, mean,
-                                            sd)
-    xtmp <- dnorm(x, mean, sd, log)
-    if (log)
-      xtmp <- xtmp - log(denom)
-    else xtmp <- xtmp/denom
-    ret[x >= lower & x <= upper] <- xtmp[ind]
-  }
-  ret
-} # from msm
-
-dsnorm <- function(x,location,scale,alpha, log = TRUE) {
-  if(log == TRUE) out = log(2/scale)+dnorm((x - location)/scale,log=T)+pnorm(alpha*(x - location)/scale,log=T)
-  if(log == FALSE) out = (2/scale)*dnorm((x - location)/scale,log=F)*pnorm(alpha*(x - location)/scale,log=F)
-  return(out)
-}
 
 
 logposterior_norm_sd <- function(x, yest, ymean, sdyest, coeff, sdy,new_y){
@@ -172,22 +123,7 @@ skew_mu <- function(x, y, sigma, rho, mu_prior, sigma_prior) {
 
 }
 
-### generate weighted covariance
-weighted_cov <- function(x, weights) { # takes 2.5 times as long as cov()
-  dims = ncol(x)
-  out = matrix(NA_real_,nrow = dims, ncol = dims)
-  
-  for(d in 1:dims) {
-    out[d,d] <- sum(weights*((x[,d]-sum(weights*x[,d])/sum(weights))^2))/(sum(weights))
-    if(d < dims) for(d2 in (d+1):dims) {
-      out[d,d2] <- sum(weights*((x[,d]-sum(weights*x[,d])/sum(weights))*(x[,d2]-sum(weights*x[,d2])/sum(weights))))/(sum(weights))
-      out[d2,d] <- out[d,d2]
-    }
-  }
-  diag(out) <- diag(out) + 0.000001*diag(out) # add small increment to the two variances (but not to covariance) to ensure chol decomposition does not fail
-  
-  return(out)
-}
+
 
 #
 # Main MCMCM function
@@ -195,6 +131,17 @@ run_MCMC_sd_obs <- function(nIter = 1000, nThin = 1, obsmat = NULL, distrmat = N
                             logprior = logprior,
                      proposal_var_inits = c(2,2,2,0.2), adapt_sd = floor(0.1 * nIter),
                      adapt_sd_decay = max(floor(0.01*nIter),1),  start_adapt = 101, quiet = FALSE){
+  
+  ### Load functions
+  source("R/functions/model_components/dsnorm.R")  
+  source("R/functions/model_components/dtnorm.R")  
+  source("R/functions/model_components/gradient.R")  
+  source("R/functions/model_components/write_logprior.R")  
+  source("R/functions/model_components/loglik.R")  
+  source("R/functions/model_components/logposterior.R")  
+  source("R/functions/model_components/MH_propose_multi.R")  
+  source("R/functions/model_components/weighted_cov.R")  
+  
   ### Initialisation
   save_it <- seq(1,nIter,nThin)
   
