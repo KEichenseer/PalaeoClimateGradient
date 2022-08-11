@@ -115,7 +115,7 @@ abline(h=0)
 prior_fun <- list(  
   f1 = function(x,log) dsnorm(x,location = -3.03, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
   f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.3, sd = 10, log = log), # prior on upper asymptote
-  f3 = function(x,log) dnorm(x, mean = 42.1, sd = 12, log = log), # prior on M
+  f3 = function(x,log) dnorm(x, mean = 42.1, sd = 10, log = log), # prior on M
   f4 = function(x,log) dgamma(x, shape = 3.2, rate = 20, log = log)# prior on Q
 )
 

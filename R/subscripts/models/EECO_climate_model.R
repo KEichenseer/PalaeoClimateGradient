@@ -17,7 +17,7 @@ hierarchical_model <- function(n_iter = 1000, n_thin = 1, obsmat = NULL,
                                yest_inits = NULL, sdyest_inits = NULL,
                      proposal_var_inits = NULL, adapt_sd = NULL,
                      adapt_sd_decay = NULL,  start_adapt = NULL, 
-                     A_sdy = 1, B_sdy = 1,
+                     A_sdy = 1, B_sdy = 1, sdy_fixed = FALSE,
                      quiet = FALSE){
   
   ### Load functions
@@ -39,8 +39,8 @@ hierarchical_model <- function(n_iter = 1000, n_thin = 1, obsmat = NULL,
   coeff_inits[3] = rnorm(1,45,7.5)
   coeff_inits[4] = exp(rnorm(1,-2.3,0.25))
   }
-  if(is.null(sdy_init)) sdy_init = exp(rnorm(1,0.7,0.25))
-  
+  if(is.null(sdy_init) & sdy_fixed == FALSE ) sdy_init = exp(rnorm(1,0.7,0.25))
+  if(is.numeric(sdy_fixed)) sdy_init = sdy_fixed
   # deterministic setting of initial values for the temperature and temperature sd estimates
   if((!(is.null(distrmat)) | !(is.null(obsmat))) & is.null(yest_inits)) {
     yest_inits <- c(unlist(sapply(unique(obsmat$sample), function(x) mean(obsmat$temperature[which(obsmat$sample == x)]))),
@@ -249,9 +249,10 @@ hierarchical_model <- function(n_iter = 1000, n_thin = 1, obsmat = NULL,
     }
     
     ### 3. Gibbs step to estimate sdy
-    sdy[i] = sqrt(1/rgamma(1,
+    if(sdy_fixed == FALSE) {sdy[i] = sqrt(1/rgamma(1,
                            shape_sdy,
                            (B_sdy+0.5*sum((yestimate[i,]-pred)^2))))
+    } else sdy[i] = sdy[i-1]
     
     ## 4. Metropolis-Hastings step to estimate the regression coefficients
     # 4.0: create proposal innovations

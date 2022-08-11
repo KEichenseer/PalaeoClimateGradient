@@ -1,7 +1,7 @@
 
 ### Hollis data
 # 
-# dat <- readRDS("data/processed/Hollis_processed_2022_07_19.rds")
+ dat <- readRDS("data/processed/Hollis_processed_EECO_2022_07_19.rds")
 # # select data from one stage to test, exclude NA data
 # data_sub <- subset(dat,EECO == 1 & !(is.na(temperature)) & !(is.na(paleolat_Meredith)) &
 #                      (is.na(depth_habitat) | depth_habitat %in% c("Mixed-layer",     "Mixed layer")))
@@ -71,7 +71,7 @@ modeold <- foreach(pc = 1:nChains) %dopar% {
   hierarchical_model(n_iter = 30000, n_thin = 5,
                   obsmat = obsmat, distrmat = distrmat, 
                   logprior_input = prior_fun,adapt_sd = 3000,
-                  adapt_sd_decay = 100, A_sdy = 1, B_sdy = 1)
+                  adapt_sd_decay = 100, A_sdy = 1, B_sdy = 1, sdy_fixed = 2.2)
 }
 
 ### stop cluster
@@ -82,7 +82,7 @@ parallel::stopCluster(cl)
 #
 # Assess output
 
-plot_chains(mode1)
+plot_chains(modeold)
 plot(test$params$sdy)
 
 mode_allold <- combine_posterior(modeold,4000)
@@ -94,7 +94,7 @@ mode_all_nosd <- combine_posterior(mode_nosd,4000)
 
 
 mcmcse::multiESS(mode_all31[,1:4])
-plot_gradient(mode_all11,ylim = c(13,39))
+plot_gradient(mode_allold,ylim = c(13,39))
 plot_gradient(mode_allold,ylim = c(10,37), confint_col = rgb(0,.7,0.5,0.2),line_col = rgb(0,.7,0.5,1), add = T)
 plot_gradient(mode_all1,ylim = c(10,37), confint_col = rgb(0.7,0,0.5,0.2),line_col = rgb(0.7,0,0.5,1), add = T)
 
