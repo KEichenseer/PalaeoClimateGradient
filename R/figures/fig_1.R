@@ -1,7 +1,6 @@
 # Load libraries --------------------------------------------------------------
 library(raster)
-library(tmap)
-library(sf)
+library(rgdal)
 library(broom)
 # Read data -------------------------------------------------------------------
 chem <- readRDS("./data/processed/Hollis_processed_EECO_2022_07_19.rds")
@@ -9,12 +8,8 @@ bio <- readRDS("./data/processed/bio_proxies_2022_08_08.RDS")
 # Merdith2021 shapefiles
 coastline <-
   "http://gws.gplates.org/reconstruct/coastlines/?time=51&model=MERDITH2021"
-polygon <-
-  "http://gws.gplates.org/reconstruct/static_polygons/?time=51&model=MERDITH2021"
 coastline <- rgdal::readOGR(coastline)
 coast_poly <- broom::tidy(coastline)
-polygon <- rgdal::readOGR(polygon)
-plate_poly <- broom::tidy(polygon)
 #Data prep -------------------------------------------------------------------
 # Filter data
 chem <- chem[, c("p_lng", "p_lat", "proxy")]
@@ -25,25 +20,30 @@ bio$shape <- 2
 bio[which(bio$type == "reef"), c("type")] <- "Coral reef"
 bio[which(bio$type == "mangrove"), c("type")] <- "Mangrove"
 # Rename cols 
-names(chem) <- c("p_lng", "p_lat", "Proxy type", "shape")
-names(bio) <- c("p_lng", "p_lat", "Proxy type", "shape")
+names(chem) <- c("p_lng", "p_lat", "proxy", "shape")
+names(bio) <- c("p_lng", "p_lat", "proxy", "shape")
 # Bind data
 locs <- rbind.data.frame(chem, bio)
 locs <- unique(locs)
 locs$unique <- paste(locs$p_lng, locs$p_lat)
 filt <- names(which(table(locs$uni) > 1))
-locs[which(locs$uni %in% filt), c("Proxy type")] <- c("Various")
+locs[which(locs$uni %in% filt), c("proxy")] <- c("Various")
 locs[which(locs$uni %in% filt), c("shape")] <- 3
 
 # Set factors
-locs[, c("Proxy type")] <- factor(locs[, c("Proxy type")],
+locs[, c("proxy")] <- factor(locs[, c("proxy")],
                                   levels = c("Coral reef", "Mangrove", "d18O",
                                              "d47", "TEX86","MgCa", "Various"))
 # Shift point for visualisation
 locs[which.max(locs$p_lat), c("p_lat")] <- 86
 
-# Reformat data for plotting
-#locs <- sf::st_as_sf(x = locs, coords = c("p_lng", "p_lat"), crs = 4326)
+# Reduce points
+bio <- unique(bio)
+chem <- unique(chem)
+
+# Add expressions
+chem$proxy[which(chem$proxy =="d18O")] <- expression(delta^2)
+
 # Plot ------------------------------------------------------------------------
 eocene_map <-
   ggplot() +
@@ -58,61 +58,47 @@ eocene_map <-
     color = 1, fill = NA, size = 0.3
   ) +
   coord_map("mollweide") +
-  ggthemes::theme_map()
-eocene_map +
-  geom_point(
-    data = locs,
-    aes(x = p_lng,
-        y = p_lat,
-        shape = `Proxy type`,
-        colour = `Proxy type`,
-        fill = `Proxy type`)) + 
-  scale_shape_manual(values = c(21, 22, 23, 24, 25, 19, 20)) +
+  ggthemes::theme_map() +
+  theme(legend.title = element_blank(),
+        legend.background = element_blank(),
+        legend.position = c(0, 0.8),
+        legend.key.size = unit(x = 5, units = "mm"),
+        legend.text.align = 0)
+
+eocene_map <- eocene_map +
+  geom_point(data = locs,
+             aes(x = p_lng,
+                 y = p_lat,
+                 shape = proxy,
+                 colour = proxy,
+                 fill = proxy)) + 
+  scale_shape_manual(values = c(21, 22, 23, 24, 25, 19, 20),
+                     labels = c("Coral reef", "Mangrove", expression(delta^18~O),
+                                expression(Delta[47]), expression(TEX[86]), "Mg/Ca",
+                                "Various")) +
   scale_fill_manual(values = c("#33a02c",
                                  "#1f78b4",
                                  "#e31a1c",
                                  "#6a3d9a",
                                  "#b15928",
                                  "#ff7f00",
-                                 "#fb9a99")) +
-  scale_colour_manual(values = c("#33a02c",
-                               "#1f78b4",
-                               "#e31a1c",
-                               "#6a3d9a",
-                               "#b15928",
+                                 "#fb9a99"),
+                    labels = c("Coral reef", "Mangrove", expression(delta^18~O),
+                               expression(Delta[47]), expression(TEX[86]), "Mg/Ca",
+                               "Various")) +
+  scale_colour_manual(values = c("black",
+                               "black",
+                               "black",
+                               "black",
+                               "black",
                                "#ff7f00",
-                               "#fb9a99"))
+                               "black"),
+                      labels = c("Coral reef", "Mangrove", expression(delta^18~O),
+                                 expression(Delta[47]), expression(TEX[86]), "Mg/Ca",
+                                 "Various")) +
+  guides(shape=guide_legend(ncol=2))
 
+eocene_map
 
-
-
-my_colours = rev(c(rgb(0.825,0.725,0.625), 
-              rgb(0.9,0.8,0.7), 
-              rgb(0.85,0.99,0.99), 
-              rgb(0.6,0.85,0.2)))
-# Create base map
-m <- tm_shape(coast_poly) +
-  tm_polygons(col = my_colours[4], alpha = 0.5)
-
-m
-m <- m + tm_shape(locs) +
-  tm_dots(col = "Proxy type", palette = "-Dark2",
-          shape = "Proxy type", shapes = c(21, 22, 23, 24, 25, 10, 8), 
-          legend.shape.show = FALSE,
-          legend.col.reverse = FALSE,
-          border.col = "black", size = 0.15, alpha = 0.8,
-          shapes.legend = c(21, 22, 23, 24, 25, 10, 8),
-          legend.is.portrait = TRUE,
-          title = "") +
-  tm_legend(legend.position = c(0.9, 0.4),
-            legend.frame = TRUE,
-            legend.bg.color = "transparent") +
-  tm_layout(frame = TRUE)
-
-tmap_save(m, "./figures/fig_1.jpg",
-          units = "mm",
-          height = 110,
-          width = 200,
-          dpi = 600)
-
-
+ggsave("./figures/fig_1.jpg", plot = eocene_map, units = "mm",
+       width = 200, height = 100, dpi = 600)
