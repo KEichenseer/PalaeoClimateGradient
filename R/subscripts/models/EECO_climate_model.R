@@ -18,7 +18,7 @@ hierarchical_model <- function(n_iter = 1000, n_thin = 1, obsmat = NULL,
                      proposal_var_inits = NULL, adapt_sd = NULL,
                      adapt_sd_decay = NULL,  start_adapt = NULL, 
                      A_sdy = 1, B_sdy = 1, sdy_fixed = FALSE,
-                     quiet = FALSE){
+                     use_sd = FALSE, quiet = FALSE){
   
   ### Load functions
   source("R/functions/model_components/dsnorm.R")  
@@ -31,6 +31,12 @@ hierarchical_model <- function(n_iter = 1000, n_thin = 1, obsmat = NULL,
   source("R/functions/model_components/skew_mu.R")  
   
   ### Initialisation
+  
+  # order observation matrix
+  if(!is.null(obsmat)) obsmat <- obsmat[with(obsmat, order(p_lat, sample)),]
+  
+  # set sd on observations to NA if use_sd = FALSE
+  if(use_sd == FALSE) obsmat$sd <- NA
   
   # random setting of initial values for the regression parameters
   if(is.null(coeff_inits)) {coeff_inits = rep(NA,4)
@@ -66,9 +72,6 @@ hierarchical_model <- function(n_iter = 1000, n_thin = 1, obsmat = NULL,
   
   logpostold = NA
   accept = rep(NA,n_iter)
-  
-  # order observation matrix
-  if(!is.null(obsmat)) obsmat <- obsmat[with(obsmat, order(p_lat, sample)),]
   
   x = NULL
   if(!is.null(obsmat)) {

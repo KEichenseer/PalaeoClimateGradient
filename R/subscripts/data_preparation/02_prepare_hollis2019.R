@@ -102,6 +102,8 @@ dat$preservation[which(dat$preservation=="Recrystallization")] <- "recrystallise
 # select data from one stage to test, exclude NA data
 data_sub <- subset(dat,EECO == 1 & !(is.na(temperature))  &
                      (is.na(depth_habitat) | depth_habitat %in% c("Mixed-layer",     "Mixed layer")))
+# exclude recrystallised data
+data_sub <- subset(data_sub,preservation != "recrystallised" | proxy !="d18O")
 
 saveRDS(data_sub,"data/processed/Hollis_processed_EECO_2022_07_19.rds")
 

@@ -42,7 +42,6 @@ distrmat = data.frame(p_lat = abs(bioprox$p_lat),
 
 points(distrmat$p_lat,distrmat$mu,pch = 19, col = rgb(0,0.8,0.2,0.75))
 ### Define the priors
-prior_fun <- readRDS("results/modern/prior_from_modern_gradient.RDS")
 
 xval <- list(seq(-5,35,0.1),
              seq(-5,60,0.1),
@@ -63,15 +62,15 @@ doParallel::registerDoParallel(cl)
 nChains = nClust
 ### Run model
 # source script
-modeold <- foreach(pc = 1:nChains) %dopar% {
+mode <- foreach(pc = 1:nChains) %dopar% {
   # call model functions
   source("R/subscripts/models/EECO_climate_model.R")
   # set random seed
   set.seed(pc)
-  hierarchical_model(n_iter = 30000, n_thin = 5,
+  hierarchical_model(n_iter = 25000, n_thin = 5,
                   obsmat = obsmat, distrmat = distrmat, 
                   logprior_input = prior_fun,adapt_sd = 3000,
-                  adapt_sd_decay = 100, A_sdy = 1, B_sdy = 1, sdy_fixed = 2.2)
+                  adapt_sd_decay = 100)
 }
 
 ### stop cluster
@@ -82,10 +81,10 @@ parallel::stopCluster(cl)
 #
 # Assess output
 
-plot_chains(modeold)
+plot_chains(mode)
 plot(test$params$sdy)
 
-mode_allold <- combine_posterior(modeold,4000)
+mode_all <- combine_posterior(mode,5000)
 mode_all_s20 <- combine_posterior(mode20,4000)
 mode_all_s10 <- combine_posterior(mode_s10,4000)
 
@@ -94,13 +93,17 @@ mode_all_nosd <- combine_posterior(mode_nosd,4000)
 
 
 mcmcse::multiESS(mode_all31[,1:4])
-plot_gradient(mode_allold,ylim = c(13,39))
+plot_gradient(mode_all,ylim = c(13,39))
 plot_gradient(mode_allold,ylim = c(10,37), confint_col = rgb(0,.7,0.5,0.2),line_col = rgb(0,.7,0.5,1), add = T)
 plot_gradient(mode_all1,ylim = c(10,37), confint_col = rgb(0.7,0,0.5,0.2),line_col = rgb(0.7,0,0.5,1), add = T)
 
-plot_posterior(mode5[[1]])
+plot_posterior(mode[[1]])
 plot_posterior(mode_s10[[3]], col_obs = rgb(.5,1,0,0.75), col_dist = rgb(0,0,1,0.75))
 
+mean_obs_t <-sapply(unique(obsmat$sample), function(x) mean(obsmat$temperature[which(obsmat$sample==x)]))
+obs_lat <-sapply(unique(obsmat$sample), function(x) mean(obsmat$p_lat[which(obsmat$sample==x)]))
+
 points(distrmat$p_lat, distrmat$mu, col = rgb(.5,0,.5,.75))
+points(obs_lat, mean_obs_t, col = rgb(.75,0.75,0,.75), pch = 10)
 
 legend("topright",c("wide prior on sdy", "narrow prior on sdy"))

@@ -10,10 +10,11 @@ sst <- raster::as.data.frame(x = sst, xy = TRUE, centroids = TRUE)
 sst <- na.omit(sst)
 
 # sample points randomly from the raster (within specified latitudinal limits) 
-source("R/subscripts/AuxiliaryFunctions.R")
+source("R/options.R")
 
 temp <- sst$Present.Surface.Temperature.Mean
 
+# use absolute latitudes
 lat <- abs(sst$y)
 
 plot(lat,temp, pch = 21,col=NA, bg = rgb(0,0,0,0.1))
@@ -40,10 +41,10 @@ modm <- foreach(pc = 1:nChains) %dopar% {
   source("R/subscripts/models/modern_climate_model.R")
   # set random seed
   set.seed(pc)
-  run_MCMC_simple(n_iter = 100000, n_thin = 10,
+  run_MCMC_simple(n_iter = 5000, n_thin = 10,
                                x = lat, y = temp, 
                                coeff_inits = NULL, sdy_init = NULL, 
-                               logprior_input = prior_fun,
+                               logprior_input = prior,
                                proposal_var_inits = c(2,2,2,0.2), adapt_sd = 2500,
                                adapt_sd_decay = 100, start_adapt = 101, quiet = FALSE)
 }
@@ -52,6 +53,7 @@ modm <- foreach(pc = 1:nChains) %dopar% {
 parallel::stopCluster(cl)
 
 ### assess posterior
+source("R/subscripts/AuxiliaryFunctions.R")
 
 plot_chains(modm)
 plot_gradient(modm[[1]],burnin = 1000, ylim = c(-2,30))
