@@ -94,10 +94,10 @@ plot_distr <- function(distrmat, lat = seq(0,90,0.2), trange = c(-10,100), distr
   
   for(i in 1:nrow(distrmat)) {
     if(distrmat$distribution[i] == "normal") {
-      tdens <- dnorm(tseq,distrmat$location[i],distrmat$scale[i])
+      tdens <- dnorm(tseq,distrmat$mu[i],distrmat$scale[i])
     }
     if(distrmat$distribution[i] == "skew-normal") {
-      tdens <- dsnorm(tseq,distrmat$location[i],distrmat$scale[i],distrmat$shape[i], log = FALSE)
+      tdens <- dsnorm(tseq,distrmat$mu[i],distrmat$scale[i],distrmat$shape[i], log = FALSE)
     }
     effrange <- which(tdens > 0.01*max(tdens))
   twidth <- distrwidth*(max(lat)-min(lat))
@@ -241,16 +241,16 @@ dtnorm <- function(x,lower,upper,mean,sd, log = FALSE) {
 
 plot_prior <- function(prior,xval,log=FALSE) {
   par(mfrow=c(2,2), mar = c(4.1,4.1,1,1), mgp = c(2.5,0.75,0))
-  dens <- prior_fun$f1(xval[[1]],log=log)
+  dens <- prior$f1(xval[[1]],log=log)
   plot_dens(xval[[1]],dens,xlab = "A")
   
-  dens <- prior_fun$f2(xval[[2]],xval[[1]][which.max(dens)],log=log)
+  dens <- prior$f2(xval[[2]],xval[[1]][which.max(dens)],log=log)
   plot_dens(xval[[2]],dens,xlab = "K")
   
-  dens <- prior_fun$f3(xval[[3]],log=log)
+  dens <- prior$f3(xval[[3]],log=log)
   plot_dens(xval[[3]],dens,xlab = "M")
   
-  dens <- prior_fun$f4(xval[[4]],log=log)
+  dens <- prior$f4(xval[[4]],log=log)
   plot_dens(xval[[4]],dens,xlab = "Q")
   
   par(mfrow=c(1,1))

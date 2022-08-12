@@ -1,13 +1,6 @@
 ############## Climate gradient model
 ############## 26/06/2022 # updated July 2022 to add SD on observations
-
-### !! Careful still need to make the obsmat sd checks conditional on obsmat not being NULL !!
-
-
-
-
-
-
+############## updated early August 2022 to improve structure
 
 #
 # Main MCMCM function
