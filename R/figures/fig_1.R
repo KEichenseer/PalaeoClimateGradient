@@ -22,9 +22,11 @@ bio[which(bio$type == "mangrove"), c("type")] <- "Mangrove"
 # Rename cols 
 names(chem) <- c("p_lng", "p_lat", "proxy", "shape")
 names(bio) <- c("p_lng", "p_lat", "proxy", "shape")
+# Unique data
+bio <- unique(bio)
+chem <- unique(chem)
 # Bind data
 locs <- rbind.data.frame(chem, bio)
-locs <- unique(locs)
 locs$unique <- paste(locs$p_lng, locs$p_lat)
 filt <- names(which(table(locs$uni) > 1))
 locs[which(locs$uni %in% filt), c("proxy")] <- c("Various")
@@ -36,13 +38,6 @@ locs[, c("proxy")] <- factor(locs[, c("proxy")],
                                              "d47", "TEX86","MgCa", "Various"))
 # Shift point for visualisation
 locs[which.max(locs$p_lat), c("p_lat")] <- 86
-
-# Reduce points
-bio <- unique(bio)
-chem <- unique(chem)
-
-# Add expressions
-chem$proxy[which(chem$proxy =="d18O")] <- expression(delta^2)
 
 # Plot ------------------------------------------------------------------------
 eocene_map <-
@@ -73,7 +68,7 @@ eocene_map <- eocene_map +
                  colour = proxy,
                  fill = proxy)) + 
   scale_shape_manual(values = c(21, 22, 23, 24, 25, 19, 20),
-                     labels = c("Coral reef", "Mangrove", expression(delta^18~O),
+                     labels = c("Coral reef", "Mangrove", expression(delta^18*"O"),
                                 expression(Delta[47]), expression(TEX[86]), "Mg/Ca",
                                 "Various")) +
   scale_fill_manual(values = c("#33a02c",
@@ -83,7 +78,7 @@ eocene_map <- eocene_map +
                                  "#b15928",
                                  "#ff7f00",
                                  "#fb9a99"),
-                    labels = c("Coral reef", "Mangrove", expression(delta^18~O),
+                    labels = c("Coral reef", "Mangrove", expression(delta^18*"O"),
                                expression(Delta[47]), expression(TEX[86]), "Mg/Ca",
                                "Various")) +
   scale_colour_manual(values = c("black",
@@ -93,7 +88,7 @@ eocene_map <- eocene_map +
                                "black",
                                "#ff7f00",
                                "black"),
-                      labels = c("Coral reef", "Mangrove", expression(delta^18~O),
+                      labels = c("Coral reef", "Mangrove", expression(delta^18*"O"),
                                  expression(Delta[47]), expression(TEX[86]), "Mg/Ca",
                                  "Various")) +
   guides(shape=guide_legend(ncol=2))

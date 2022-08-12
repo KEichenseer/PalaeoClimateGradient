@@ -1,6 +1,12 @@
-#run-analyses
+# Title: XXX
+# Authors: Kilian Eichenseer & Lewis A. Jones
+# Updated: 2022-08-11
+#============================= RUN ANALYSES ==================================#
 
-data <- read.csv("./data/raw/Eocene/bio_proxies.csv")
-data
-
-saveRDS("./data/processed/bio_proxies_2022_08_08.RDS")
+# Data preparation -------------------------------------------------------------
+source("./R/subscripts/data_preparation/01_data_wrangle_hollis2019.R")
+rm(list = ls())
+source("./R/subscripts/data_preparation/02_prepare_hollis2019.R")
+rm(list = ls())
+source("./R/subscripts/data_preparation/03_palaeorotate_data.R")
+rm(list = ls())
