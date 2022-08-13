@@ -71,42 +71,39 @@ Here, we present a Bayesian hierarchical model to integrate geological data---wi
 
 **Mangroves.** Recent mangroves occur in the tropics - subtropics. Although many factors besides temperature determine the extent of mangrove distributions, empirical temperature limits have been established for the genera *Avicennia* and *Rhizophora*, with lower mean annual SST limits of 15.6 degC and 20.8 degC, respectively [@Quisthoudt2012]. Both *Avicennia* and members of the Rhizophoraceae family were widespread in the early Eocene, but only *Avicennia* occurred in polar latitudes [@Suan2017; @Popescu2021]. Assuming that Eocene members of these mangrove taxa had similar climatic requirements as their modern relatives, the presence and absence of *Avicennia* and Rhizophoraceae pollen can be used as a temperature proxy. To translate mangrove occurrences from the compilation by @Popescu2021 to a quantitative temperature proxy, we allocate locations at which *Avicennia* pollen, but no Rhizophoraceae pollen were found, a mean temperature between the lower *Avicennia* and Rhizophoraceae limit (18.2 degC), with a standard deviation of 1.33 degC, thus placing 95 % of the probability density within that interval (see Fig. 1x). The range of temperatures in which both taxa occur in the modern is very wide (20.8 and 28 deC), hence occurrences of both *Avicennia* and Rhizophoraceae pollen were not used in the analysis.
 
-[Fig. 1]
+[Fig 1: Map and distribution of proxy data and ecological data]
 
 ## Bayesian framework
 - logistic regression
 - hierarchical model structure
--
+- choice of priors (based on modern, see below)
 
-[Fig. 2]
+[Fig. 2: Model structure and visualisation of parameters and priors]
+
 ## Model validation
 
 [Fig. 3]
-
 - Modern data
 - Sample based on Eocene localities
 
 
-## Application to the EECO
+## Model application
+- Calculate lat gradient
+- Calculate global T
 
 [Fig. 4]
 
-
-
-
-[Fig 1: In this part we can show a figure with the proxy data and the distributions of temperature proxies we specify, like mangroves]
-
-## A hierarchical model of latitudinal temperature gradients ##
-
-
-[Fig 2: In this part we can show a figure with the model structure and the priors we put on the parameters. Also, try it on the modern data? Alternatively, this figure goes to the SI]
-
-
-- alternative to current implementation: prior on (A+DKA) instead of on DKA? Then constrain DKA to be positive by proposing it in the log-space? This would allow for putting a direct prior on the upper temperature limit
-
 # Results
 
-## Fig 3 - Eocene gradient
+## Model validation
+- Show that the modern gradient can be reproduced with Eocene sampling distribution
+[Fig 3 - Modern gradient]
+
+## EECO reconstruction
+- Show Eocene gradient 
+- Global t
+- report lat gradient
+
 ## Fig 4 - compare Eocene gradient with previous reconstructions / ES models
 
 - x1 Draw samples from the posterior gradient to get a latitudinal gradient of deg C / deg lat with uncertainty (intercept gradient at 0 and 90 deg lat)
