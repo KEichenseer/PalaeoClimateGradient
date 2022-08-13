@@ -20,4 +20,9 @@ priors <- list(  # a list with one function per parameter of the logistic regres
   f4 = function(x,log) dgamma(x, shape = 4.3, rate = 30, log = log)# prior on B (growth rate)
 )
 #
-# 
+# Define temperature distributions for Eocene ecological data
+proxy_distributions <- data.frame(name = c("Avicennia", "Avicennia-Rhizophoraceae", "Reef"),
+                                  distribution = c("normal", "normal", "normal"),
+                                  mean = c(mean(c(15.6,22.5)), mean(c(20.7,29.5)), 27.6),
+                                  sd = c((22.5-15.6)/4, c(29.5-20.7)/4, (29.5-21)/4),
+                                  shape = rep(NA,3))

@@ -7,7 +7,7 @@ source("./R/functions/model_processing/combine_posterior.R")
 # Load data -------------------------------------------------------------------
 temp <- raster(
   "./data/raw/climate/BioOracle_20220711/Present.Surface.Temperature.Mean.asc")
-modern_sample <- readRDS("./results/modern/modern_sample_gradient.RDS")
+modern_sample <- readRDS("./results/modern/modern_climate_model_output.rds")
 eocene_sample <- readRDS("./results/modern/modern_sample_eocene_p_lat_gradient.RDS")
 eocene_reps <- readRDS("./results/modern/modern_sample_summary_stats.RDS")
 # Data preparation ------------------------------------------------------------
@@ -133,4 +133,4 @@ ggsave("./figures/fig_3.jpg",
        units = "mm", width = 150, height = 250,
        dpi = 600)
   
-  
+p 

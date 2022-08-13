@@ -1,6 +1,9 @@
 ### Define the priors
 source("R/options.R")
 source("R/functions/plotting/plot_dens.R")
+source("R/functions/model_components/dsnorm.R")
+source("R/functions/model_components/dtnorm.R")
+
 # plot all priors
 xval = list(seq(-6,36,0.01),
              seq(-5,65,0.01),

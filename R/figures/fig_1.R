@@ -2,6 +2,7 @@
 library(raster)
 library(rgdal)
 library(broom)
+library(ggplot2)
 # Read data -------------------------------------------------------------------
 chem <- readRDS("./data/processed/Hollis_processed_EECO_2022_07_19.rds")
 bio <- readRDS("./data/processed/bio_proxies_2022_08_08.RDS")
@@ -93,7 +94,11 @@ eocene_map <- eocene_map +
                                  "Various")) +
   guides(shape=guide_legend(ncol=2))
 
+
+
+ggsave("./figures/fig_1.png", plot = eocene_map, units = "mm",
+       width = 200, height = 100, dpi = 600)
+
+# display the figure in the R plot window
 eocene_map
 
-ggsave("./figures/fig_1.jpg", plot = eocene_map, units = "mm",
-       width = 200, height = 100, dpi = 600)
