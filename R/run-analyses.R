@@ -8,7 +8,7 @@ list.of.packages <- c("cli", "doParallel","foreach","parallel","mvnfast","truncn
                       "broom", "ggplot2", "ggthemes", "readxl", "mapproj", "magick",
                       "png", "ggpubr")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
+if(length(new.packages)>=1) install.packages(new.packages)
 
 # Data preparation -------------------------------------------------------------
 source("./R/data_preparation/01_data_wrangle_hollis2019.R")
@@ -26,6 +26,7 @@ source("./R/figures/Fig_1.R", print.eval=TRUE)
 source("./R/figures/prior_plot.R")
 #
 # Estimate modern latitudinal temperature gradient - run model
+# !!! WARNING !!! This can take 30 minutes or longer!
 source("./R/analyses/run_modern_climate_model.R")
 #
 # Estimate modern latitudinal temperature gradient from samples drawn

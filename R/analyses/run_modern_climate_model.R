@@ -46,6 +46,7 @@ parallel::stopCluster(cl)
 
 
 # discard 10k iterations as burnin each, and combine the results of the 4 chains
+source("R/functions/model_processing/combine_posterior.R")
 mod_all <- combine_posterior(modm,burnin = 10000)
 
 # save output
