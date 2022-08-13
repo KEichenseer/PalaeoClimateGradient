@@ -6,7 +6,7 @@
 # check for missing packages and install if needed
 list.of.packages <- c("cli", "doParallel","foreach","parallel","mvnfast","truncnorm",
                       "broom", "ggplot2", "ggthemes", "readxl", "mapproj", "magick",
-                      "png", "ggpubr")
+                      "png", "ggpubr", "mcmcse")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)>=1) install.packages(new.packages)
 
