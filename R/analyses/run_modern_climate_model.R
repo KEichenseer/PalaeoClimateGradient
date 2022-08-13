@@ -50,4 +50,4 @@ source("R/functions/model_processing/combine_posterior.R")
 mod_all <- combine_posterior(modm,burnin = 100)
 
 # save output
-saveRDS(mod_all, "R/subscripts/models/modern_climate_model_output.rds")
+saveRDS(mod_all, "results/modern/modern_climate_model_output.rds")
