@@ -15,30 +15,47 @@ Modelling latitudinal temperature gradients from geological proxies: An early Eo
 
 Abstract
 ===============================================================================
-
-Here goes the abstract
+Geochemical data such as oxygen isotopes (d18O), tetraether indices (TEX86) and magnesium calcium ratios (Mg/Ca) are routinely used to reconstruct ocean temperatures in deep time. However, limited spatial coverage and disagreements between geochemical proxies compromise the accuracy of these reconstructions. Geological data such as coral reefs, mangroves, and evaporites have the potential to supplement geochemical data by improving spatial coverage and constraining temperature estimates. Historically, these data have been used to qualitatively inform upon palaeoclimatic conditions at broad spatial scales, yet no transfer functions exist to convert geological data into temperature estimates. Quantitative temperature reconstructions have therefore not made use of these data. Here, we present a Bayesian hierarchical model to integrate geological data–with established temperature proxies–into a unified quantitative framework. We apply this approach to the early Eocene climatic optimum (EECO), the interval with the warmest sustained temperatures of the Cenozoic. Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad sea surface temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical shallow marine proxy record to model the latitudinal temperature gradient and its uncertainty. Our results confirm the presence of a flattened latitudinal temperature gradient and unusually high polar temperatures during the EECO. We show that the inclusion of ecological data can substantially reduce the uncertainty on temperature estimates in climate zones lacking geochemical data.
 
 # Introduction
 
-The early Eocene climate optimum (EECO, ~ 53 - 49 million years ago) is thought to have been the warmest episode of [...]. The EECO is of particular interest due to its use as an analogue for extreme warming scenarios, depicting a possible future high-CO2 world. To reconstruct the climate of EECO, a variety of proxy data and Earth System Models have been used. Early modelers have soon noticed that their models struggle to reproduce the climate indicated by proxy data: Without unrealistically high concentrations of atmospheric CO2, early climate models were unable to reproduce the equitable polar climates indicated by early Eocene proxy data, e.g. the occurrence of mangroves in polar latitudes, and d18O data from x indicates a temperature of ~ y at latitude z.  
+The early Eocene climate optimum (EECO, ~ 53--49 million years ago) is thought to have been the warmest episode of [...]. The EECO is of particular interest due to its use as an analogue for extreme warming scenarios, depicting a possible future high-CO2 world. To reconstruct the climate of EECO, a variety of proxy data and Earth System Models have been used. Early modelers have soon noticed that their models struggle to reproduce the climate indicated by proxy data: Without unrealistically high concentrations of atmospheric CO2, early climate models were unable to reproduce the equitable polar climates indicated by early Eocene proxy data, e.g. the occurrence of mangroves in polar latitudes, and d18O data from x indicates a temperature of ~ y at latitude z.  
 
 Contrast between complex, process-driven Earth system models and very simplistic use of the proxy data as local temperature estimates or global averages. Here, we introduce a proxy-driven modelling approach of relatively low complexity, which places the available chemical and biological proxy data in a single climate model.
 In order to properly compare model output to proxy data, latitudinal temperature patterns need to be reconstructed from noisy data (impossible to properly compare model gradients with scattered proxy points "by eye")
 
+Hook -> Generic problem:
+- Reconstructing past climate important for understanding current/future global warming
+- Two main pathways: highly complex ESM <--> proxy compilations
+- Problems with proxy data: only provides a local picture (few local sites interpreted as global signal)
+- Problems with ESM (long time to run, very complex, a lot of assumptions on processes/doesn't consider how they may change, need to be constrained with proxy data)
+- Lack of intermediate-complexity models to make full use of the proxy data
+
+Specific problem:
+- exemplified with the EECO: proxies and ESM hard to reconcile, EECO important climate analogue
+- a lot of proxies recrystallised <--> unreliable data or lack of data
 
 
-Example reference [@R-base]
+Solution:
+- Proxy-driven model (no strong assumptions on processes)
+- Integrate more data (quantify biological / geological information)
+- Integrate additional knowledge (constraints on such gradients)
+
+Application:
+- EECO time of extreme warming
+- problem of the Early Eocene:
+- apply solution to EECO to constrain EECO lat. T gradient
+
+Here:
+
+Here, we present a Bayesian hierarchical model to integrate geological data---with established temperature proxies---into a unified quantitative framework. We apply this approach to the early Eocene climatic optimum (EECO), the interval with the warmest sustained temperatures of the Cenozoic. Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad sea surface temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical shallow marine proxy record to model the latitudinal temperature gradient and its uncertainty.
+
+- EECO specific information
+- Disagreement between GCM + geochem data
 
 # Materials & Methods
 
-## early Eocene SST proxies
-
-Proxy-based reconstructions of Cenozoic shallow water temperatures chose a range of proxies for marine, shallow water temperatures
-proxies: d18O, D47, Mg/Ca, TEX86
-mangroves, corals, sharks?
-
-
-
+## Geochemical data
 
 **d18O.**
 
@@ -48,10 +65,32 @@ mangroves, corals, sharks?
 
 **TEX86.**
 
+## Ecological data
+
 **Coral reefs.** Coral reefs built by zooxanthellate-bearing, shallow water corals are confined to the tropics - substropics. The coldest
 
-
 **Mangroves.** Recent mangroves occur in the tropics - subtropics. Although many factors besides temperature determine the extent of mangrove distributions, empirical temperature limits have been established for the genera *Avicennia* and *Rhizophora*, with lower mean annual SST limits of 15.6 degC and 20.8 degC, respectively [@Quisthoudt2012]. Both *Avicennia* and members of the Rhizophoraceae family were widespread in the early Eocene, but only *Avicennia* occurred in polar latitudes [@Suan2017; @Popescu2021]. Assuming that Eocene members of these mangrove taxa had similar climatic requirements as their modern relatives, the presence and absence of *Avicennia* and Rhizophoraceae pollen can be used as a temperature proxy. To translate mangrove occurrences from the compilation by @Popescu2021 to a quantitative temperature proxy, we allocate locations at which *Avicennia* pollen, but no Rhizophoraceae pollen were found, a mean temperature between the lower *Avicennia* and Rhizophoraceae limit (18.2 degC), with a standard deviation of 1.33 degC, thus placing 95 % of the probability density within that interval (see Fig. 1x). The range of temperatures in which both taxa occur in the modern is very wide (20.8 and 28 deC), hence occurrences of both *Avicennia* and Rhizophoraceae pollen were not used in the analysis.
+
+[Fig. 1]
+
+## Bayesian framework
+- logistic regression
+- hierarchical model structure
+-
+
+[Fig. 2]
+## Model validation
+
+[Fig. 3]
+
+- Modern data
+- Sample based on Eocene localities
+
+
+## Application to the EECO
+
+[Fig. 4]
+
 
 
 
