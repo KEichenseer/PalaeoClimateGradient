@@ -102,8 +102,8 @@ plot_distr <- function(distrmat, lat = seq(0,90,0.2), trange = c(-10,100), distr
     effrange <- which(tdens > 0.01*max(tdens))
   twidth <- distrwidth*(max(lat)-min(lat))
   y = tseq[effrange]
-  x1 = distrmat$latitude[i] - twidth*tdens[effrange]/max(tdens[effrange])
-  x2 = distrmat$latitude[i] + twidth*tdens[effrange]/max(tdens[effrange])
+  x1 = distrmat$p_lat[i] - twidth*tdens[effrange]/max(tdens[effrange])
+  x2 = distrmat$p_lat[i] + twidth*tdens[effrange]/max(tdens[effrange])
   
   polygon(c(x1,rev(x2)),c(y,rev(y)), col = col, border = NA)
   }

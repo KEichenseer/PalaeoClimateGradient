@@ -15,7 +15,14 @@ obsmat <- data.frame(sample = (paste(abs(dat$p_lat),dat$longitude, dat$proxy)),
                      sd = dat$temperature_sd,
                      proxy = dat$proxy)
 
-plot(obsmat$p_lat,obsmat$temperature,xlim = c(-90,90), col = rgb(0,0,0,0.33))
+# northern hemisphere:
+obsmat <- subset(obsmat,p_lat > 0)
+
+# southern hemisphere:
+obsmat <- subset(obsmat,p_lat < 0)
+obsmat$p_lat = abs(obsmat$p_lat)
+
+#plot(obsmat$p_lat,obsmat$temperature,xlim = c(-90,90), col = rgb(0,0,0,0.33))
 
 ### Mangrove and Coral data
 # read and assign proxy type
@@ -40,15 +47,16 @@ distrmat = data.frame(p_lat = abs(bioprox$p_lat),
                       shape = proxy_distributions$shape[proxy_index],
                       distribution = proxy_distributions$distribution[proxy_index])
 
-points(distrmat$p_lat,distrmat$mu,pch = 19, col = rgb(0,0.8,0.2,0.75))
+#points(distrmat$p_lat,distrmat$mu,pch = 19, col = rgb(0,0.8,0.2,0.75))
 ### Define the priors
 
 xval <- list(seq(-5,35,0.1),
              seq(-5,60,0.1),
              seq(0,90,0.1),
-             seq(0,0.6,0.01))
+             seq(0,0.3,0.002))
 source("R/subscripts/AuxiliaryFunctions.R")
-plot_prior(prior_fun,xval)
+# plot_prior(priors,xval)
+
 ### Prepare for model run
 # Source model script
 source("R/subscripts/models/EECO_climate_model.R")
@@ -62,14 +70,14 @@ doParallel::registerDoParallel(cl)
 nChains = nClust
 ### Run model
 # source script
-mode <- foreach(pc = 1:nChains) %dopar% {
+mode_south2 <- foreach(pc = 1:nChains) %dopar% {
   # call model functions
   source("R/subscripts/models/EECO_climate_model.R")
   # set random seed
   set.seed(pc)
   hierarchical_model(n_iter = 25000, n_thin = 5,
-                  obsmat = obsmat, distrmat = distrmat, 
-                  logprior_input = prior_fun,adapt_sd = 3000,
+                  obsmat = obsmat, distrmat = NULL, 
+                  logprior_input = priors,adapt_sd = 3000,
                   adapt_sd_decay = 100)
 }
 
@@ -82,28 +90,36 @@ parallel::stopCluster(cl)
 # Assess output
 
 plot_chains(mode)
-plot(test$params$sdy)
+plot_chains(mode_north)
+plot_chains(mode_south)
 
 mode_all <- combine_posterior(mode,5000)
-mode_all_s20 <- combine_posterior(mode20,4000)
-mode_all_s10 <- combine_posterior(mode_s10,4000)
+mode_all_north<- combine_posterior(mode_north,4000)
+mode_all_south2<- combine_posterior(mode_south2,4000)
 
 mode_all_nobio <- combine_posterior(mode_nobio,4000)
 mode_all_nosd <- combine_posterior(mode_nosd,4000)
 
 
-mcmcse::multiESS(mode_all31[,1:4])
+mcmcse::multiESS(mode_all[,1:4])
 plot_gradient(mode_all,ylim = c(13,39))
-plot_gradient(mode_allold,ylim = c(10,37), confint_col = rgb(0,.7,0.5,0.2),line_col = rgb(0,.7,0.5,1), add = T)
-plot_gradient(mode_all1,ylim = c(10,37), confint_col = rgb(0.7,0,0.5,0.2),line_col = rgb(0.7,0,0.5,1), add = T)
+plot_gradient(mode_all_north,ylim = c(10,37), confint_col = rgb(0,.7,0.5,0.2),line_col = rgb(0,.7,0.5,1), add = F)
+plot_gradient(mode_all_south,ylim = c(23,40), confint_col = rgb(0.7,0,0.5,0.2),line_col = rgb(0.7,0,0.5,1), add = F)
 
 plot_posterior(mode[[1]])
-plot_posterior(mode_s10[[3]], col_obs = rgb(.5,1,0,0.75), col_dist = rgb(0,0,1,0.75))
+plot_posterior(mode_north[[3]], col_obs = rgb(0,.7,0,0.75), col_dist = rgb(0,0,1,0.75))
+plot_posterior(mode_south[[3]], col_obs = rgb(1,.2,0,0.75), col_dist = rgb(0,0,1,0.75))
 
 mean_obs_t <-sapply(unique(obsmat$sample), function(x) mean(obsmat$temperature[which(obsmat$sample==x)]))
+quant_obs_t <-sapply(unique(obsmat$sample), function(x) quantile(obsmat$temperature[which(obsmat$sample==x)],probs=c(0.025,0.975)))
+
 obs_lat <-sapply(unique(obsmat$sample), function(x) mean(obsmat$p_lat[which(obsmat$sample==x)]))
 
+plot_distr(distrmat)
+
 points(distrmat$p_lat, distrmat$mu, col = rgb(.5,0,.5,.75))
-points(obs_lat, mean_obs_t, col = rgb(.75,0.75,0,.75), pch = 10)
+points(obs_lat, mean_obs_t, col = rgb(0,0.75,0,.75), pch = 19)
+for(i in 1:length(obs_lat)) points(rep(obs_lat[i],2),quant_obs_t[,i],type="l",col=rgb(0,0.75,0,.75))
+points(obs_lat, mean_obs_t, col = rgb(.75,0,0,.75), pch = 10)
 
 legend("topright",c("wide prior on sdy", "narrow prior on sdy"))

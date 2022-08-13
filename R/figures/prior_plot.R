@@ -5,7 +5,7 @@ source("R/functions/plotting/plot_dens.R")
 xval = list(seq(-6,36,0.01),
              seq(-5,65,0.01),
              seq(9,80,0.1),
-             seq(0,0.5,0.001)
+             seq(0,0.4,0.001)
 )
 
 png("figures/priors.png",res = 600,width = 4,height = 3.8,units = "in")
@@ -31,6 +31,6 @@ axis(1,c(-15,0,15,45,75,105))
 dens <- priors$f4(xval[[4]],log=log)
 plot_dens(xval[[4]],dens,xlab = "B", yaxt = "n", xaxt = "n", ylab = "", col = col)
 axis(2,c(0,0.5,1),c(0,0.5,1))
-axis(1,c(-1,0,0.25,0.5,1),c(NA,0,0.25,0.5,NA))
+axis(1,c(-1,0,0.2,0.4,1),c(NA,0,0.2,0.4,NA))
 par(mfrow=c(1,1))
 dev.off()

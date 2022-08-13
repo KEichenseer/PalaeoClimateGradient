@@ -94,7 +94,7 @@ x2[which.max(dens)]
 
 # parameter M - normal distribution
 x3 <- seq(0,90,0.1)
-dens <- dnorm(x3,mean = 42.1, sd = 12)
+dens <- dnorm(x3,mean = 42.1, sd = 10)
 plot(x3,dens,type = "l",lwd = 2)
 x3[which.max(dens)]
 # we put the maximum density on the modern estimate for M (42.1)
@@ -118,7 +118,7 @@ prior_fun <- list(
   f1 = function(x,log) dsnorm(x,location = -3.03, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
   f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.3, sd = 10, log = log), # prior on upper asymptote
   f3 = function(x,log) dnorm(x, mean = 42.1, sd = 10, log = log), # prior on M
-  f4 = function(x,log) dgamma(x, shape = 3.2, rate = 20, log = log)# prior on Q
+  f4 = function(x,log) dgamma(x, shape = 4.3, rate = 30, log = log)# prior on Q
 )
 
 saveRDS(prior_fun,"results/modern/prior.RDS")
@@ -127,7 +127,7 @@ saveRDS(prior_fun,"results/modern/prior.RDS")
 xlist = list(seq(-6,36,0.01),
              seq(-5,65,0.01),
              seq(0,90,0.1),
-             seq(0,0.62,0.001)
+             seq(0,0.5,0.001)
              )
 plot_prior(prior_fun,xval=xlist)
 
