@@ -1,19 +1,24 @@
 ---
 title: "The Early Eocene Climate Optimum reconstructed with Bayesian multi-proxy integration"
-"Improving palaeoclimatic reconstructions with ecological data: How hot was the early Eocene?"
-"Integrating ecological and geochemical proxies for palaeoclimatic reconstruction: An early Eocene example"
 
 author:
   - Kilian Eichenseer^[Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom] and Lewis A. Jones^[Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Universidade de Vigo, 36310 Vigo, Spain]
 output:
   word_document:
     reference_docx: "template.docx"
+    
 bibliography: references.bib
 csl: palaeontology.csl
+
+
 ---
+
 
 <!-- discarded titles:
 Modelling latitudinal temperature gradients from geological proxies: An early Eocene example
+"Improving palaeoclimatic reconstructions with ecological data: How hot was the early Eocene?"
+"Integrating ecological and geochemical proxies for palaeoclimatic reconstruction: An early Eocene example"
+
 -->
 
 Abstract
@@ -82,6 +87,23 @@ In order to properly compare model output to proxy data, latitudinal temperature
 [Fig 1: Map and distribution of proxy data and ecological data]
 
 ## Bayesian framework
+
+**Model structure.** We model the mean temperature ($\mu$) at location $j$ as a function of absolute latitude ($abs(l)$) with a logistic regression (`growth curve` or `Richard's curve`) of the form:
+
+$$\mu_{j}  \sim N(\nu_j, \sigma), $$
+
+$$\nu_{j} = A~+\frac{K-A}{e^{B(abs(l_j)-M)}}~, ~~~~~ j = 1,...,n,  $$
+where $A$ and $K$ denote the lower and upper asymptote, respectively, $M$ specifies the latitude of maximal growth, the most quickly with latitude, $B$ denotes the growth rate (Fig. 2), $\sigma$ denotes the residual standard deviation, and $n$ denotes the number of locations.
+
+We take a hierarchical approach and infer $\mu_j$ from $m$ individual temperature observations $t_{i = 1,...m}$ at location $j$ as
+
+$$t_{i,j}  \sim N(\mu_j, \sigma_j), ~~~~~ i = 1,...,m,  $$
+where $m$ is the number of observations at each location, and $\sigma_j$ is the estimated standard deviation of the temperatures at location $j$.
+
+This structure implies that $\mu_j$ is not fixed at the mean of the temperatures $t_{i=1,...,m,~j}$ of location $j$, but is drawn (`regularised`) towards the overall logistic regression curve. The pull towards the regression curve tends to be high when $m$ is low, when the observations $t_{i=1,...,m,~j}$ are scattered, and/or when the overall standard deviation $\sigma$ is low. In practice, this has the desirable consequence that locations with few observations and large temperature differences between observations have less influence on the regression curve than well-sampled locations with consistent temperature observations.
+
+**Priors.** In the Bayesian framework, priors need to be placed on the unknown parameters of a model. For $\sigma$ and $\sigma_{j=1,..n}$ we use weakly informative inverse-gamma priors with shape parameter $alpha$ = ... and scale parameter $beta$ = ... . Moderately changing these priors has little effect on the model outcome, which is desirable as we have little a-priori knowledge of these parameters. In contrast, we put informative priors on the regression coefficients $A$, $K$, $M$ and $B$, based on basic physical principles. Specifically, we put a skew-normal prior on the lower asymptote $A$, with ...  . This constrains $A$ to not be $<< -2^\circ C$, which is the freezing point of sea water. We chose this distribution such that its mode is $~ 0^\circ C$, slightly higher than the modern... 
+
 - logistic regression
 - hierarchical model structure
 - choice of priors (based on modern, see below)
