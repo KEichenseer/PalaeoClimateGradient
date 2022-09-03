@@ -1,6 +1,6 @@
 # logistic function to generate latitudinal temperature gradients based on four parameters
-
-gradient <- function(x, coeff, sdy) { # parametrised with difference between cold and hot
+# accepts a vector of length 4 or a dataframe with four columns
+gradient <- function(x, coeff, sdy = 0) { # parametrised with difference between cold and hot
   if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
   if(is.data.frame(coeff) | is.matrix(coeff)) {
     A = coeff[,1]
