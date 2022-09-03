@@ -107,7 +107,7 @@ $$\sigma  \sim \sqrt{Inv{\text -}Gamma(\alpha+\frac{n}{2},\beta + 0.5\times(\mu_
 $$\sigma_j  \sim \sqrt{Inv{\text -}Gamma(\alpha+\frac{m}{2},\beta + 0.5\times(t_{i,j}-\mu_j))}, ~~~~~ i = 1,...,m,~~~~~j = 1,...,n. $$
 We set $\alpha = 1$ and $\beta = 1$, allowing these priors to be quickly overwhelmed by the data as $n$ and $m$ increase, which is desirable as we have little a-priori knowledge of these parameters. 
 
-In contrast, we put informative priors on the regression coefficients $A$, $K$, $M$ and $B$, based on physical principles and knowledge from the modern climate system. Specifically, we used the priors to express the following constraints and prior knowledge:
+In contrast, we put informative priors on the regression coefficients $A$, $K$, $M$ and $B$, based on physical principles and knowledge from the modern climate system:
 1) Predicted seawater surface temperatures is not allowed to be $<< -2^\circ C$, the freezing point of sea water.
 2) Input of solar energy decreases from the tropics to the poles. Hence, the latitudinal temperature gradient is generally negative, i.e. temperature decreases with absolute latitude. This is achieved by constraining $K-A$ to be positive.
 3) The steepness of the gradient is likely highest in mid-latitudes.
