@@ -95,12 +95,16 @@ $$\mu_{j}  \sim N(\nu_j, \sigma), $$
 $$\nu_{j} = A~+\frac{K-A}{e^{B(abs(l_j)-M)}}~, ~~~~~ j = 1,...,n,  $$
 where $A$ and $K$ denote the lower and upper asymptote, respectively, $M$ specifies the latitude of maximal growth, the most quickly with latitude, $B$ denotes the growth rate (Fig. 2), $\sigma$ denotes the residual standard deviation, and $n$ denotes the number of locations.
 
-We take a hierarchical approach and infer $\mu_j$ from $m$ individual temperature observations $t_{i = 1,...m}$ at location $j$ as
+We infer $\mu_j$ from $m$ individual temperature observations $t_{i = 1,...m}$, derived from geochemical data, at location $j$ as
 
 $$t_{i,j}  \sim N(\mu_j, \sigma_j), ~~~~~ i = 1,...,m,  $$
 where $m$ is the number of observations at each location, and $\sigma_j$ is the estimated standard deviation of the temperatures at location $j$.
 
-This structure implies that $\mu_j$ is not fixed at the mean of the temperatures $t_{i=1,...,m,~j}$ of location $j$, but is drawn (`regularised`) towards the overall logistic regression curve. The pull towards the regression curve tends to be high when $m$ is low, when the observations $t_{i=1,...,m,~j}$ are scattered, and/or when the overall standard deviation $\sigma$ is low. In practice, this has the desirable consequence that locations with few observations and large temperature differences between observations have less influence on the overall regression than well-sampled locations with consistent temperature observations.
+Similarly, $\mu_j$ is inferred for locations with ecological proxies from the associated normal temperature distributions with a given mean and standard deviation, $mean_j$ and $sd_j$, as
+
+$$mean_j  \sim N(\, \mu_j,sd_j).  $$
+
+This structure implies that $\mu_j$ is not fixed at the mean proxy temperature at location $j$, <!--of the temperatures $t_{i=1,...,m,~j}$ of location $j$-->, but is drawn (`regularised`) towards the overall logistic regression curve. The pull towards the regression curve tends to be high when $m$ is low, when the observations $t_{i=1,...,m,~j}$ are scattered, and/or when the overall standard deviation $\sigma$ is low. In practice, this has the desirable consequence that locations with few observations and large temperature differences between observations have less influence on the overall regression than well-sampled locations with consistent temperature observations.
 
 **Priors.** In the Bayesian framework, priors need to be placed on the unknown parameters of a model. We placed weakly informative, conjugate inverse-gamma priors on $\sigma$ and $\sigma_{j=1,..n}$:
 $$\sigma  \sim \sqrt{Inv{\text -}Gamma(\alpha+\frac{n}{2},\beta + 0.5\times(\mu_j-\nu_j))}, ~~~~~ j = 1,...,n,  $$
