@@ -14,9 +14,9 @@ parallel = TRUE # should the chains run in parallel (using doParallel and foreac
 # 
 # Define the priors
 priors <- list(  # a list with one function per parameter of the logistic regression
-  f1 = function(x,log) dsnorm(x,location = -3.03, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
-  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28.3, sd = 10, log = log), # prior on K (upper asymptote)
-  f3 = function(x,log) dnorm(x, mean = 42.1, sd = 10, log = log), # prior on M (latitude of steepest point of the gradient)
+  f1 = function(x,log) dsnorm(x,location = -3.0, scale = 12, alpha = 30, log = log), # prior on A (lower asymptote)
+  f2 = function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28, sd = 10, log = log), # prior on K (upper asymptote)
+  f3 = function(x,log) dnorm(x, mean = 42, sd = 10, log = log), # prior on M (latitude of steepest point of the gradient)
   f4 = function(x,log) dgamma(x, shape = 4.3, rate = 30, log = log)# prior on B (growth rate)
 )
 #
