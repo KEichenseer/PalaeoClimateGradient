@@ -1,5 +1,5 @@
 ---
-title: "The Early Eocene Climate Optimum reconstructed with Bayesian multi-proxy integration"
+title: "An Early Eocene temperature gradient modelled with geological and ecological proxies"
 
 author:
   - Kilian Eichenseer^[Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom] and Lewis A. Jones^[Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Universidade de Vigo, 36310 Vigo, Spain]
@@ -20,7 +20,7 @@ csl: palaeontology.csl
 Modelling latitudinal temperature gradients from geological proxies: An early Eocene example
 "Improving palaeoclimatic reconstructions with ecological data: How hot was the early Eocene?"
 "Integrating ecological and geochemical proxies for palaeoclimatic reconstruction: An early Eocene example"
-
+"The Early Eocene Climate Optimum reconstructed with Bayesian multi-proxy integration"
 -->
 
 Abstract
