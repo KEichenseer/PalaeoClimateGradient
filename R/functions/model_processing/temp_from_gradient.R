@@ -6,7 +6,7 @@ temp_from_gradient <- function(lat,model_out, burnin = NULL) {
   # load gradient function
   source("R/functions/model_components/gradient.R")
   
-  if (is.null(burnin)) first_it <- 1 else first_it == burnin
+  if (is.null(burnin)) first_it <- 1 else first_it = burnin
   last_it <- nrow(model_out)
   
   grad <- gradient(lat,model_out[first_it:last_it,c("A","dKA","M","B")],sdy=0)
