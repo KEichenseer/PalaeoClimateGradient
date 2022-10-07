@@ -33,7 +33,7 @@ modm <- foreach(pc = 1:nChains) %dopar% {
   source("R/functions/model_components/climate_model_modern.R")
   # set random seed
   set.seed(pc)
-  run_MCMC_simple(n_iter = 1000,
+  run_MCMC_simple(n_iter = 60000,
                   n_thin = 10,
                   x = lat,
                   y = temp,
@@ -47,7 +47,7 @@ parallel::stopCluster(cl)
 
 # discard 10k iterations as burnin each, and combine the results of the 4 chains
 source("R/functions/model_processing/combine_posterior.R")
-mod_all <- combine_posterior(modm,burnin = 100)
+mod_all <- combine_posterior(modm,burnin = 1000)
 
 # save output
 saveRDS(mod_all, "results/modern/modern_climate_model_output.rds")
