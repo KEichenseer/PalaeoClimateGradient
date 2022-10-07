@@ -82,7 +82,7 @@ In order to properly compare model output to proxy data, latitudinal temperature
 
 ## Ecological data
 
-**Coral reefs.** Today, shallow warm-water coral reefs are limited to tropical and subtropical latitudes (~34°N–32°S), with minimum sea surface temperature (~18 °C) tolerances being the primary constraint on this distribution [@johannes1983; @kleypas1999; @yamano2001]. However, as coral reefs reside at the upper thermal limit of the oceans today, their maximum sea surface temperature tolerance is less well-constrained with some studies suggesting up to 35.6 degC in the geological past [@jones2022reef]. During the Eocene, coral communities and reefs occupied   
+**Coral reefs.** Today, shallow warm-water coral reefs are limited to tropical and subtropical latitudes (~34°N–32°S), with minimum sea surface temperature (~18 °C) tolerances being the primary constraint on this distribution [@johannes1983; @kleypas1999; @yamano2001]. However, as coral reefs reside at the upper thermal limit of the oceans today, their maximum sea surface temperature tolerance is less well-constrained with some studies suggesting up to 35.6 degC in the geological past [@jones2022reef]. During the Eocene, coral communities and reefs persisted outside of the tropics, with some communities expanding up to 43 degC N [@zamagni2012]
 
 
 
@@ -148,7 +148,8 @@ was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were c
 [Fig. 4]
 
 ## Parameter estimation
-We estimated the posterior distributions of the model parameters using a custom-made Markov chain Monte Carlo (MCMC) algorithm, written in R. Specifically, we sampled the unknown parameters $A$, $K$, $M$ and $B$ using a Metropolis-Hastings step, and used Gibbs sampling to estimate all other unknown parameters. Posterior inference on the modern gradient is based on four chains with 60,000 iterations each, 10,000 of which were discarded as burn-in, and keeping every 10th iteration, resulting in a total of 20,000 iterations. For the Eocene model, we increased these numbers by a factor of 10, i.e. running four chains with 600,000 iterations each, keeping every 100th iteration, as the hierarchical model structure results in higher autocorrelation of the chains.  
+We estimated the posterior distributions of the model parameters using a custom-made Markov chain Monte Carlo (MCMC) algorithm, written in R. Specifically, we sampled the unknown parameters $A$, $K$, $M$ and $B$ using Metropolis-Hastings, and used Gibbs sampling to estimate all other unknown parameters. Posterior inference on the modern gradient is based on four chains with 60,000 iterations each, 10,000 of which were discarded as burn-in, and keeping every 10th iteration, resulting in a total of 20,000 iterations. The modern temperature gradient with the Eocene sampling distribution was estimated in one chain with 25,000 iterations for each of the 100 temperature samples. 5,000 iterations each were discarded as burn-in, and every 10th iteration was kept, resulting in a total of 200,000 iterations across all 100 model runs.
+For the Eocene model, we ran four chains with 600,000 iterations each, discarding 100,000 as burn-in and keeping every 100th iteration, as the hierarchical model structure results in higher autocorrelation of the chains. The Eocene posterior inference is thus based on a total of 20,000 iterations with low autocorrelation (effective multivariate sample size for $A$, $K$, $M$ and $B$ is > 18,000).
 
 # Results
 

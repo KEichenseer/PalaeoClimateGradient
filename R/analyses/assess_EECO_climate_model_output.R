@@ -22,7 +22,7 @@ plot_chains(mod) # default is A, dKA, M and log B
 plot_chains(mod, params = c("sdy", "logpost"))
 
 # combine chains, discard burnin
-mode_all <- combine_posterior(mod,50000)
+mode_all <- combine_posterior(mod,100000)
 
 # check effective sample size for A, dKA, M, and B
 mcmcse::multiESS(mode_all[,1:4])
