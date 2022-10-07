@@ -6,8 +6,8 @@ author:
 output:
   word_document:
     reference_docx: "template.docx"
-    
-    
+
+
 bibliography: references.bib
 csl: palaeontology.csl
 
@@ -61,7 +61,7 @@ Here, we present a Bayesian hierarchical model to integrate geological data---wi
 - Disagreement between GCM + geochem data
 
 
-<!-- 
+<!--
 
 The early Eocene climate optimum (EECO, ~ 53--49 million years ago) is thought to have been the warmest episode of [...]. The EECO is of particular interest due to its use as an analogue for extreme warming scenarios, depicting a possible future high-CO2 world. To reconstruct the climate of EECO, a variety of proxy data and Earth System Models have been used. Early modelers have soon noticed that their models struggle to reproduce the climate indicated by proxy data: Without unrealistically high concentrations of atmospheric CO2, early climate models were unable to reproduce the equitable polar climates indicated by early Eocene proxy data, e.g. the occurrence of mangroves in polar latitudes, and d18O data from x indicates a temperature of ~ y at latitude z.  
 
@@ -82,7 +82,8 @@ In order to properly compare model output to proxy data, latitudinal temperature
 
 ## Ecological data
 
-**Coral reefs.** Coral reefs built by zooxanthellate-bearing, shallow water corals are confined to the tropics - substropics. The coldest
+**Coral reefs.** Today, shallow warm-water coral reefs are restricted to tropical-to-subtropical latitudes.
+Coral reefs built by zooxanthellate-bearing, shallow water corals are confined to the tropics - substropics. The coldest
 
 **Mangroves.** Recent mangroves occur in the tropics - subtropics. Although many factors besides temperature determine the extent of mangrove distributions, empirical temperature limits have been established for the genera *Avicennia* and *Rhizophora*, with lower mean annual SST limits of 15.6 degC and 20.8 degC, respectively [@Quisthoudt2012]. Both *Avicennia* and members of the Rhizophoraceae family were widespread in the early Eocene, but only *Avicennia* occurred in polar latitudes [@Suan2017; @Popescu2021]. Assuming that Eocene members of these mangrove taxa had similar climatic requirements as their modern relatives, the presence and absence of *Avicennia* and Rhizophoraceae pollen can be used as a temperature proxy. To translate mangrove occurrences from the compilation by @Popescu2021 to a quantitative temperature proxy, we allocate locations at which *Avicennia* pollen, but no Rhizophoraceae pollen were found, a mean temperature between the lower *Avicennia* and Rhizophoraceae limit (18.2 degC), with a standard deviation of 1.33 degC, thus placing 95 % of the probability density within that interval (see Fig. 1x). The range of temperatures in which both taxa occur in the modern is very wide (20.8 and 28 deC), hence occurrences of both *Avicennia* and Rhizophoraceae pollen were not used in the analysis.
 
@@ -111,23 +112,23 @@ This structure implies that $\mu_j$ is not fixed at the mean proxy temperature a
 **Priors (Fig2x).** In the Bayesian framework, priors need to be placed on the unknown parameters of a model. We placed weakly informative, conjugate inverse-gamma priors on $\sigma$ and $\sigma_{j=1,..n}$:
 $$\sigma  \sim \sqrt{Inv-Gamma(\alpha+\frac{n}{2},\beta + 0.5\times(\mu_j-\nu_j))}, ~~~~~ j = 1,...,n,  $$
 $$\sigma_j  \sim \sqrt{Inv-Gamma(\alpha+\frac{m}{2},\beta + 0.5\times(t_{i,j}-\mu_j))}, ~~~~~ i = 1,...,m,~~~~~j = 1,...,n. $$
-We set $\alpha = \beta = 1$, allowing these priors to be quickly overwhelmed by the data as $n$ and $m$ increase, as we have little *a priori* knowledge of these parameters. 
+We set $\alpha = \beta = 1$, allowing these priors to be quickly overwhelmed by the data as $n$ and $m$ increase, as we have little *a priori* knowledge of these parameters.
 
 In contrast, we put informative priors on the regression coefficients $A$, $K$, $M$ and $B$, based on physical principles, and vaguely based on the modern climate system:  
 
-**A.** Predicted seawater surface temperatures are not allowed to be $<< -2^\circ C$, the freezing point of sea water. The highest prior density of $A$ is placed around $0^\circ C$, and it slowly tapers off towards higher temperatures. This shape is achieved by placing a skew-normal prior on the lower asymptote, specified as 
+**A.** Predicted seawater surface temperatures are not allowed to be $<< -2^\circ C$, the freezing point of sea water. The highest prior density of $A$ is placed around $0^\circ C$, and it slowly tapers off towards higher temperatures. This shape is achieved by placing a skew-normal prior on the lower asymptote, specified as
 $$A \sim SN(\xi=-3.0,\omega=12,\alpha_{SN}=30),$$
 where $\xi$, $\omega$, and $\alpha_{SN}$ are the location, scale and shape parameters.  
 
-**K.** Input of solar energy decreases from the tropics to the poles. Hence, the latitudinal temperature gradient is broadly negative, i.e. temperature decreases with absolute latitude. This is achieved by setting $K \ge A$. The prior on the upper asymptote $K$ is a truncated normal distribution with the mean set to $K$ of the modern SST gradient, with a broad standard deviation: 
+**K.** Input of solar energy decreases from the tropics to the poles. Hence, the latitudinal temperature gradient is broadly negative, i.e. temperature decreases with absolute latitude. This is achieved by setting $K \ge A$. The prior on the upper asymptote $K$ is a truncated normal distribution with the mean set to $K$ of the modern SST gradient, with a broad standard deviation:
 $$K \sim TN(\mu_{TN} = 28, \sigma_{TN} = 10, \alpha_{TN} = A, \beta_{TN}= \infty)$$
 The distribution is truncated to the left at $\alpha_{TN}=A$, but not truncated to the right ($\beta_{TN}$).  
 
-**M.** The steepness of the gradient is presumed to be highest in mid-latitudes; this is expressed with a normal prior on $M$ with the mean set to $M$ of the modern SST gradient: 
+**M.** The steepness of the gradient is presumed to be highest in mid-latitudes; this is expressed with a normal prior on $M$ with the mean set to $M$ of the modern SST gradient:
 $$M \sim N(42,10)$$
 **B.** The steepness or growth rate $B$ of the gradient is constrained to be $\ge0$ and to not be exceedingly high, as oceanic and atmospheric heat transfer is bound to prevent very abrupt SST changes across latitudes. A gamma-distributed prior of the form
 $$B \sim Gamma(\alpha_G=4.3,\beta_G=30)$$
-was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were chosen such that the highest prior density is at $B$ of the modern SST gradient, $0.11$. 
+was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were chosen such that the highest prior density is at $B$ of the modern SST gradient, $0.11$.
 
 [Fig. 2: Model structure and visualisation of parameters and priors]
 
@@ -147,13 +148,18 @@ was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were c
 # Results
 
 ## Model validation
+- Show that the 4-parameter logistic function can adequatly describe the modern temperature gradient
 - Show that the modern gradient can be reproduced with Eocene sampling distribution
 [Fig 3 - Modern gradient]
 
+The average modern temperature gradient can be closely approximated with our model when using the full modern SST dataset (Fig. 3a). Degrading the amount and distribution of data points to match the early Eocene sampling distribution still results in a close match of the modelled gradient with the empirical gradient (Fig 3b). A noticable, but minor offset is apparent in high latitudes, where sampling is most incomplete (Fig 3b).
+
 ## EECO reconstruction
-- Show Eocene gradient 
+- Show Eocene gradient
 - Global t
 - report lat gradient
+
+
 
 ## Fig 4 - compare Eocene gradient with previous reconstructions / ES models
 
