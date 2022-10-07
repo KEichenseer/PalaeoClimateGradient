@@ -28,7 +28,7 @@ mode_all <- combine_posterior(mod,100000)
 mcmcse::multiESS(mode_all[,1:4])
 
 # Plot the gradient
-plot_gradient(mode_all,ylim = c(13,39))
+plot_gradient(mode_all,ylim = c(-2,39))
 
 # add median of the poster estimates of location means
 plot_posterior(mod[[1]]) # select the first run, doesn't yet work for combined chains
@@ -44,3 +44,9 @@ legend("topright",c("posterior mean (proxy obs.)", "posterior mean (distribution
                     "empirical mean (proxy obs.)", "assigned distribution mean"),
        pch = c(17,17,1,1), col = c(rgb(0.8,0.5,0,0.75),rgb(0,0.5,.8,0.75),
                                    rgb(0.85,0,0,0.75),rgb(0,0,.85,0.75)))
+
+# add modern gradient:
+# source("./R/functions/model_processing/temp_from_gradient.R")
+# modern_sample <- readRDS("./results/modern/modern_climate_model_output.rds")
+# points(0:90,apply(temp_from_gradient(0:90,modern_sample),1,median), type = "l", lwd = 2)
+
