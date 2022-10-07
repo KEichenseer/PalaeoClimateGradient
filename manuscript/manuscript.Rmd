@@ -72,7 +72,7 @@ In order to properly compare model output to proxy data, latitudinal temperature
 
 ## Geochemical data
 
-Geochemical climate proxy data were extracted from a latest Paleocene and early Eocene compilation [@hollis2019]. This compilation provides  For our analyses, this dataset was restricted to the EECO and contains four commonly used geochemical climate proxies: d180, d47, Mg/Ca and TEX86 (REFS). For a detailed description of each see [@hollis2019].
+Geochemical climate proxy data were extracted from a latest Paleocene and early Eocene compilation [@hollis2019]. This compilation provides  For our analyses, this dataset was restricted to the EECO and contains four commonly used geochemical climate proxies: d180, d47, Mg/Ca and TEX86 (REFS). For a detailed description of each proxy see [@hollis2019].
 
 - palaeoenvironment of data (which filters were applied)
 - recrystallisation (excluding most d18O)
@@ -93,19 +93,12 @@ Do we need a description of each? Not in detail, 1 paragraph in total is enough
 2) *Avicennia* and Rhizophoraceae assemblages: the presence of both groups suggests that the locality should have a minimum temperature of 20.7 degC (lower temperature limit of *Rhizophora*). As the upper thermal limits of *Aviciennia* and *Rhizophora* are not well established in @Quisthoudt2012, we assign the same maximum temperature limits (29.5 degC) as coral reef localities as mangroves are also widely distributed throughout tropical regions. Consequently, we define the temperature distribution for this locality as a normal distribution with a mean of 25.1 and a standard deviation of 2.2, with 95% probability density within the temperature limits.
 
 
- Mangrove localities containing *Avicennia* pollen, but no Rhizophoraceae pollen, a mean temperature of 19.05 degC was ascribed. The absence of Rhizophoraceae indicates that sea surface temperature values
-
-This value is between *Avicennia*'s lower temperature limit (15.6 degC) and the temperature at which *Rhizophora* commonly occurs (22.5 degC), deliberately wider than indicated by the lower *Rhizophora* limit.
-
-To translate mangrove occurrences from the compilation by @Popescu2021 to a quantitative temperature proxy, we allocate locations at which *Avicennia* pollen, but no Rhizophoraceae pollen were found, a mean temperature of 19.05 degC, between the lower *Avicennia* limit (15.6 degC) and the temperature at which *Rhizophora* commonly occurs (22.5 degC), deliberately wider than indicated by the lower *Rhizophora* limit. We set the standard deviation to 1.725 such that 95 % of the probability density are within 15.6 and 22.5 degC, placing 5% probability on the possibility that an Eocene *Avicennia*-only mangrove record occurred outside of this range. We define a 95% probability density for locations with *Avicennia* and Rhizophoraceae in a similar way. To allow for greater uncertainty at the lower temperature limit, we use the empirical 20.7 degC limit. For the upper limit, we use the maximal coral reef temperature of 29.5 degC from @kleypas1999, as the compendium of @Quisthoudt2012 does not include the warmest, equatorial regions. The mean and standard deviation of locations with *Avicennia* and Rhizophoraceae are thus set to 25.1 and 2.2, respectively.
-
-
 
 [Fig 1: Map and distribution of proxy data and ecological data]
 
 ## Palaeogeographic reconstruction
 
-The palaeogeographic distribution of geochemical and ecological data was reconstructed using the @merdith2021 plate rotation model via the palaeoverse R package ver. XXX (REF). The midpoint age of the EECO (51.5 Ma), along with the present-day coordinates of geochemical and ecological data, were used for palaeorotation.
+The palaeogeographic distribution of geochemical and ecological data was reconstructed using the @merdith2021 plate rotation model via the palaeoverse R package ver. XXX (REF). The midpoint age of the EECO (51.2 Ma), along with the present-day coordinates of geochemical and ecological data, were used for palaeorotation.
 
 ## Bayesian framework
 
@@ -178,7 +171,7 @@ The average modern temperature gradient can be closely approximated with our mod
 
 ## EECO reconstruction
 - Show Eocene gradient
-- Global t
+- Global t : use raster package for calculation of areal weights
 - report lat gradient
 
 The modelled Eocene temperature gradient is starkly different from the modern (Fig 4). Modelled, median equatorial temperatures are 4.2 (95% CI: 0.2 - 8.3) degC higher for the Eocene, and polar temperatures are higher by 25.0 (95% CI: 17.0 - 29.1) degC. This results in a strongly flattened latitudinal temperature gradient of 9.0  (95% CI: 2.5 - 17.8) degC for the Eocene, as opposed to 29.6 degC for the modern. The high variability of early Eocene palaeotemperature proxies, particularly in the mid-latitudes, and the scarcity of high-latitude data, results in substantial uncertainties in the modelled temperature gradient, but ...
