@@ -82,7 +82,7 @@ In order to properly compare model output to proxy data, latitudinal temperature
 
 ## Ecological data
 
-**Coral reefs.** Today, shallow warm-water coral reefs are limited to tropical and subtropical latitudes (~34°N–32°S), with minimum sea surface temperature (~18 °C) tolerances being the primary constraint on this distribution [@johannes1983; @kleypas1999]. As coral reefs reside at the upper thermal limit of the oceans today, their maximum sea surface temperature tolerance is less well-constrained. However,
+**Coral reefs.** Today, shallow warm-water coral reefs are limited to tropical and subtropical latitudes (~34°N–32°S), with minimum sea surface temperature (~18 °C) tolerances being the primary constraint on this distribution [@johannes1983; @kleypas1999; @yamano2001]. However, as coral reefs reside at the upper thermal limit of the oceans today, their maximum sea surface temperature tolerance is less well-constrained with some studies suggesting up to 35.6 degC in the geological past [@jones2022reef]. During the Eocene, coral communities and reefs occupied   
 
 
 
@@ -133,6 +133,7 @@ was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were c
 
 [Fig. 2: Model structure and visualisation of parameters and priors]
 
+
 ## Model validation
 
 [Fig. 3]
@@ -145,6 +146,9 @@ was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were c
 - Calculate global T
 
 [Fig. 4]
+
+## Parameter estimation
+We estimated the posterior distributions of the model parameters using a custom-made Markov chain Monte Carlo (MCMC) algorithm, written in R. Specifically, we sampled the unknown parameters $A$, $K$, $M$ and $B$ using a Metropolis-Hastings step, and used Gibbs sampling to estimate all other unknown parameters. Posterior inference on the modern gradient is based on four chains with 60,000 iterations each, 10,000 of which were discarded as burn-in, and keeping every 10th iteration, resulting in a total of 20,000 iterations. For the Eocene model, we increased these numbers by a factor of 10, i.e. running four chains with 600,000 iterations each, keeping every 100th iteration, as the hierarchical model structure results in higher autocorrelation of the chains.  
 
 # Results
 
