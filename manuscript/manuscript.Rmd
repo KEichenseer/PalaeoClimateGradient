@@ -82,8 +82,9 @@ In order to properly compare model output to proxy data, latitudinal temperature
 
 ## Ecological data
 
-**Coral reefs.** Today, shallow warm-water coral reefs are restricted to tropical-to-subtropical latitudes.
-Coral reefs built by zooxanthellate-bearing, shallow water corals are confined to the tropics - substropics. The coldest
+**Coral reefs.** Today, shallow warm-water coral reefs are limited to tropical and subtropical latitudes (~34°N–32°S), with minimum sea surface temperature (~18 °C) tolerances being the primary constraint on this distribution [@johannes1983; @kleypas1999]. As coral reefs reside at the upper thermal limit of the oceans today, their maximum sea surface temperature tolerance is less well-constrained. However,
+
+
 
 **Mangroves.** Recent mangroves occur in the tropics - subtropics. Although many factors besides temperature determine the extent of mangrove distributions, empirical temperature limits have been established for the genera *Avicennia* and *Rhizophora*, with lower mean annual SST limits of 15.6 degC and 20.8 degC, respectively [@Quisthoudt2012]. Both *Avicennia* and members of the Rhizophoraceae family were widespread in the early Eocene, but only *Avicennia* occurred in polar latitudes [@Suan2017; @Popescu2021]. Assuming that Eocene members of these mangrove taxa had similar climatic requirements as their modern relatives, the presence and absence of *Avicennia* and Rhizophoraceae pollen can be used as a temperature proxy. To translate mangrove occurrences from the compilation by @Popescu2021 to a quantitative temperature proxy, we allocate locations at which *Avicennia* pollen, but no Rhizophoraceae pollen were found, a mean temperature between the lower *Avicennia* and Rhizophoraceae limit (18.2 degC), with a standard deviation of 1.33 degC, thus placing 95 % of the probability density within that interval (see Fig. 1x). The range of temperatures in which both taxa occur in the modern is very wide (20.8 and 28 deC), hence occurrences of both *Avicennia* and Rhizophoraceae pollen were not used in the analysis.
 
@@ -151,15 +152,11 @@ was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were c
 - Show that the 4-parameter logistic function can adequatly describe the modern temperature gradient
 - Show that the modern gradient can be reproduced with Eocene sampling distribution
 [Fig 3 - Modern gradient]
-
 The average modern temperature gradient can be closely approximated with our model when using the full modern SST dataset (Fig. 3a). Degrading the amount and distribution of data points to match the early Eocene sampling distribution still results in a close match of the modelled gradient with the empirical gradient (Fig 3b). A noticable, but minor offset is apparent in high latitudes, where sampling is most incomplete (Fig 3b).
-
 ## EECO reconstruction
 - Show Eocene gradient
 - Global t
 - report lat gradient
-
-
 
 ## Fig 4 - compare Eocene gradient with previous reconstructions / ES models
 
