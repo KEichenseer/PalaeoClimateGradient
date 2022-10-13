@@ -174,9 +174,34 @@ The average modern temperature gradient can be closely approximated with our mod
 - Global t : use raster package for calculation of areal weights
 - report lat gradient
 
+```{r results block 1 - for in-line code}
+setwd('..') # move up to parent folder of /manuscript
+source("R/functions/model_components/gradient.R")
+mode_all <- readRDS("results/eeco/eeco_climate_model_output_params.rds")
+modm_all <- readRDS("results/modern/modern_climate_model_output.rds")
+
+# latitudinal weights in 1 deg lat bands
+alpha1 <- seq(1,90,1)
+alpha2 <- seq(0,89,1)
+latweight <- sin(pi*alpha1/180) - sin(pi*alpha2/180) # sums to 1 - careful when using lat. subsets
+# eocene temperature gradient
+eotemp <- gradient(seq(0.5,89.5,1), mode_all[,1:4],0)
+# eocene temperature gradient quantiles
+eotempq <- apply(eotemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
+# eocene global average temperature with 95% CI
+eotemp_global <- apply(eotempq,1, function(x) round(sum(x*latweight),1), simplify = FALSE)
+# modern temperature gradient
+motemp <- gradient(seq(0.5,89.5,1), modm_all[,1:4],0)
+# modern temperature gradient quantiles
+motempq <- apply(motemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
+# modern global average temperature with 95% CI
+motemp_global <- apply(motempq,1, function(x) round(sum(x*latweight),1), simplify = FALSE)
+
+```
+
 The modelled Eocene temperature gradient is starkly different from the modern (Fig 4). Modelled, median equatorial temperatures are 4.2 (95% CI: 0.2 - 8.3) degC higher for the Eocene, and polar temperatures are higher by 25.0 (95% CI: 17.0 - 29.1) degC. This results in a strongly flattened latitudinal temperature gradient of 9.0  (95% CI: 2.5 - 17.8) degC for the Eocene, as opposed to 29.6 degC for the modern. The high variability of early Eocene palaeotemperature proxies, particularly in the mid-latitudes, and the scarcity of high-latitude data, results in substantial uncertainties in the modelled temperature gradient, but ...
 
-The global Eocene mean sea surface temperature is estimated at 28.8 (95% CI: 25.7 - 31.7) degC, significantly higher than the modern (?? degC).
+The global Eocene mean sea surface temperature is estimated at `r eotemp_global$"50%"` (95% CI: `r eotemp_global$"2.5%"` - `r eotemp_global$"97.5%"`) degC, significantly higher than the modern (`r motemp_global$"50%"` degC).
 
 
 

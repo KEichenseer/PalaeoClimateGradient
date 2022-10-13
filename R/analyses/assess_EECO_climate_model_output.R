@@ -23,7 +23,7 @@ plot_chains(mod, params = c("sdy", "logpost"))
 
 # combine chains, discard burnin
 mode_all <- combine_posterior(mod,100000)
-
+saveRDS(mode_all,"results/eeco/eeco_climate_model_output_params.rds")
 # check effective sample size for A, dKA, M, and B
 mcmcse::multiESS(mode_all[,1:4])
 
