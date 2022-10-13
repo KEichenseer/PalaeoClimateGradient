@@ -16,7 +16,7 @@ nClust <- 4
 cl <- parallel::makeCluster(nClust)
 doParallel::registerDoParallel(cl)
 
-nChains = 4
+nChains = 100
 ### Run model
 mods <- foreach(s = 1:nChains) %dopar% {
   # load model functions
