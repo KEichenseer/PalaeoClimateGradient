@@ -72,15 +72,7 @@ In order to properly compare model output to proxy data, latitudinal temperature
 
 ## Geochemical data
 
-Geochemical climate proxy data were extracted from a latest Paleocene and early Eocene compilation [@hollis2019]. This compilation provides four different geochemical proxies for reconstructing seawater temperature: d180, d47, Mg/Ca and TEX86. For our analyses, this dataset was restricted to the EECO and contains four commonly used geochemical climate proxies: d180, d47, Mg/Ca and TEX_86_ (REFS). For a detailed description of each proxy see [@hollis2019].
-
-- palaeoenvironment of data (which filters were applied)
-- recrystallisation (excluding most d18O)
-
-Do we need a description of each? Not in detail, 1 paragraph in total is enough
- Measurements of the ratio of stable isotope 18O and 16O from fossils provide
-
-
+Geochemical climate proxy data were extracted from a latest Paleocene and early Eocene compilation [@hollis2019]. This compilation provides four different geochemical proxies for reconstructing seawater temperature: $\delta^18^O, \Delta$_47_, Mg/Ca and TEX_86_. For our analyses, this dataset was restricted to the EECO and samples from the continental shelf. Recrystallised $\delta^18^O samples were also excluded as secondary diagenetic calcite precipitated after deposition can bias isotope measurements and offset temperature values [@schrag1999]. This resulted in most $\delta^18^O samples being excluded from the dataset (x out of x). After data filtering, x geochemical proxy samples remained. For a detailed description of each proxy see [@hollis2019].
 
 ## Ecological data
 
@@ -149,6 +141,8 @@ was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were c
 [Fig. 3]
 - Modern data
 - Sample based on Eocene localities
+
+To test whether our logistic regression model can adequately describe latitudinal temperature gradients, we applied a simplified version of the model to modern sea surface temperatures from Bio-Oracle [@...]. As these modern, annual sea surface temperatures estimates are associated with little uncertainty, there is no need for a hierarchical model structure, and we substituted temperature ($t$) for $\mu$ in eq. ? and ?. To verify that the modern gradient can be approximated with limited sampling, we resampled modern sea surface temperatures at modern latitudes corresponding the palaeolatitudes of the Eocene samples. This process was repeated 100 times, randomly chosing a longitude for each latitude in each repetition. The parameters of the non-hierarchical temperature model were estimated for each of the 100 samples, and the iterations after burn-in from the posterior of the parameters were pooled to generate the resulting median temperature gradient with 95 % credible intervals.
 
 
 ## Model application
