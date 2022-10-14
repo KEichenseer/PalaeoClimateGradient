@@ -105,7 +105,7 @@ p2 <- ggplot() +
                 colour = "Modelled gradient - \nEECO distribution"),
             size = 1.5, 
             alpha = 0.9) +
-  xlab("Latitude (\u00B0)") +
+  xlab("|Latitude| (\u00B0)") +
   scale_x_continuous(limits = c(0, 90),
                      breaks = seq(0, 90, 30),
                      labels = seq(0, 90, 30)) +
