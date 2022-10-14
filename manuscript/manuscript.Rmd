@@ -180,6 +180,8 @@ source("R/functions/model_components/gradient.R")
 mode_all <- readRDS("results/eeco/eeco_climate_model_output_params.rds")
 modm_all <- readRDS("results/modern/modern_climate_model_output.rds")
 
+## outsource to a seperate analysis script
+
 # latitudinal weights in 1 deg lat bands
 alpha1 <- seq(1,90,1)
 alpha2 <- seq(0,89,1)
