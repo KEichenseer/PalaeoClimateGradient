@@ -72,17 +72,7 @@ In order to properly compare model output to proxy data, latitudinal temperature
 
 ## Geochemical data
 
-Geochemical climate proxy data were extracted from a latest Paleocene and early Eocene compilation [@hollis2019]. This compilation provides four different geochemical proxies for reconstructing seawater temperature: $\delta^18^O, \Delta$_47_, Mg/Ca and TEX_86_. For our analyses, this dataset was restricted to the EECO and samples from shallow. We also excluded recrystallised $\delta^18^O samples as secondary diagenetic calcite precipitated after deposition can bias isotope measurements and offset temperature values [@schrag1999].
-
- For a detailed description of each proxy see [@hollis2019].
-
-- palaeoenvironment of data (which filters were applied)
-- recrystallisation (excluding most d18O)
-
-Do we need a description of each? Not in detail, 1 paragraph in total is enough
- Measurements of the ratio of stable isotope 18O and 16O from fossils provide
-
-
+Geochemical climate proxy data were extracted from a latest Paleocene and early Eocene compilation [@hollis2019]. This compilation provides four different geochemical proxies for reconstructing seawater temperature: $\delta^18^O, \Delta$_47_, Mg/Ca and TEX_86_. For our analyses, this dataset was restricted to the EECO and samples from the continental shelf. Recrystallised $\delta^18^O samples were also excluded as secondary diagenetic calcite precipitated after deposition can bias isotope measurements and offset temperature values [@schrag1999]. This resulted in most $\delta^18^O samples being excluded from the dataset (x out of x). After data filtering, x geochemical proxy samples remained. For a detailed description of each proxy see [@hollis2019].
 
 ## Ecological data
 
