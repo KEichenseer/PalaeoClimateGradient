@@ -72,7 +72,9 @@ In order to properly compare model output to proxy data, latitudinal temperature
 
 ## Geochemical data
 
-Geochemical climate proxy data were extracted from a latest Paleocene and early Eocene compilation [@hollis2019]. This compilation provides four different geochemical proxies for reconstructing seawater temperature: d180, d47, Mg/Ca and TEX86. For our analyses, this dataset was restricted to the EECO and contains four commonly used geochemical climate proxies: d180, d47, Mg/Ca and TEX_86_ (REFS). For a detailed description of each proxy see [@hollis2019].
+Geochemical climate proxy data were extracted from a latest Paleocene and early Eocene compilation [@hollis2019]. This compilation provides four different geochemical proxies for reconstructing seawater temperature: $\delta^18^O, \Delta$_47_, Mg/Ca and TEX_86_. For our analyses, this dataset was restricted to the EECO and samples from shallow. We also excluded recrystallised $\delta^18^O samples as secondary diagenetic calcite precipitated after deposition can bias isotope measurements and offset temperature values [@schrag1999].
+
+ For a detailed description of each proxy see [@hollis2019].
 
 - palaeoenvironment of data (which filters were applied)
 - recrystallisation (excluding most d18O)
@@ -150,6 +152,9 @@ was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were c
 - Modern data
 - Sample based on Eocene localities
 
+To test whether our logistic regression model can adequately describe latitudinal temperature gradients, we applied a simplified version of the model to modern sea surface temperatures from Bio-Oracle [@...]
+
+the climate model is able to estimate latitudinal temperature gradients from limited data, we subsampled modern sea surface temperatures from the Bio-Or
 
 ## Model application
 - Calculate lat gradient
