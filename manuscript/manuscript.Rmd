@@ -145,15 +145,24 @@ was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were c
 To test whether our logistic regression model can adequately describe latitudinal temperature gradients, we applied a simplified version of the model to modern sea surface temperatures from Bio-Oracle [@...]. As these modern, annual sea surface temperatures estimates are associated with little uncertainty, there is no need for a hierarchical model structure, and we substituted temperature ($t$) for $\mu$ in eq. ? and ?. To verify that the modern gradient can be approximated with limited sampling, we resampled modern sea surface temperatures at modern latitudes corresponding the palaeolatitudes of the Eocene samples. This process was repeated 100 times, randomly chosing a longitude for each latitude in each repetition. The parameters of the non-hierarchical temperature model were estimated for each of the 100 samples, and the iterations after burn-in from the posterior of the parameters were pooled to generate the resulting median temperature gradient with 95 % credible intervals.
 
 
-## Model application
-- Calculate lat gradient
-- Calculate global T
-
-[Fig. 4]
-
 ## Parameter estimation
 We estimated the posterior distributions of the model parameters using a Markov chain Monte Carlo (MCMC) algorithm, written in R. Specifically, we sampled the unknown parameters $A$, $K$, $M$ and $B$ with Metropolis-Hastings, and used Gibbs sampling to estimate all other unknown parameters. Posterior inference on the modern gradient is based on four chains with 60,000 iterations each, 10,000 of which were discarded as burn-in, and keeping every 10th iteration, resulting in a total of 20,000 iterations. The modern temperature gradient with the Eocene sampling distribution was estimated in one chain with 25,000 iterations for each of the 100 temperature samples. 5,000 iterations each were discarded as burn-in, and every 10th iteration was kept, resulting in a total of 200,000 iterations across all 100 model runs.
-For the Eocene model, we ran four chains with 600,000 iterations each, discarding 100,000 as burn-in and keeping every 100th iteration, as the hierarchical model structure results in higher autocorrelation of the chains. The Eocene posterior inference is thus based on a total of 210,000 iterations with low autocorrelation (effective multivariate sample size for $A$, $K$, $M$ and $B$ is > 18,000).
+For the Eocene model, we ran four chains with 600,000 iterations each, discarding 100,000 as burn-in and keeping every 100th iteration, as the hierarchical model structure results in higher autocorrelation of the chains. The Eocene posterior inference is thus based on a total of 20,000 iterations with low autocorrelation (effective multivariate sample size for $A$, $K$, $M$ and $B$ is > 18,000).
+
+
+## Processing of model results
+- Calculate lat gradient
+- Calculate global T
+[Fig. 4]
+
+Modelled sea surface temperature estimates were generated with eq. ?, calculating the sea surface temperatures at any latitude with the parameter estimates of each iteration from the posterior. The median, $2.5^{th}$ and $97.5^{th}$ percentile of temperatures where then taken from all temperature estimates obtained at the latitude of interest.
+
+Differences between Eocene and modern temperatures at a certain latitude were calculated by randomly pairing all iterations of the posterior from the Eocene and modern temperature gradient model, calculating the Eocene and modern temperature using the respective iterations, taking the difference, and then calculating the median (2.5th, 97.5th percentile) from all pairs of iterations.  
+
+Global average temperatures were calculated by taking the weighted mean of the median (2.5th, 97.5th percentile) temperature estimates in 1 degree latitudinal bins. The weights were set to the proportion of global surface area in each latitudinal bin, i.e. decreasing with increasing latitude as:
+$$weights = sin(\alpha_{1,i}) - sin(\alpha_{2,i}) ,$$
+where $\alpha1$ is the upper, and $\alpha2$ is the lower latitudinal boundary of bin $i$.
+
 
 # Results
 
@@ -168,30 +177,10 @@ The average modern temperature gradient can be closely approximated with our mod
 - Global t : use raster package for calculation of areal weights
 - report lat gradient
 
-```{r results block 1 - for in-line code}
+```{r results block 1 - for in-line code, echo = FALSE}
 setwd('..') # move up to parent folder of /manuscript
-source("R/functions/model_components/gradient.R")
-mode_all <- readRDS("results/eeco/eeco_climate_model_output_params.rds")
-modm_all <- readRDS("results/modern/modern_climate_model_output.rds")
-
-## outsource to a seperate analysis script
-
-# latitudinal weights in 1 deg lat bands
-alpha1 <- seq(1,90,1)
-alpha2 <- seq(0,89,1)
-latweight <- sin(pi*alpha1/180) - sin(pi*alpha2/180) # sums to 1 - careful when using lat. subsets
-# eocene temperature gradient
-eotemp <- gradient(seq(0.5,89.5,1), mode_all[,1:4],0)
-# eocene temperature gradient quantiles
-eotempq <- apply(eotemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
-# eocene global average temperature with 95% CI
-eotemp_global <- apply(eotempq,1, function(x) round(sum(x*latweight),1), simplify = FALSE)
-# modern temperature gradient
-motemp <- gradient(seq(0.5,89.5,1), modm_all[,1:4],0)
-# modern temperature gradient quantiles
-motempq <- apply(motemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
-# modern global average temperature with 95% CI
-motemp_global <- apply(motempq,1, function(x) round(sum(x*latweight),1), simplify = FALSE)
+motemp_global <- readRDS("results/modern/global_mean_modern.rds")
+eotemp_global <- readRDS("results/eeco/global_mean_eeco.rds")
 
 ```
 

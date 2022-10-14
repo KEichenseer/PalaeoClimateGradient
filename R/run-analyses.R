@@ -38,3 +38,9 @@ source("./R/figures/fig_3.R", print.eval=TRUE)
 #
 # Estimate EECO latitudinal temperature gradient
 source("./R/analyses/run_EECO_climate_model.R")
+#
+# Fig. 4
+
+#
+# results section - global mean temperature
+source("./R/analyses/global_mean_temperatures.R")
