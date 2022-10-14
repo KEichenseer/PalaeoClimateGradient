@@ -1,7 +1,7 @@
 # global mean temperatures for the modern and the Eocene
 
 source("R/functions/model_components/gradient.R")
-mode_all <- readRDS("results/eeco/eeco_climate_model_output_params.rds")
+mode_all <- readRDS("results/eeco/eeco_climate_model_output_combined.rds")
 modm_all <- readRDS("results/modern/modern_climate_model_output.rds")
 
 # latitudinal weights in 1 deg lat bands

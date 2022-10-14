@@ -142,7 +142,7 @@ was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were c
 - Modern data
 - Sample based on Eocene localities
 
-To test whether our logistic regression model can adequately describe latitudinal temperature gradients, we applied a simplified version of the model to modern sea surface temperatures from Bio-Oracle [@...]. As these modern, annual sea surface temperatures estimates are associated with little uncertainty, there is no need for a hierarchical model structure, and we substituted temperature ($t$) for $\mu$ in eq. ? and ?. To verify that the modern gradient can be approximated with limited sampling, we resampled modern sea surface temperatures at modern latitudes corresponding the palaeolatitudes of the Eocene samples. This process was repeated 100 times, randomly chosing a longitude for each latitude in each repetition. The parameters of the non-hierarchical temperature model were estimated for each of the 100 samples, and the iterations after burn-in from the posterior of the parameters were pooled to generate the resulting median temperature gradient with 95 % credible intervals.
+To test whether our logistic regression model can adequately describe latitudinal temperature gradients, we applied a simplified version of the model to modern sea surface temperatures from Bio-Oracle [@...]. As these modern, annual sea surface temperatures estimates are associated with little uncertainty, there is no need for a hierarchical model structure, and we substituted temperature ($t$) for $\mu$ in eq. ? and ?. To verify that the modern gradient can be approximated with limited sampling, we resampled modern sea surface temperatures at modern latitudes corresponding the palaeolatitudes of the Eocene samples. This process was repeated 100 times, randomly chosing a longitude for each latitude in each repetition. The parameters of the non-hierarchical temperature model were estimated for each of the 100 samples, and the iterations after burn-in from the posterior of the parameters were pooled to generate the resulting median temperature gradient with 95 % credible intervals ($2.5^{th}$ to $97.5^{th}$ percentile).
 
 
 ## Parameter estimation
@@ -157,9 +157,9 @@ For the Eocene model, we ran four chains with 600,000 iterations each, discardin
 
 Modelled sea surface temperature estimates were generated with eq. ?, calculating the sea surface temperatures at any latitude with the parameter estimates of each iteration from the posterior. The median, $2.5^{th}$ and $97.5^{th}$ percentile of temperatures where then taken from all temperature estimates obtained at the latitude of interest.
 
-Differences between Eocene and modern temperatures at a certain latitude were calculated by randomly pairing all iterations of the posterior from the Eocene and modern temperature gradient model, calculating the Eocene and modern temperature using the respective iterations, taking the difference, and then calculating the median (2.5th, 97.5th percentile) from all pairs of iterations.  
+Differences between Eocene and modern temperatures at a certain latitude were calculated by randomly pairing all iterations of the posterior from the Eocene and modern temperature gradient model, calculating the Eocene and modern temperature using the respective iterations, taking the difference, and then calculating the median ($2.5^{th}$, $97.5^{th}$ percentile) from all pairs of iterations.  
 
-Global average temperatures were calculated by taking the weighted mean of the median (2.5th, 97.5th percentile) temperature estimates in 1 degree latitudinal bins. The weights were set to the proportion of global surface area in each latitudinal bin, i.e. decreasing with increasing latitude as:
+Global average temperatures were calculated by taking the weighted mean of the median ($2.5^{th}$, $97.5^{th}$ percentile) temperature estimates in 1 degree latitudinal bins. The weights were set to the proportion of global surface area in each latitudinal bin, i.e. decreasing with increasing latitude as:
 $$weights = sin(\alpha_{1,i}) - sin(\alpha_{2,i}) ,$$
 where $\alpha1$ is the upper, and $\alpha2$ is the lower latitudinal boundary of bin $i$.
 
@@ -177,8 +177,11 @@ The average modern temperature gradient can be closely approximated with our mod
 - Global t : use raster package for calculation of areal weights
 - report lat gradient
 
-```{r results block 1 - for in-line code, echo = FALSE}
+```{r results block - for in-line code, echo = FALSE}
 setwd('..') # move up to parent folder of /manuscript
+
+# add gradient results here
+
 motemp_global <- readRDS("results/modern/global_mean_modern.rds")
 eotemp_global <- readRDS("results/eeco/global_mean_eeco.rds")
 

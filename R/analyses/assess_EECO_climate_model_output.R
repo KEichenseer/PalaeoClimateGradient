@@ -50,10 +50,3 @@ legend("topright",c("posterior mean (proxy obs.)", "posterior mean (distribution
 # modern_sample <- readRDS("./results/modern/modern_climate_model_output.rds")
 # points(0:90,apply(temp_from_gradient(0:90,modern_sample),1,median), type = "l", lwd = 2)
 
-# global average temperature
-alpha1 <- seq(1,90,1)
-alpha2 <- seq(0,89,1)
-latweight <- sin(pi*alpha1/180) - sin(pi*alpha2/180)
-eotemp <- gradient(seq(0.5,89.5,1), mode_all[,1:4],0)
-eotempq <- apply(eotemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
-apply(eotempq,1, function(x) sum(x*latweight))

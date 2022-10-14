@@ -60,4 +60,9 @@ parallel::stopCluster(cl)
 ### save output
 saveRDS(mode, "results/eeco/eeco_climate_model_output.rds")
 
+# combine chains and discard burn-in
+mode_all <- combine_posterior(mode,100000)
+# save combined chains
+saveRDS(mode_all, "results/eeco/eeco_climate_model_output_combined.rds")
+
 ### To check results use the "assess_EECO-climate_model_output_script.R
