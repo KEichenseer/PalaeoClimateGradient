@@ -142,9 +142,8 @@ was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were c
 - Modern data
 - Sample based on Eocene localities
 
-To test whether our logistic regression model can adequately describe latitudinal temperature gradients, we applied a simplified version of the model to modern sea surface temperatures from Bio-Oracle [@...]
+To test whether our logistic regression model can adequately describe latitudinal temperature gradients, we applied a simplified version of the model to modern sea surface temperatures from Bio-Oracle [@...]. As these modern, annual sea surface temperatures estimates are associated with little uncertainty, there is no need for a hierarchical model structure, and we substituted temperature ($t$) for $\mu$ in eq. ? and ?. To verify that the modern gradient can be approximated with limited sampling, we resampled modern sea surface temperatures at modern latitudes corresponding the palaeolatitudes of the Eocene samples. This process was repeated 100 times, randomly chosing a longitude for each latitude in each repetition. The parameters of the non-hierarchical temperature model were estimated for each of the 100 samples, and the iterations after burn-in from the posterior of the parameters were pooled to generate the resulting median temperature gradient with 95 % credible intervals.
 
-the climate model is able to estimate latitudinal temperature gradients from limited data, we subsampled modern sea surface temperatures from the Bio-Or
 
 ## Model application
 - Calculate lat gradient
