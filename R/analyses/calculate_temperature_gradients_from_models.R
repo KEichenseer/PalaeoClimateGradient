@@ -1,5 +1,6 @@
 ### calculating results
 source("./R/functions/model_processing/temp_from_gradient.R")
+source("./R/functions/model_components/gradient.R")
 
 # modern
 modm <- readRDS("./results/modern/modern_climate_model_output.rds")
@@ -27,3 +28,7 @@ eocene_gradient <- as.list(quantile(eocene_t0 - eocene_t90, probs = c(0.025,0.5,
 modern_gradient <- as.list(quantile(modern_t0 - modern_t90, probs = c(0.025,0.5,0.975)))
 
 # save results
+saveRDS(tdiff_lat0, "eocene_modern_difference_equator.rds")
+saveRDS(tdiff_lat90, "eocene_modern_difference_poles.rds")
+saveRDS(eocene_gradient, "eocene_overall_gradient.rds")
+saveRDS(modern_gradient, "modern_overall_gradient.rds")
