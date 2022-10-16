@@ -76,7 +76,7 @@ Geochemical climate proxy data were extracted from a latest Paleocene and early 
 
 ## Ecological data
 
-**Coral reefs.** Today, shallow warm-water coral reefs are limited to tropical and subtropical latitudes (~34°N–32 degS), with minimum sea surface temperature (~18 degC) tolerances being the primary constraint on this distribution [@johannes1983; @kleypas1999; @yamano2001]. As coral reefs reside at the upper thermal limit of the oceans today, their maximum sea surface temperature tolerance is less well-constrained with some studies suggesting up to 35.6 degC in the geological past [@jones2022reef]. Nevertheless, the distribution of coral reefs have frequently been recognised as tracers of past (sub-)tropical conditions [@ziegler1984; @kiessling2001]. During the Eocene, coral communities and reefs expanded across tropical and temperate latitudes, with some communities found up to palaeolatitudes of 43 degC N [@zamagni2012]. Using a compilation of Paleocene--early Eocene coral reefs and community localities [@zamagni2012], we generate quantitative sea surface temperature estimates for the ECCO. To do so, we extract localities inferred to be Ilerdian (early Eocene) coral reefs from the compilation, and that can be confidently assigned to the EECO. We exclude coral knobs and coral-bearing mounds which might have broader climatic limits than coral reef ecosystems. This filtering resulted in four unique coral reef localities remaining for the EECO, all of which conform to the modern latitudinal range of coral reefs (<34 deg N). Subsequently, we use statistically derived temperature limits (minimum = 21 degC, average = 27.6 degC, maximum = 29.5 degC) from the published literature [@kleypas1999] to define a normal probability distribution of potential temperature values for coral reef localities. This normal probability distribution was defined with a mean of 27.6 and a standard deviation of 2.125, placing 97.5% of the probability density above the minimum. As the distribution of modern corals is skewed towards warmer temperatures, this approach results in 16.5% of the probability being placed on temperatures > 29.5 degC, allowing for the possibilty that Eocene coral reefs were adapted to warmer conditions than modern-day coral reefs.
+**Coral reefs.** Today, shallow warm-water coral reefs are limited to tropical and subtropical latitudes (~34°N–32 degS), with minimum sea surface temperature (~18 degC) tolerances being the primary constraint on this distribution [@johannes1983; @kleypas1999; @yamano2001]. As coral reefs reside at the upper thermal limit of the oceans today, their maximum sea surface temperature tolerance is less well-constrained with some studies suggesting up to 35.6 degC in the geological past [@jones2022reef]. Nevertheless, the distribution of coral reefs have frequently been recognised as tracers of past (sub-)tropical conditions [@ziegler1984; @kiessling2001]. During the Eocene, coral communities and reefs expanded across tropical and temperate latitudes, with some communities found up to palaeolatitudes of 43 degC N [@zamagni2012]. Using a compilation of Paleocene--early Eocene coral reefs and community localities [@zamagni2012], we generate quantitative sea surface temperature estimates for the ECCO. To do so, we extract localities inferred to be Ilerdian (early Eocene) coral reefs from the compilation, and that can be confidently assigned to the EECO. We exclude coral knobs and coral-bearing mounds which might have broader climatic limits than coral reef ecosystems. This filtering resulted in four unique coral reef localities remaining for the EECO, all of which conform to the modern latitudinal range of coral reefs (<34 deg N). Subsequently, we use statistically derived temperature limits (minimum = 21 degC, average = 27.6 degC, maximum = 29.5 degC) from the published literature [@kleypas1999] to define a normal probability distribution of potential temperature values for coral reef localities. This normal probability distribution was defined with a mean of 27.6 and a standard deviation of 2.125, placing 97.5% of the probability density above the minimum. As the distribution of modern corals is skewed towards warmer temperatures, this approach results in 16.5% of the probability being placed on temperatures > 29.5 degC, allowing for the possibility that Eocene coral reefs were adapted to warmer conditions than modern-day coral reefs.
 
 **Mangroves.** Mangroves are distributed throughout the tropics and subtropics today. While factors beside SST influence the distribution of mangroves, empirical, lower temperature limits have been established for the genera *Avicennia* (15.6 degC) and *Rhizophora* (20.7 degC) [@Quisthoudt2012]. Both *Avicennia* and members of the Rhizophoraceae family were widespread in the early Eocene, but only *Avicennia* occurred at polar latitudes [@Suan2017; @Popescu2021]. Assuming that Eocene members of these mangrove taxa conform to the same climatic requirements as their modern relatives, the presence and absence of *Avicennia* and Rhizophoraceae pollen can be used as a palaeotemperature indicator. For this analysis, published mangrove occurrence data were taken from @Popescu2021, and converted to quantitative temperature estimates. From this data, we identify two types of pollen assemblages which we ascribe different temperature distributions:
 
@@ -180,16 +180,29 @@ The average modern temperature gradient can be closely approximated with our mod
 ```{r results block - for in-line code, echo = FALSE}
 setwd('..') # move up to parent folder of /manuscript
 
-# add gradient results here
+# temperature gradients
+tdiff_lat0 <- readRDS("results/eeco/eocene_modern_difference_equator.rds")
+tdiff_lat90 <- readRDS("results/eeco/eocene_modern_difference_poles.rds")
+eocene_gradient <- readRDS("results/eeco/eocene_overall_gradient.rds")
+modern_gradient <- readRDS("results/modern/modern_overall_gradient.rds")
 
+# sdy
+eeco_sdy <- readRDS("results/eeco/eeco_sdy.rds")
+modern_eeco_sample_sdy <- readRDS("results/modern/modern_eeco_sample_sdy.rds")
+
+
+# global average temperatures
 motemp_global <- readRDS("results/modern/global_mean_modern.rds")
 eotemp_global <- readRDS("results/eeco/global_mean_eeco.rds")
 
+
 ```
 
-The modelled Eocene temperature gradient is starkly different from the modern (Fig 4). Modelled, median equatorial temperatures are 4.2 (95% CI: 0.2 - 8.3) degC higher for the Eocene, and polar temperatures are higher by 25.0 (95% CI: 17.0 - 29.1) degC. This results in a strongly flattened latitudinal temperature gradient of 9.0  (95% CI: 2.5 - 17.8) degC for the Eocene, as opposed to 29.6 degC for the modern. The high variability of early Eocene palaeotemperature proxies, particularly in the mid-latitudes, and the scarcity of high-latitude data, results in substantial uncertainties in the modelled temperature gradient, but ...
+The modelled Eocene temperature gradient is starkly different from the modern (Fig 4). Modelled, median equatorial temperatures are `r tdiff_lat0$"50%"` (95% CI: `r tdiff_lat0$"2.5%"` - `r tdiff_lat0$"97.5%"`) degC higher for the Eocene, and polar temperatures are higher by `r tdiff_lat90$"50%"` (95% CI: `r tdiff_lat90$"2.5%"` - `r tdiff_lat90$"97.5%"`) degC. This results in a strongly flattened latitudinal temperature gradient of `r eocene_gradient$"50%"`  (95% CI: `r eocene_gradient$"2.5%"` - `r eocene_gradient$"97.5%"`) degC for the Eocene, as opposed to `r modern_gradient$"50%"` degC for the modern. 
 
-The global Eocene mean sea surface temperature is estimated at `r eotemp_global$"50%"` (95% CI: `r eotemp_global$"2.5%"` - `r eotemp_global$"97.5%"`) degC, significantly higher than the modern (`r motemp_global$"50%"` degC).
+The high variability of early Eocene palaeotemperature proxies, particularly in the mid-latitudes, and the scarcity of high-latitude data, results in substantial uncertainties in the modeled temperature gradient. This is reflected in the residual standard deviation ($\sigma$) of the early Eocene gradient, `r eeco_sdy$"50%"` (95% CI: `r eeco_sdy$"2.5%"` - `r eeco_sdy$"97.5%"`) degC, more than twice as high than  $\sigma$ of the modern gradient, resampled at early Eocene latitudes, `r modern_eeco_sample_sdy$"50%"` (95% CI: `r modern_eeco_sample_sdy$"2.5%"` - `r modern_eeco_sample_sdy$"97.5%"`) degC.
+
+The global Eocene mean sea surface temperature is estimated at `r eotemp_global$"50%"` (95% CI: `r eotemp_global$"2.5%"` - `r eotemp_global$"97.5%"`) degC, significantly higher than the modern (`r motemp_global$"50%"` degC). 
 
 
 
@@ -202,6 +215,9 @@ The global Eocene mean sea surface temperature is estimated at `r eotemp_global$
 # Discussion
 
 - x1 compare lat gradient to literature estimates, e.g. Zhang2019
+- compare lat gradient to climate models and the "early EECO problem"
+- discuss insufficiency of proxies (high variability, ...)
+- discuss utility of the model and future applications
 
 # Conclusions
 
