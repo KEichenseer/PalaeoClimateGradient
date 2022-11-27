@@ -44,3 +44,5 @@ source("./R/analyses/run_EECO_climate_model.R")
 source("./R/analyses/global_mean_temperatures.R")
 # results section - gradients and temperature differences
 source("./R/analyses/calculate_temperature_gradients_from_models.R")
+# results section - sdy
+source("./R/analyses/assess_sdy.R")
