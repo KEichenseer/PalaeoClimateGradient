@@ -6,37 +6,37 @@ error_polygon <- function(x,en,ep,color=rgb(0,0,0,0.2)) {
            border = NA, col = color)
 }
 
-
-gradient <- function(x, coeff, sdy) { # parametrise with difference between cold and hot end instead
-  if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
-  if(is.data.frame(coeff) | is.matrix(coeff)) {
-    A = coeff[,1]
-    DKA = coeff[,2]
-    M = coeff[,3]
-    Q = coeff[,4]
-    
-    lat = t(data.frame(lat=x))
-    lat = lat[rep(1, each=length(A)),]
-    
-    if(sdy == 0) {out = A + DKA/((1+(exp(Q*(lat-M)))))
-    } else {
-      out = A + DKA/((1+(exp(Q*(lat-M)))))+ rnorm(length(x),0,sdy)
-    }
-    
-  } else {
-    A = coeff[1]
-    DKA = coeff[2]
-    M = coeff[3]
-    Q = coeff[4]
-    
-    if(sdy == 0) {return(A + DKA/((1+(exp(Q*(x-M))))))
-    } else {
-      out = A + DKA/((1+(exp(Q*(x-M)))))+ rnorm(length(x),0,sdy)
-    }
-  }
-  return(out)
-}
-
+# 
+# gradient <- function(x, coeff, sdy) { # parametrise with difference between cold and hot end instead
+#   if(is.list(coeff) & !(is.data.frame(coeff) | is.matrix(coeff))) coeff = unlist(coeff)
+#   if(is.data.frame(coeff) | is.matrix(coeff)) {
+#     A = coeff[,1]
+#     DKA = coeff[,2]
+#     M = coeff[,3]
+#     Q = coeff[,4]
+#     
+#     lat = t(data.frame(lat=x))
+#     lat = lat[rep(1, each=length(A)),]
+#     
+#     if(sdy == 0) {out = A + DKA/((1+(exp(Q*(lat-M)))))
+#     } else {
+#       out = A + DKA/((1+(exp(Q*(lat-M)))))+ rnorm(length(x),0,sdy)
+#     }
+#     
+#   } else {
+#     A = coeff[1]
+#     DKA = coeff[2]
+#     M = coeff[3]
+#     Q = coeff[4]
+#     
+#     if(sdy == 0) {return(A + DKA/((1+(exp(Q*(x-M))))))
+#     } else {
+#       out = A + DKA/((1+(exp(Q*(x-M)))))+ rnorm(length(x),0,sdy)
+#     }
+#   }
+#   return(out)
+# }
+# 
 
 plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
                           ylim = NULL, line_col = "black", confint_col = rgb(0,0,0,0.2), lwd = 2) {
