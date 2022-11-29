@@ -37,3 +37,14 @@ axis(2,c(0,0.5,1),c(0,0.5,1))
 axis(1,c(-1,0,0.2,0.4,1),c(NA,0,0.2,0.4,NA))
 par(mfrow=c(1,1))
 dev.off()
+
+# plot inv-gamma prior 
+
+
+dens <- hist(1/rgamma(1000000,5,5),seq(0,30,0.01))
+plot_dens(seq(0,5,0.01)[15:485],data.table::frollmean(dens$density[1:length(seq(0,5,0.01))],30)[30:500],
+          xlab = expression(sigma), yaxt = "n", xaxt = "n", ylab = "", col = col, xlim = c(0,3.33))
+
+
+dens <- dnorm(seq(-3,3,0.01))
+plot_dens(seq(-3,3,0.01),dens,xlab = "N", yaxt = "n", xaxt = "n", ylab = "", col = col)
