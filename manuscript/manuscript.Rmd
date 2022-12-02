@@ -1,5 +1,5 @@
 ---
-title: "An Early Eocene temperature gradient modelled with geological and ecological proxies"
+title: "Combinig geological and ecological proxies to model latitudinal temperature gradients in the early Eocene greenhouse"
 
 author:
   - Kilian Eichenseer^[Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom] and Lewis A. Jones^[Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Universidade de Vigo, 36310 Vigo, Spain]
@@ -21,6 +21,7 @@ Modelling latitudinal temperature gradients from geological proxies: An early Eo
 "Improving palaeoclimatic reconstructions with ecological data: How hot was the early Eocene?"
 "Integrating ecological and geochemical proxies for palaeoclimatic reconstruction: An early Eocene example"
 "The Early Eocene Climate Optimum reconstructed with Bayesian multi-proxy integration"
+"An Early Eocene temperature gradient modelled with geological and ecological proxies"
 -->
 
 Abstract
@@ -28,7 +29,9 @@ Abstract
 Geochemical data such as oxygen isotopes (d18O), tetraether indices (TEX86) and magnesium calcium ratios (Mg/Ca) are routinely used to reconstruct ocean temperatures in deep time. However, limited spatial coverage and disagreements between geochemical proxies compromise the accuracy of these reconstructions. Geological data such as coral reefs, mangroves, and evaporites have the potential to supplement geochemical data by improving spatial coverage and constraining temperature estimates. Historically, these data have been used to qualitatively inform upon palaeoclimatic conditions at broad spatial scales, yet no transfer functions exist to convert geological data into temperature estimates. Quantitative temperature reconstructions have therefore not made use of these data. Here, we present a Bayesian hierarchical model to integrate geological data–with established temperature proxies–into a unified quantitative framework. We apply this approach to the early Eocene climatic optimum (EECO), the interval with the warmest sustained temperatures of the Cenozoic. Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad sea surface temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical shallow marine proxy record to model the latitudinal temperature gradient and its uncertainty. Our results confirm the presence of a flattened latitudinal temperature gradient and unusually high polar temperatures during the EECO. We show that the inclusion of ecological data can substantially reduce the uncertainty on temperature estimates in climate zones lacking geochemical data.
 
 # Introduction
-The geological record holds evidence for episodes in Earth history with fundamentally different climates than our current. Some episodes, for example the early Eocene, are thought to have been significantly warmer than the modern, potentially representing an analogue for extreme climate warming scenarios. Reconstructions of palaeoclimate commonly follow one of two approaches. Geochemical proxies such as oxygen isotopes (d18O), tetraether indices (TEX86) and magnesium calcium ratios (Mg/Ca) are used to derive palaeotemperature estimates for individual locations using experimentally derived transfer functions. Multiple local estimates are sometimes summarised to generate regional or global estimates, but this approach is prone to sampling bias [@Jones2022]. Earth system models take a fundamentally different approach by modelling the climate-generating processes directly, reconstructing spatially resolved climate estimates for the entire glob.e This approach is, however, relying on proxy data to constrain the large number of possible model setups and ground truth the model output.
+The geological record holds evidence for episodes in Earth history with fundamentally different climates than our current [@Scotese2021]. Some episodes, for example the early Eocene, are thought to have been significantly warmer than the modern [@Pross2012], potentially representing an analogue for extreme climate warming scenarios [@Burke2018]. Reconstructions of palaeoclimate commonly follow one of two approaches. Geochemical proxies such as oxygen isotopes (d18O), tetraether indices (TEX86) and magnesium calcium ratios (Mg/Ca) are used to derive palaeotemperature estimates for individual locations using experimentally derived transfer functions [e.g. @Liu2009]. To generate regional or global average estimates, the mean of multiple local estimates is taken [e.g. @Veizer2015]. This approach has the advantage of being transparent and easy to reproduce, modify or expand with new data, but is prone to sampling bias [@Jones2022]. Earth system models take a fundamentally different approach by modelling the climate-generating processes directly, reconstructing spatially resolved climate estimates for the entire globe [@???]. However, this approach still relies on proxy data to constrain the large number of possible model setups and ground truth the model output [@???] It also requires substantial computing resources and technical expert knowledge, and is thus difficult to implement or modify for most palaeoclimate researchers.
+
+Climate reconstructions of low - intermediate complexity provide an alternative that can be employed more readily by a broad range of users. Examples of this approach include proxy compilations that take into account the spatial nature of the data, e.g. @Hollis2019 investigated latitudinal temperature trends across the late Palaeocene - early Eocene with a spatially resolved proxy record. Expanding from this approach, some proxy-based reconstructions use statistical modelling to infer climatic patterns, and to bridge data gaps, e.g. using polynomials to reconstruct latitudinal gradients [@Bijl2009], or Gaussian process regression for a 2D-reconstruction of surface temperatures [@Inglis2020]. These latter approaches take advantage of the autoregressive nature 
 
 
 Hook -> Generic problem:
@@ -67,6 +70,10 @@ The early Eocene climate optimum (EECO, ~ 53--49 million years ago) is thought t
 
 Contrast between complex, process-driven Earth system models and very simplistic use of the proxy data as local temperature estimates or global averages. Here, we introduce a proxy-driven modelling approach of relatively low complexity, which places the available chemical and biological proxy data in a single climate model.
 In order to properly compare model output to proxy data, latitudinal temperature patterns need to be reconstructed from noisy data (impossible to properly compare model gradients with scattered proxy points "by eye")
+
+Reconstructing Earth's climate history is fundamental for understanding the evolution of the Earth system and its consequences for life in the past and future. The geological record, the only empirical source of information on the palaeoclimate of the deep past, holds evidence.  
+
+
 -->
 # Materials & Methods
 
