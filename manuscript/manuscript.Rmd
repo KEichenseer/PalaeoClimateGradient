@@ -29,21 +29,27 @@ Abstract
 Geochemical data such as oxygen isotopes (d18O), tetraether indices (TEX86) and magnesium calcium ratios (Mg/Ca) are routinely used to reconstruct ocean temperatures in deep time. However, limited spatial coverage and disagreements between geochemical proxies compromise the accuracy of these reconstructions. Geological data such as coral reefs, mangroves, and evaporites have the potential to supplement geochemical data by improving spatial coverage and constraining temperature estimates. Historically, these data have been used to qualitatively inform upon palaeoclimatic conditions at broad spatial scales, yet no transfer functions exist to convert geological data into temperature estimates. Quantitative temperature reconstructions have therefore not made use of these data. Here, we present a Bayesian hierarchical model to integrate geological data–with established temperature proxies–into a unified quantitative framework. We apply this approach to the early Eocene climatic optimum (EECO), the interval with the warmest sustained temperatures of the Cenozoic. Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad sea surface temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical shallow marine proxy record to model the latitudinal temperature gradient and its uncertainty. Our results confirm the presence of a flattened latitudinal temperature gradient and unusually high polar temperatures during the EECO. We show that the inclusion of ecological data can substantially reduce the uncertainty on temperature estimates in climate zones lacking geochemical data.
 
 # Introduction
-The geological record holds evidence for episodes in Earth history with fundamentally different climates than our current [@Scotese2021]. Some episodes, for example the early Eocene, are thought to have been significantly warmer than the modern [@Pross2012], potentially representing an analogue for extreme climate warming scenarios [@Burke2018]. Reconstructions of palaeoclimate commonly follow one of two approaches. Geochemical proxies such as oxygen isotopes (d18O), tetraether indices (TEX86) and magnesium calcium ratios (Mg/Ca) are used to derive palaeotemperature estimates for individual locations using experimentally derived transfer functions [e.g. @Liu2009]. To generate regional or global average estimates, the mean of multiple local estimates is taken [e.g. @Veizer2015]. This approach has the advantage of being transparent and easy to reproduce, modify or expand with new data, but is prone to sampling bias [@Jones2022]. Earth system models take a fundamentally different approach by modelling the climate-generating processes directly, reconstructing spatially resolved climate estimates for the entire globe [@???]. However, this approach still relies on proxy data to constrain the large number of possible model setups and ground truth the model output [@???] It also requires substantial computing resources and technical expert knowledge, and is thus difficult to implement or modify for most palaeoclimate researchers.
+The geological record holds evidence for episodes in Earth history with fundamentally different climates than our current [@Scotese2021]. Some episodes, for example the early Eocene, are thought to have been significantly warmer than the modern [@Pross2012], potentially representing an analogue for extreme climate warming scenarios [@Burke2018]. Reconstructions of palaeoclimate commonly use 1) geochemical proxy data, 2) ecological or lithological climate indicators, or 3) earth system modelling. 
 
-Climate reconstructions of low - intermediate complexity provide an alternative that can be employed more readily by a broad range of users. Examples of this approach include proxy compilations that take into account the spatial nature of the data, e.g. @Hollis2019 investigated latitudinal temperature trends across the late Palaeocene - early Eocene with a spatially resolved proxy record. Expanding from this approach, some proxy-based reconstructions use statistical modelling to infer climatic patterns, and to bridge data gaps, e.g. using polynomials to reconstruct latitudinal gradients [@Bijl2009], or Gaussian process regression for a 2D-reconstruction of surface temperatures [@Inglis2020]. These latter approaches take advantage of the autoregressive nature 
+Geochemical proxies such as oxygen isotopes (d18O), tetraether indices (TEX86) and magnesium calcium ratios (Mg/Ca) are used to derive palaeotemperature estimates for individual locations using experimentally derived transfer functions [e.g. @Liu2009]. To generate regional or global average estimates, the mean of multiple local estimates is taken [e.g. @Veizer2015]. This approach has the advantage of being transparent and easy to reproduce, modify or expand with new data, but is prone to sampling bias [@Jones2022]. Ecological and lithological climate data provide an alternative method of reconstructing palaeotemperatures, using e.g. leaf physiognomy and floral assemblages to derive palaeotemperature proxies [@Greenwood2003], or using lithological indicators to determine the range of palaeoclimatic belts [@Scotese2021]. Despite some recent advances [@Chandra2021], ecological and lithological climate indicators are still rarely used in quantitative palaeoclimate reconstructions, particularly for the marine realm. Earth system models take a fundamentally different approach by modelling the climate-generating processes directly, reconstructing spatially resolved climate estimates for the entire globe [@???]. However, this approach still relies on proxy data to constrain the large number of possible model setups and ground truth the model output [@???] It also requires substantial computing resources and technical expert knowledge, and is thus difficult to implement or modify for most palaeoclimate researchers.
 
+Spatially resolved climate reconstructions provide an alternative that can be employed more readily by a broad range of users. Examples of this approach include the visualisation of proxy compilations along a latitudinal gradient [@Hollis2019, @Vickers2021]. Interpolation is sometimes used to bridge spatial gaps in palaeoclimate data [@Taylor2004], taking advantage of the autoregressive nature of climatic data: much of the information on the climate of any given location is contained in the climate data of nearby locations [@Reynolds1994]. Adding to this, some proxy-based reconstructions use statistical modelling to infer climatic patterns. For example, polynomial regression has been used to reconstruct latitudinal temperature gradients [@Bijl2009], and 2D-reconstructions of surface temperatures have been created with Gaussian process regression [@Inglis2020]. 
+
+Here, we present a Bayesian, hierarchical model for inferring sea surface temperatures (SST) that expands upon existing, spatial reconstructions of palaeoclimate by allowing for the integration of 1) prior information based on physical principles and the observed, modern SST distribution, and of 2) geochemical and ecological climate proxies in a common, quantitative framework. We apply this approach to the early Eocene climatic optimum (EECO), the interval with the warmest sustained temperatures of the Cenozoic. Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical, shallow marine proxy record to model the latitudinal SST gradient and its uncertainty. 
+
+
+<!--
 
 Hook -> Generic problem:
 - Reconstructing past climate important for understanding current/future global warming
-- Two main pathways: highly complex ESM <--> proxy compilations
+- Two main pathways: highly complex ESM <-> proxy compilations
 - Problems with proxy data: only provides a local picture (few local sites interpreted as global signal)
 - Problems with ESM (long time to run, very complex, a lot of assumptions on processes/doesn't consider how they may change, need to be constrained with proxy data)
 - Lack of intermediate-complexity models to make full use of the proxy data
 
 Specific problem:
 - exemplified with the EECO: proxies and ESM hard to reconcile, EECO important climate analogue
-- a lot of proxies recrystallised <--> unreliable data or lack of data
+- a lot of proxies recrystallised <-> unreliable data or lack of data
 
 
 Solution:
@@ -58,11 +64,9 @@ Application:
 
 Here:
 
-Here, we present a Bayesian hierarchical model to integrate geological data---with established temperature proxies---into a unified quantitative framework. We apply this approach to the early Eocene climatic optimum (EECO), the interval with the warmest sustained temperatures of the Cenozoic. Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad sea surface temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical shallow marine proxy record to model the latitudinal temperature gradient and its uncertainty.
-
 - EECO specific information
 - Disagreement between GCM + geochem data
-
+-->
 
 <!--
 
@@ -74,7 +78,12 @@ In order to properly compare model output to proxy data, latitudinal temperature
 Reconstructing Earth's climate history is fundamental for understanding the evolution of the Earth system and its consequences for life in the past and future. The geological record, the only empirical source of information on the palaeoclimate of the deep past, holds evidence.  
 
 
+Here, we present a Bayesian hierarchical model to integrate geological data---with established temperature proxies---into a unified quantitative framework. We apply this approach to the early Eocene climatic optimum (EECO), the interval with the warmest sustained temperatures of the Cenozoic. Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad sea surface temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical shallow marine proxy record to model the latitudinal temperature gradient and its uncertainty.
+
+Our hierarchical approach accounts for different sample sizes between and uncertainties within proxy sites, and 
+
 -->
+
 # Materials & Methods
 
 ## Geochemical data
@@ -146,8 +155,10 @@ was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were c
 ## Model validation
 
 [Fig. 3]
+<!--
 - Modern data
 - Sample based on Eocene localities
+-->
 
 To test whether our logistic regression model can adequately describe latitudinal temperature gradients, we applied a simplified version of the model to modern sea surface temperatures from Bio-Oracle [@...]. As these modern, annual sea surface temperatures estimates are associated with little uncertainty, there is no need for a hierarchical model structure, and we substituted temperature ($t$) for $\mu$ in eq. ? and ?. To verify that the modern gradient can be approximated with limited sampling, we resampled modern sea surface temperatures at modern latitudes corresponding the palaeolatitudes of the Eocene samples. This process was repeated 100 times, randomly chosing a longitude for each latitude in each repetition. The parameters of the non-hierarchical temperature model were estimated for each of the 100 samples, and the iterations after burn-in from the posterior of the parameters were pooled to generate the resulting median temperature gradient with 95 % credible intervals ($2.5^{th}$ to $97.5^{th}$ percentile).
 
@@ -158,10 +169,11 @@ For the Eocene model, we ran four chains with 600,000 iterations each, discardin
 
 
 ## Processing of model results
+<!--
 - Calculate lat gradient
 - Calculate global T
 [Fig. 4]
-
+-->
 Modelled sea surface temperature estimates were generated with eq. ?, calculating the sea surface temperatures at any latitude with the parameter estimates of each iteration from the posterior. The median, $2.5^{th}$ and $97.5^{th}$ percentile of temperatures where then taken from all temperature estimates obtained at the latitude of interest.
 
 Differences between Eocene and modern temperatures at a certain latitude were calculated by randomly pairing all iterations of the posterior from the Eocene and modern temperature gradient model, calculating the Eocene and modern temperature using the respective iterations, taking the difference, and then calculating the median ($2.5^{th}$, $97.5^{th}$ percentile) from all pairs of iterations.  
@@ -174,16 +186,17 @@ where $\alpha1$ is the upper, and $\alpha2$ is the lower latitudinal boundary of
 # Results
 
 ## Model validation
-- Show that the 4-parameter logistic function can adequatly describe the modern temperature gradient
+<!-- - Show that the 4-parameter logistic function can adequatly describe the modern temperature gradient
 - Show that the modern gradient can be reproduced with Eocene sampling distribution
+-->
 [Fig 3 - Modern gradient]
 The average modern temperature gradient can be closely approximated with our model when using the full modern SST dataset (Fig. 3a). Degrading the amount and distribution of data points to match the early Eocene sampling distribution still results in a close match of the modelled gradient with the empirical gradient (Fig 3b). A noticable, but minor offset is apparent in high latitudes, where sampling is most incomplete (Fig 3b).
 
 ## EECO reconstruction
-- Show Eocene gradient
+<!-- - Show Eocene gradient
 - Global t : use raster package for calculation of areal weights
 - report lat gradient
-
+-->
 ```{r results block - for in-line code, echo = FALSE}
 setwd('..') # move up to parent folder of /manuscript
 
@@ -213,7 +226,7 @@ The global Eocene mean sea surface temperature is estimated at `r eotemp_global$
 
 
 
-## Fig 4 - compare Eocene gradient with previous reconstructions / ES models
+## Fig 4 - compare Eocene gradient with modern gradient, also with previous reconstructions / ES models?
 
 - x1 Draw samples from the posterior gradient to get a latitudinal gradient of deg C / deg lat with uncertainty (intercept gradient at 0 and 90 deg lat)
 
