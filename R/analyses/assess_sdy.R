@@ -10,3 +10,8 @@ eeco_sdy <- as.list(format(round(quantile(mode_all$sdy,probs = c(.025,.5,.975)),
 
 saveRDS(modern_eeco_sample_sdy, "results/modern/modern_eeco_sample_sdy.rds")
 saveRDS(eeco_sdy, "results/eeco/eeco_sdy.rds")
+
+# just proxy sdy
+eeco_prox <- readRDS("results/eeco/eeco_climate_model_output_just_proxy.rds")
+eeco_prox <- combine_posterior(eeco_prox, burnin = 100000)
+eeco_prox_sdy <- as.list(format(round(quantile(eeco_prox$sdy,probs = c(.025,.5,.975)),1),nsmall = 1))
