@@ -1,0 +1,5 @@
+### Seperate gradient in hemispheres
+- Common question I got when presenting this work.
+Could be achieved by using seperate A, B, M, and a single K. Would take considerably effort to implement.
+Not worth it for the SI.
+Instead: Just run the model on northern hemisphere and southern hemisphere seperately and present results in the SI
