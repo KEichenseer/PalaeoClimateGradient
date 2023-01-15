@@ -54,5 +54,7 @@ $$M \sim N(42,10)$$
 $$B \sim Gamma(\alpha_G=4.3,\beta_G=30)$$
 was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were chosen such that the highest prior density is at $B$ of the modern SST gradient, $0.11$.
 
+## Convergence checks
+To ensure the convergence and mixing of the chains, we inspected traceplots of all the unknown parameters of the model. [Add figures]
 
 # References
