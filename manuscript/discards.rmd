@@ -1,0 +1,11 @@
+---
+title: "Discards"
+output: html_document
+date: "2023-01-21"
+---
+
+
+## Condensed methods Bayesian framework
+We model the relationship between sea surface temperature and latitude with a generalised logistic regression (`growth curve` or `Richard's curve`). Specifically, we modelled the estimate of the mean temperature $\mu_{j}$ at location $j$ as  $\mu_{j}  \sim N(\nu_j, \sigma)$, with
+$$\nu_{j} = A~+\frac{K-A}{e^{B(abs(l_j)-M)}}~, ~~~~~ j = 1,...,n,  $$
+where $A$ and $K$ denote the lower and upper asymptote, respectively, $M$ specifies the latitude of maximal growth, the most quickly with latitude, $B$ denotes the growth rate (Fig. 2), $\sigma$ denotes the residual standard deviation, and $n$ denotes the number of locations. The hierarchical model structure implies that $\mu_{j}$ reflects the temperature proxies at location $j$, but is also affected by the fit to the overall latitudinal gradient. We placed priors on the unknown parameters $A$,$K$,$M$, and $B$ that were vaguely based on the modern, and observing general physical principles. For details on the model structure and the choice of priors, see the *Supplementary Material*.
