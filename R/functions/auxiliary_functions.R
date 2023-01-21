@@ -154,14 +154,16 @@ plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = N
 
 
 
-plot_chains <- function(mod, params = 1:4, n_thin = NULL, logB = TRUE, xlabel = "iteration") {
-  if("params" %in% names(mod[[1]])) {mod <- lapply(mod, function(x) x$params)
-  modnames <- names(mod[[1]])
-  if(!is.numeric(params)) plot_it <- which(modnames %in% params) else plot_it <- params
-  }
-  modnames[2] <- "K"
+plot_chains <- function(mod, select = list("params",1:4), n_thin = NULL, log_y = c(0,0,0,0), xlabel = "iteration",
+                        ylabel = c("A","K","M","B"), n_thin_original = 100, xaxt = "r", xaxsat = NULL, xaxslab = NULL) {
+  #if("params" %in% names(mod[[1]])) {mod <- lapply(mod, function(x) x$params)
+  plot_columns = select[[2]]
+  # modnames <- names(mod[[1]])
+  # if(!is.numeric(params)) plot_columns <- which(modnames %in% params) else plot_columns <- params
+  # }
+  #modnames[2] <- "K"
   op <- par()[c("mfrow","mar","mgp")]
-  nplot <- length(params)
+  nplot <- length(plot_columns)
   cols <- c(rgb(0,0.5,0.75,0.7),
             rgb(0.75,0,0.5,0.7),
             rgb(0.77,0.5,0,0.7),
@@ -169,41 +171,42 @@ plot_chains <- function(mod, params = 1:4, n_thin = NULL, logB = TRUE, xlabel = 
   par(mfrow = c(nplot,1), mar  = c(3.5,3.5,0.5,0.5), mgp = c(2.25,0.75,0), las = 1)
   if(!("data.frame" %in% class(mod))) {
     nchains <- length(mod)
-    n_iter <- nrow(mod[[1]])
+    n_iter <- nrow(mod[[1]][[select[[1]]]])
     if(is.null(n_thin)) n_thin <- max(c(1,round(n_iter/2000)))
         iteration <- seq(1,n_iter,n_thin)
-    for(j in plot_it) {
-      if(j == 2){
-        ylimit <- range(sapply(plot_it,function(x) range(mod[[x]][iteration,j]+mod[[x]][iteration,j-1])))
-        plot(iteration,mod[[1]][iteration,j]+mod[[1]][iteration,j-1],type = "l", xlab = xlabel,
-             col = cols[1], ylab = modnames[j], ylim = ylimit, yaxs = "i")
-        if(nchains >= 2)  for(i in 2:nchains) {
-          points(iteration,mod[[i]][iteration,j]+mod[[i]][iteration,j-1],type = "l",
-                 col = cols[i])
-          }
-        } else{
-      if(j != 4 | logB == FALSE){
-        ylimit <- range(sapply(plot_it,function(x) range(mod[[x]][iteration,j])))
-      plot(iteration,mod[[1]][iteration,j],type = "l", xlab = xlabel,
-                           col = cols[1], ylab = modnames[j], ylim = ylimit, yaxs = "i")
+    for(j in plot_columns) {
+      # if(j == 2){
+      #   ylimit <- range(sapply(plot_columns,function(x) range(mod[[x]][[select[[1]]]][iteration,j]+mod[[x]][[select[[1]]]][iteration,j-1])))
+      #   plot(iteration,mod[[1]][iteration,j]+mod[[1]][iteration,j-1],type = "l", xlab = xlabel,
+      #        col = cols[1], ylab = modnames[j], ylim = ylimit, yaxs = "i")
+      #   if(nchains >= 2)  for(i in 2:nchains) {
+      #     points(iteration,mod[[i]][iteration,j]+mod[[i]][iteration,j-1],type = "l",
+      #            col = cols[i])
+      #     }
+      #   } else{
+      # if(j != 4 | logB == FALSE){
+        ylimit <- range(sapply(nchains,function(x) range(mod[[x]][[select[[1]]]][iteration,j],na.rm = T)))
+      plot(iteration*n_thin_original,mod[[1]][[select[[1]]]][iteration,j],type = "l", xlab = xlabel, ylab = ylabel[which(plot_columns==j)],
+                           col = cols[1], ylim = ylimit, yaxs = "r", xaxt = xaxt)
       if(nchains >= 2)  for(i in 2:nchains) {
-        points(iteration,mod[[i]][iteration,j],type = "l",
+        points(iteration*n_thin_original,mod[[i]][[select[[1]]]][iteration,j],type = "l",
              col = cols[i])
       }
-      }
-      if(j == 4 & logB == TRUE){
-        ylimit <- range(sapply(plot_it,function(x) range(log10(mod[[x]][iteration,j]))))
-        plot(iteration,log10(mod[[1]][iteration,j]),type = "l", xlab = xlabel,
-             col = cols[1], ylab = "log(B)", ylim = ylimit, yaxs = "i")
-        if(nchains >= 2)  for(i in 2:nchains) {
-          points(iteration,log10(mod[[i]][iteration,j]),type = "l",
-                 col = cols[i])
-        }
-       }
+      if(xaxt =="n") axis(1,at = xaxsat, xaxslab)
+      # }
+      # if(j == 4 & logB == TRUE){
+      #   ylimit <- range(sapply(plot_columns,function(x) range(log10(mod[[x]][iteration,j]))))
+      #   plot(iteration,log10(mod[[1]][iteration,j]),type = "l", xlab = xlabel,
+      #        col = cols[1], ylab = "log(B)", ylim = ylimit, yaxs = "i")
+      #   if(nchains >= 2)  for(i in 2:nchains) {
+      #     points(iteration,log10(mod[[i]][iteration,j]),type = "l",
+      #            col = cols[i])
+      #   }
+      #  }
 
       }
     }
-  }
+  
   par(op)
 }
 
