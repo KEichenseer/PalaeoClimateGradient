@@ -13,48 +13,31 @@ csl: palaeontology.csl
 
 
 ---
-## Hierarchical, Bayesian model for latitudinal temperature gradients
+```{r, setup, include=FALSE}
+#knitr::opts_knit$set(root.dir = '..')
+```
 
-**Model structure (Fig 2).** We model the mean temperature ($\mu$) at location $j$ as a function of absolute latitude ($abs(l)$) with a logistic regression (`growth curve` or `Richard's curve`) of the form:
+## S1. Convergence checks
+To ensure the convergence and mixing of the chains, we inspected traceplots of all the unknown parameters of the model. 
 
-$$\mu_{j}  \sim N(\nu_j, \sigma), $$
+```{r out.width='100%', echo = FALSE, fig.cap = "Fig S1. Traceplots of a subset of the unknown model parameters. The four colours correspond to the four independent model runs. a) Traceplot of A, K-A, M, B and $\\sigma$; b) Traceplot of five selected $\\mu_j$; c) Traceplot of five selected $\\sigma_j$."}
+setwd('..') # move up to parent folder of /manuscript
+knitr::include_graphics("D://Github/PalaeoClimateGradient/figures/SM/FigS1-Traceplot.jpg", error = FALSE)
+```
 
-$$\nu_{j} = A~+\frac{K-A}{e^{B(abs(l_j)-M)}}~, ~~~~~ j = 1,...,n,  $$
-where $A$ and $K$ denote the lower and upper asymptote, respectively, $M$ specifies the latitude of maximal growth, the most quickly with latitude, $B$ denotes the growth rate (Fig. 2), $\sigma$ denotes the residual standard deviation, and $n$ denotes the number of locations.
 
-We infer $\mu_j$ from $m$ individual temperature observations $t_{i = 1,...m}$, derived from geochemical data, at location $j$ as
+## S2. Gradient with just the geochemical proxy data
 
-$$t_{i,j}  \sim N(\mu_j, \sigma_j), ~~~~~ i = 1,...,m,  $$
-where $m$ is the number of observations at each location, and $\sigma_j$ is the estimated standard deviation of the temperatures at location $j$.
 
-Similarly, $\mu_j$ is inferred for locations with ecological proxies from the associated normal temperature distributions with a given mean and standard deviation, $t_{\mu,j}$ and $t_{\sigma,j}$, as
+```{r out.width='100%', echo = FALSE, fig.cap = "Fig S2. Latitudinal temperature gradient with just the geochemical proxies (orange), showing the median (line) and 95% credibal interval (shading). Symbols with vertical lines show the median and 95% credible intervals of $\\mu$. The grey line and shading in the background show the latitudinal temperature gradient with the geochemical and ecological proxy data."}
+setwd('..') # move up to parent folder of /manuscript
+knitr::include_graphics("D://Github/PalaeoClimateGradient/figures/SM/FigS2_geochem_eeco.png", error = FALSE)
+```
 
-$$t_{\mu,j}  \sim N(\mu_j,t_{\sigma,j}).  $$
+## S3. Seperate gradients on the northen and southern hemisphere
 
-This structure implies that $\mu_j$ is not fixed at the mean proxy temperature at location $j$, <!--of the temperatures $t_{i=1,...,m,~j}$ of location $j$-->, but is drawn towards the overall logistic regression curve, i.e. towards $\nu_j$. The pull towards $\nu_j$ tends to be high when $m$ is low, when the observations $t_{i=1,...,m,~j}$ are scattered, i.e. $\sigma_j$ is high, and/or when the overall standard deviation $\sigma$ is low. In practice, this has the desirable consequence that locations with few observations and large temperature differences between observations have less influence on the overall regression than well-sampled locations with consistent temperature observations.
 
-**Priors (Fig2x).** In the Bayesian framework, priors need to be placed on the unknown parameters of a model. We placed weakly informative, conjugate inverse-gamma priors on $\sigma$ and $\sigma_{j=1,..n}$:
-$$\sigma  \sim \sqrt{Inv-Gamma(\alpha+\frac{n}{2},\beta + 0.5\times(\mu_j-\nu_j))}, ~~~~~ j = 1,...,n,  $$
-$$\sigma_j  \sim \sqrt{Inv-Gamma(\alpha+\frac{m}{2},\beta + 0.5\times(t_{i,j}-\mu_j))}, ~~~~~ i = 1,...,m,~~~~~j = 1,...,n. $$
-We set $\alpha = \beta = 1$, allowing these priors to be quickly overwhelmed by the data as $n$ and $m$ increase, as we have little *a priori* knowledge of these parameters.
-
-In contrast, we put informative priors on the regression coefficients $A$, $K$, $M$ and $B$, based on physical principles, and vaguely based on the modern climate system:  
-
-**A.** Predicted seawater surface temperatures are not allowed to be $<< -2^\circ C$, the freezing point of sea water. The highest prior density of $A$ is placed around $0^\circ C$, and it slowly tapers off towards higher temperatures. This shape is achieved by placing a skew-normal prior on the lower asymptote, specified as
-$$A \sim SN(\xi=-3.0,\omega=12,\alpha_{SN}=30),$$
-where $\xi$, $\omega$, and $\alpha_{SN}$ are the location, scale and shape parameters.  
-
-**K.** Input of solar energy decreases from the tropics to the poles. Hence, the latitudinal temperature gradient is broadly negative, i.e. temperature decreases with absolute latitude. This is achieved by setting $K \ge A$. The prior on the upper asymptote $K$ is a truncated normal distribution with the mean set to $K$ of the modern SST gradient, with a broad standard deviation:
-$$K \sim TN(\mu_{TN} = 28, \sigma_{TN} = 10, \alpha_{TN} = A, \beta_{TN}= \infty)$$
-The distribution is truncated to the left at $\alpha_{TN}=A$, but not truncated to the right ($\beta_{TN}$).  
-
-**M.** The steepness of the gradient is presumed to be highest in mid-latitudes; this is expressed with a normal prior on $M$ with the mean set to $M$ of the modern SST gradient:
-$$M \sim N(42,10)$$
-**B.** The steepness or growth rate $B$ of the gradient is constrained to be $\ge0$ and to not be exceedingly high, as oceanic and atmospheric heat transfer is bound to prevent very abrupt SST changes across latitudes. A gamma-distributed prior of the form
-$$B \sim Gamma(\alpha_G=4.3,\beta_G=30)$$
-was placed on $B$. The shape and rate parameters $\alpha_G$ and $\beta_G$ were chosen such that the highest prior density is at $B$ of the modern SST gradient, $0.11$.
-
-## Convergence checks
-To ensure the convergence and mixing of the chains, we inspected traceplots of all the unknown parameters of the model. [Add figures]
-
-# References
+```{r out.width='100%', echo = FALSE, fig.cap = "Fig S3. Latitudinal temperature gradient in seperate hemispheres, showing the medians (lines) and 95% credibal intervals (shadings) in the southern (red) and northern hemisphere (blue). Symbols with vertical lines show the median and 95% credible intervals of $\\mu$. Turquoise symbols in the northern hemisphere highlight the ecological proxy data. The grey line and shading in the background show the latitudinal temperature gradient with the data from both hemispheres combined, plotted in both hemispheres."}
+setwd('..') # move up to parent folder of /manuscript
+knitr::include_graphics("D://Github/PalaeoClimateGradient/figures/SM/FigS3_north_south_eeco.png", error = FALSE)
+```

@@ -39,7 +39,8 @@ error_polygon <- function(x,en,ep,color=rgb(0,0,0,0.2)) {
 # 
 
 plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
-                          ylim = NULL, line_col = "black", confint_col = rgb(0,0,0,0.2), lwd = 2) {
+                          ylim = NULL, line_col = "black", confint_col = rgb(0,0,0,0.2), lwd = 2,
+                          negative = FALSE) {
   # select only params
   if("params" %in% names(model_out)) model_out <- model_out$params
   
@@ -55,6 +56,8 @@ plot_gradient <- function(model_out, burnin = NULL, lat = seq(0,90,0.2), confint
   
   if(is.null(ylim)) ylim <- 
     c(max(min(med_grad*0.75),min(grad_q["2.5%",])),min(max(med_grad*1.25),max(grad_q["97.5%",])))
+  # enable reverse gradient
+  if(negative) lat <- -lat
   
   if(add == F) {
   plot(lat, med_grad, ylim = ylim,
@@ -124,7 +127,8 @@ plot_data <- function(obsmat = NULL, distrmat = NULL, lat = seq(0,90,0.2), add =
 
 plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = NULL, add = F,
                            ylim = NULL, col_obs = rgb(.8,0.5,0,0.75), col_dist = rgb(0,0.5,.8,0.75),
-                           cex = 1, pch = 17) {
+                           cex = 1, pch = 17, negative = FALSE) {
+  if(negative) lsign <- -1 else lsign <- 1
   n_iter <- nrow(mod$params)
   if(is.null(burnin)) burnin = round(nrow(mod$params)*12/100)+1
   
@@ -133,9 +137,9 @@ plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = N
   samples <- 1:dim(mod$sdyest)[2]
   if(length(col_obs)!=nobsloc)  col_obs <- rep(col_obs[1],nobsloc)
   
-  invisible(sapply(samples,function(x) points(mod$lat[x], mean(mod$yestimate[burnin:n_iter,x]), pch = pch, col = col_obs[x], cex = cex)))
+  invisible(sapply(samples,function(x) points(lsign*mod$lat[x], mean(mod$yestimate[burnin:n_iter,x]), pch = pch, col = col_obs[x], cex = cex)))
   
-  invisible(sapply(samples,function(x) points(rep(mod$lat[x],2), quantile(mod$yestimate[burnin:n_iter,x], probs = c(0.05,0.95)), 
+  invisible(sapply(samples,function(x) points(rep(lsign*mod$lat[x],2), quantile(mod$yestimate[burnin:n_iter,x], probs = c(0.05,0.95)), 
                                     type = "l", col = col_obs[x])))
  
   } else nobsloc <- 0
@@ -146,8 +150,8 @@ plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = N
     
   
   distr_ind <- (nobsloc+1):ndistrloc
-  invisible(sapply(distr_ind,function(x) points(mod$lat[x], median(mod$yestimate[burnin:n_iter,x]), pch = pch, col = col_dist, cex = cex)))
-  invisible(sapply(distr_ind,function(x) points(rep(mod$lat[x],2), quantile(mod$yestimate[burnin:n_iter,x], probs = c(0.05,0.95)), 
+  invisible(sapply(distr_ind,function(x) points(lsign*mod$lat[x], median(mod$yestimate[burnin:n_iter,x]), pch = pch, col = col_dist, cex = cex)))
+  invisible(sapply(distr_ind,function(x) points(rep(lsign*mod$lat[x],2), quantile(mod$yestimate[burnin:n_iter,x], probs = c(0.05,0.95)), 
                                                 type = "l", col = col_dist)))
   }
 }
@@ -155,7 +159,7 @@ plot_posterior <- function(mod,burnin = NULL, lat = seq(0,90,0.2), confint_n = N
 
 
 plot_chains <- function(mod, select = list("params",1:4), n_thin = NULL, log_y = c(0,0,0,0), xlabel = "iteration",
-                        ylabel = c("A","K","M","B"), n_thin_original = 100, xaxt = "r", xaxsat = NULL, xaxslab = NULL) {
+                        ylabel = c("A","K","M","B"), n_thin_original = 100, xaxt = "s", xaxsat = NULL, xaxslab = NULL) {
   #if("params" %in% names(mod[[1]])) {mod <- lapply(mod, function(x) x$params)
   plot_columns = select[[2]]
   # modnames <- names(mod[[1]])
@@ -168,7 +172,9 @@ plot_chains <- function(mod, select = list("params",1:4), n_thin = NULL, log_y =
             rgb(0.75,0,0.5,0.7),
             rgb(0.77,0.5,0,0.7),
             rgb(0,0.75,0,0.7))
-  par(mfrow = c(nplot,1), mar  = c(3.5,3.5,0.5,0.5), mgp = c(2.25,0.75,0), las = 1)
+  layout(matrix(1:nplot, nrow = nplot, ncol = 1, byrow = TRUE), heights = c(rep(3,nplot-1),4))
+  par(mar  = c(3.5,3.5,0.5,0.5), mgp = c(2.25,0.75,0), las = 1)
+  
   if(!("data.frame" %in% class(mod))) {
     nchains <- length(mod)
     n_iter <- nrow(mod[[1]][[select[[1]]]])
@@ -185,14 +191,24 @@ plot_chains <- function(mod, select = list("params",1:4), n_thin = NULL, log_y =
       #     }
       #   } else{
       # if(j != 4 | logB == FALSE){
+      if(j == plot_columns[length(plot_columns)]) {
+        xaxt_current <- xaxt 
+        par(mar  = c(3.5,3.5,0.5,0.5), mgp = c(2.25,0.75,0), las = 1)
+        } else {
+          xaxt_current <- "n"
+          par(mar  = c(0.75,3.5,0.5,0.5), mgp = c(2.25,0.75,0), las = 1)
+          
+        }
         ylimit <- range(sapply(nchains,function(x) range(mod[[x]][[select[[1]]]][iteration,j],na.rm = T)))
       plot(iteration*n_thin_original,mod[[1]][[select[[1]]]][iteration,j],type = "l", xlab = xlabel, ylab = ylabel[which(plot_columns==j)],
-                           col = cols[1], ylim = ylimit, yaxs = "r", xaxt = xaxt)
+                           col = cols[1], ylim = ylimit, yaxs = "r", xaxt = xaxt_current)
       if(nchains >= 2)  for(i in 2:nchains) {
         points(iteration*n_thin_original,mod[[i]][[select[[1]]]][iteration,j],type = "l",
              col = cols[i])
       }
-      if(xaxt =="n") axis(1,at = xaxsat, xaxslab)
+      if(j == plot_columns[length(plot_columns)] & xaxt_current =="n") axis(1,at = xaxsat, xaxslab)
+      if(j != plot_columns[length(plot_columns)] & xaxt_current =="n") axis(1,at = xaxsat, labels = NA)
+      
       # }
       # if(j == 4 & logB == TRUE){
       #   ylimit <- range(sapply(plot_columns,function(x) range(log10(mod[[x]][iteration,j]))))
