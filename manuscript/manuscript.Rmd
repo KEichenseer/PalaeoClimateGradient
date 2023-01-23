@@ -195,6 +195,7 @@ modern_eocene_gradient_diff <- readRDS("results/modern/modern_eocene_sampling_ov
 # sdy
 eeco_sdy <- readRDS("results/eeco/eeco_sdy.rds")
 modern_eeco_sample_sdy <- readRDS("results/modern/modern_eeco_sample_sdy.rds")
+modern_sdy <- readRDS("results/modern/modern_sdy.rds")
 
 
 # global average temperatures
@@ -216,17 +217,15 @@ The modeled, latitudinal temperature gradient facilitates accurate reconstructio
 
 
 ## EECO reconstruction
-<!-- - Show Eocene gradient
-- Global t : use raster package for calculation of areal weights
-- report lat gradient
--->
 
+The modeled Eocene temperature gradient is starkly different from the modern (Fig 4). Modelled, median equatorial temperatures are `r tdiff_lat0$"50%"` (95% CI: `r tdiff_lat0$"2.5%"` - `r tdiff_lat0$"97.5%"`) degC higher for the Eocene, and polar temperatures are higher by `r tdiff_lat90$"50%"` (95% CI: `r tdiff_lat90$"2.5%"` - `r tdiff_lat90$"97.5%"`) degC. This results in a strongly flattened latitudinal temperature gradient of `r eocene_gradient$"50%"`  (95% CI: `r eocene_gradient$"2.5%"` - `r eocene_gradient$"97.5%"`) degC for the Eocene, as opposed to `r modern_gradient$"50%"` degC for the modern. 
 
-The modelled Eocene temperature gradient is starkly different from the modern (Fig 4). Modelled, median equatorial temperatures are `r tdiff_lat0$"50%"` (95% CI: `r tdiff_lat0$"2.5%"` - `r tdiff_lat0$"97.5%"`) degC higher for the Eocene, and polar temperatures are higher by `r tdiff_lat90$"50%"` (95% CI: `r tdiff_lat90$"2.5%"` - `r tdiff_lat90$"97.5%"`) degC. This results in a strongly flattened latitudinal temperature gradient of `r eocene_gradient$"50%"`  (95% CI: `r eocene_gradient$"2.5%"` - `r eocene_gradient$"97.5%"`) degC for the Eocene, as opposed to `r modern_gradient$"50%"` degC for the modern. 
-
-The high variability of early Eocene palaeotemperature proxies, particularly in the mid-latitudes, and the scarcity of high-latitude data, results in substantial uncertainties in the modeled temperature gradient. This is reflected in the residual standard deviation ($\sigma$) of the early Eocene gradient, `r eeco_sdy$"50%"` (95% CI: `r eeco_sdy$"2.5%"` - `r eeco_sdy$"97.5%"`) degC, more than twice as high than  $\sigma$ of the modern gradient, resampled at early Eocene latitudes, `r modern_eeco_sample_sdy$"50%"` (95% CI: `r modern_eeco_sample_sdy$"2.5%"` - `r modern_eeco_sample_sdy$"97.5%"`) degC. The inclusion of ecological proxy data only slightly reduces the overall model standard deviation, but helps constrain polar temperature estimates (Supplementary materials).  ### Continue here.
+The high variability of early Eocene palaeotemperature proxies, particularly in the mid-latitudes, and the scarcity of high-latitude data, result in substantial uncertainties in the modeled temperature gradient. This is reflected in the residual standard deviation ($\sigma$) of the early Eocene gradient, `r eeco_sdy$"50%"` (95% CI: `r eeco_sdy$"2.5%"` - `r eeco_sdy$"97.5%"`) degC, more than twice as high than  $\sigma$ of the modern gradient, `r modern_sdy$"50%"`. 
 
 The global Eocene mean sea surface temperature is estimated at `r eotemp_global$"50%"` (95% CI: `r eotemp_global$"2.5%"` - `r eotemp_global$"97.5%"`) degC, significantly higher than the modern (`r motemp_global$"50%"` degC). 
+
+For comparison, a model run excluding the ecological proxies results in a global mean temperature of  
+The inclusion of ecological proxy data only slightly reduces the overall model standard deviation (Supplementary materials). 
 
 
 ## Fig 4 - compare Eocene gradient with modern gradient, also with previous reconstructions / ES models?
