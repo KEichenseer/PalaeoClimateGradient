@@ -16,6 +16,10 @@ modem <- combine_posterior(modem_list,5000)
 eeco_prox <- readRDS("results/eeco/eeco_climate_model_output_just_proxy.rds")
 eeco_prox <- combine_posterior(eeco_prox, burnin = 100000)
 
+# eeco northern and southern
+eeco_north <- readRDS("results/SM/eeco_climate_model_northern_hemisphere_output_combined.rds")
+eeco_south <- readRDS("results/SM/eeco_climate_model_southern_hemisphere_output_combined.rds")
+
 
 # calculate temperatures at lat 0 and lat 90 for every iteration
 modern_t0 <- gradient(0,modm[,1:4])
@@ -27,6 +31,12 @@ modern_t90 <- gradient(90,modm[,1:4])
 modern_eocene_t90 <- gradient(90,modm[,1:4])
 eocene_t90 <- gradient(90,mode[,1:4])
 eeco_prox_t90 <- gradient(90,eeco_prox[,1:4])
+
+eeco_north_t0 <- gradient(0,eeco_north[,1:4])
+eeco_south_t0 <- gradient(0,eeco_south[,1:4])
+eeco_north_t90 <- gradient(90,eeco_north[,1:4])
+eeco_south_t90 <- gradient(90,eeco_south[,1:4])
+
 
 n <- length(modern_t0)
 
@@ -49,6 +59,16 @@ proxy_uncertain_diff_percent <- as.list(format((round(eocene_proxy_gradient_unce
 # eocene sample deviation from modern gradient
 modern_eocene_gradient_diff <- as.list(format(round(quantile((modern_eocene_t0 - modern_eocene_t90)-(modern_t0 - modern_t90), probs = c(0.025,0.5,0.975)),1),nsmall = 1))
 
+#north south
+eocene_northern_gradient <- as.list(format(round(quantile(eeco_north_t0 - eeco_north_t90, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+eocene_southern_gradient <- as.list(format(round(quantile(eeco_south_t0 - eeco_south_t90, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+eocene_north_south_gradient_diff_all <- (eeco_north_t0 - eeco_north_t90) - (eeco_south_t0 - eeco_south_t90)
+eocene_north_south_gradient_diff <- as.list(format(round(quantile(eocene_north_south_gradient_diff_all, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+
+
+
+
+
 # save results
 saveRDS(tdiff_lat0, "./results/eeco/eocene_modern_difference_equator.rds")
 saveRDS(tdiff_lat90, "./results/eeco/eocene_modern_difference_poles.rds")
@@ -59,3 +79,5 @@ saveRDS(modern_gradient, "./results/modern/modern_overall_gradient.rds")
 saveRDS(modern_eocene_gradient, "./results/modern/modern_eocene_sampling_overall_gradient.rds")
 saveRDS(modern_eocene_gradient_diff, "./results/modern/modern_eocene_sampling_overall_gradient_diff.rds")
 saveRDS(proxy_uncertain_diff_percent, "./results/eeco/proxy_vs_full_uncertain_diff_percent.rds")
+
+saveRDS(eocene_north_south_gradient_diff,"./results/SM/eocene_north_south_gradient_diff.rds")

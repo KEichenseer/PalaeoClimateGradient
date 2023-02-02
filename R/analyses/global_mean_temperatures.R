@@ -12,6 +12,10 @@ modem_all <- combine_posterior(modem_list,5000)
 eeco_prox <- readRDS("results/eeco/eeco_climate_model_output_just_proxy.rds")
 eeco_prox <- combine_posterior(eeco_prox, burnin = 100000)
 
+# eeco northern and southern
+eeco_north <- readRDS("results/SM/eeco_climate_model_northern_hemisphere_output_combined.rds")
+eeco_south <- readRDS("results/SM/eeco_climate_model_southern_hemisphere_output_combined.rds")
+
 # latitudinal weights in 1 deg lat bands
 alpha1 <- seq(1,90,1)
 alpha2 <- seq(0,89,1)
@@ -39,10 +43,31 @@ moeotemp_global <- apply(moeotempq,1, function(x) round(sum(x*latweight),1), sim
 eotempprox <- gradient(seq(0.5,89.5,1), eeco_prox[,1:4],0)
 
 
+# eocene northern temperature gradient
+eeconorthtemp <- gradient(seq(0.5,89.5,1), eeco_north[,1:4],0)
+# eocene northern temperature gradient quantiles
+eeconorthtempq <- apply(eeconorthtemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
+# eocene northern global average temperature with 95% CI
+eeconorthtemp_global <- apply(eeconorthtempq,1, function(x) round(sum(x*latweight),1), simplify = FALSE)
+#
+# eocene southern temperature gradient
+eecosouthtemp <- gradient(seq(0.5,89.5,1), eeco_south[,1:4],0)
+# eocene southern temperature gradient quantiles
+eecosouthtempq <- apply(eecosouthtemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
+# eocene southern global average temperature with 95% CI
+eecosouthtemp_global <- apply(eecosouthtempq,1, function(x) round(sum(x*latweight),1), simplify = FALSE)
+#
+
 moeotemp_global_all <- apply(moeotemp,1, function(x) (sum(x*latweight)), simplify = T)
 motemp_global_all <- apply(motemp,1, function(x) (sum(x*latweight)), simplify = T)
 eotemp_global_all <- apply(eotemp,1, function(x) (sum(x*latweight)), simplify = T)
 eotempprox_global_all <- apply(eotempprox,1, function(x) (sum(x*latweight)), simplify = T)
+eeconorthtemp_global_all <- apply(eeconorthtemp,1, function(x) (sum(x*latweight)), simplify = T)
+eecosouthtemp_global_all <- apply(eecosouthtemp,1, function(x) (sum(x*latweight)), simplify = T)
+
+# eeco south north difference 
+eeco_south_north_diff_global <- as.list(format(round(quantile(eecosouthtemp_global_all-eeconorthtemp_global_all, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+
 # modern eocene sample deviation of global average
 modern_eocene_gradient_deviation <- as.list(format(round(quantile(moeotemp_global_all-motemp_global_all, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
 
@@ -55,3 +80,6 @@ saveRDS(eotemp_global,"results/eeco/global_mean_eeco.rds")
 saveRDS(moeotemp_global,"results/eeco/global_mean_modern_eocene_sampling_eeco.rds")
 saveRDS(modern_eocene_gradient_deviation,"results/eeco/global_mean_modern_eocene_sampling_difference.rds")
 saveRDS(eocene_eoceneproxy_gradient_deviation,"results/eeco/global_mean_eocene_eoceneproxy_difference.rds")
+saveRDS(eeconorthtemp_global,"results/SM/global_mean_northern_eeco.rds")
+saveRDS(eecosouthtemp_global,"results/SM/global_mean_southern_eeco.rds")
+saveRDS(eeco_south_north_diff_global,"results/SM/global_mean_diff_south_north_eeco.rds")
