@@ -41,3 +41,11 @@ knitr::include_graphics("D://Github/PalaeoClimateGradient/figures/SM/FigS2_geoch
 setwd('..') # move up to parent folder of /manuscript
 knitr::include_graphics("D://Github/PalaeoClimateGradient/figures/SM/FigS3_north_south_eeco.png", error = FALSE)
 ```
+
+## S4. Different shapes of temperature gradients
+
+
+```{r out.width='100%', echo = FALSE, fig.cap = "Fig S4. Simulated latitudinal temperature gradients sampled at the absolute latitudes of the EECO data. The dark grey points show the simulated temperature data, the black line shows the shape of the true gradient, and the medians (lines) and 95% credibal intervals (shadings) of the inferred gradients using the model are shown in red. a) linear gradient; b) flat gradient; c) quadratic gradient; d) logit-shaped gradient. Except for d), which is very different from the modern and from reconstructed gradients, all latitudinal temperature gradients are well captured by the model in the latitudinal range for which data is provided."}
+setwd('..') # move up to parent folder of /manuscript
+knitr::include_graphics("D://Github/PalaeoClimateGradient/figures/SM/FigS4_different_gradients.png", error = FALSE)
+```
