@@ -5,6 +5,122 @@ date: "2023-01-21"
 ---
 
 
+## Introduction discards
+
+A relatively recent, proxy-based studies inferred a SST gradient that was shallower than the modern by 32+-10 % [@Evans2018], which would correspond to a gradient of ~20+-3 degC. Later studies based on new proxy compilations only estimate temperature gradients up to mid-latitudes [@Hollis2019], or combine SST proxies with other data [@Inglis2020], making it difficult to infer a meaningful estimate of the SST gradient. We therefore provide The early Eocene climatic optimum (EECO) showcases the 
+
+is an . 
+
+
+
+
+Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical, shallow marine proxy record to model the latitudinal SST gradient and its uncertainty. 
+
+
+We apply this model to the early Eocene climate optimum,...
+
+"nearest living relative" methods are used for deriving numerical climate estimates from taxonomic plant data for the Cenozoic  [@Faucette2007; @Chevalier2022]. These methods work on the the premise that . 
+Proxy-based, deep-time palaeoclimate reconstructions relying solely on geochemical proxies [e.g. @Veizer2015; @Grossman2022] have significant spatial gaps, and global temperature reconstructions based on those records alone may be biased [@Jones2022]. Ecological and lithological data are sometimes used for quantitative climate reconstructions [@Uhl2009;], but are rarely used in conjunction with geochemical proxies [@Burgener2023]. 
+
+For example, a plethora of 
+
+
+
+Here, we combine sea surface temperatures from geochemical proxies with numerical temperature estimated from mangroves and coral reefs, derived with a nearest living relative 
+
+apply broadly analogous method to the marine record, deriving probability densities broadly reflecting the thermal preferences of modern coral reefs and mangrove taxa [@...], which we assign to fossil occurrences of coral reefs and mangroves.
+
+, and sometimes biological proxies such as leaf physiognomy,
+. This can involve interpolation between data points, or extrapolation if entire climate zones remain unsampled. Examples of this approach include t
+Combining quantitative proxy data with not fully quantified climate constraints, e.g. the presence of tropical weathering products such as bauxite and laterite, has the potential to improve upon existing, purely proxy-based reconstructions [@Scotese2021; @Burgener2023]. Terrestrial and 
+
+approach is still rarely employed in deep-time palaeoclimatic studies, as it This requires transforming ordinal or interval-bound data into numerical estimates, which is common 
+
+Integrating this type of information into fully quantitative climate reconstructions requires 
+
+
+data provide a different method of reconstructing palaeotemperatures
+Palaeobiological or geological climate indicators that provide only broad climate constraints which are hard to quantify, and 3) 
+[@Burgener2023]
+For the marine realm, Geochemical proxies such as oxygen isotopes (d18O), tetraether indices (TEX86) and magnesium calcium ratios (Mg/Ca) are used to derive palaeotemperature estimates for individual locations using experimentally derived transfer functions [e.g. @Liu2009].
+
+Climate data not based on geochemical, quantitative proxies generally provide broad categorical information, e.g. "tropical" or "dry", or broad quantitative constraints, e.g. "> 20 degC mean annual temperature". Integrating this information into fully quantitative climate reconstructions requires transforming it to a numerical scale. This approach is showcased by nearest living relative methods, commonly employed in terrestrial, Cenozoic climate reconstructions, which work on the premise that the climatic requirements of ancient plant taxa were similar to those of there nearest modern relatives [@Kvacek2007]. A plethora of methods have been developed to derive numerical climate values from taxonomic data [@Faucette2007; @...]. Approaches based on probability density functions have the advantage of naturally capturing the uncertainty associated with the climatic occupancy of modern nearest relatives [@Greenwood2017], and probability distributions can be readily integrated in a quantitative modelling framework. Here, we employ a similar approach, constructing probability distributions broadly reflecting the thermal preferences of modern coral reefs and mangrove taxa [@...], which we assign to fossil occurrences of coral reefs and mangroves.
+
+
+Combining quantitative proxy data with other climate constraints has the potential to improve upon climate reconstructions based on a single type of proxy [@Burgener2023], but is rarely employed in deep-time palaeoclimatic studies. 
+
+
+
+Deep-time palaeoclimate reconstructions use geochemical proxy data
+
+The first challenge requires that all proxy data is converted to a common scale.  
+
+
+
+A fundamental challenge in reconstructing Earth's past climate is to infer large-scale climatic patterns from local observations, derived from disparate proxies.  In order for the
+
+
+Proxy-derived palaeoclimate reconstructions offer an important alternative to and a test of Earth system models, and as such are fundamental for reconstructing Earth's past climate
+
+The geological record holds evidence for episodes in Earth history with fundamentally different climates than our current [@Scotese2021]. Some episodes, for example the early Eocene, are thought to have been significantly warmer than the modern [@Pross2012], potentially representing an analogue for extreme climate warming scenarios [@Burke2018]. Reconstructions of palaeoclimate commonly use geochemical proxy data, palaeobiological or lithological climate indicators, or earth system modelling. 
+
+Geochemical proxies such as oxygen isotopes (d18O), tetraether indices (TEX86) and magnesium calcium ratios (Mg/Ca) are used to derive palaeotemperature estimates for individual locations using experimentally derived transfer functions [e.g. @Liu2009]. Palaeobiological and lithological climate data provide a different method of reconstructing palaeotemperatures, using e.g. leaf physiognomy and floral assemblages to derive palaeotemperature proxies [@Greenwood2003], or using lithological indicators to determine the range of palaeoclimatic belts [@Scotese2021]. To capture complex dependencies between proxies and climate data, machine learning approaches [@Chandra2021] or articifical neural networks [@Malmgren1997; @Lauchstedt2017] are sometimes used. Earth system models take a fundamentally different approach by modelling the climate-generating processes directly, reconstructing spatially resolved climate estimates for the entire globe [@???]. However, this approach still relies on proxy data to constrain the large number of possible model setups and ground truth the model output [@???] It also requires substantial computing resources and technical expert knowledge, and is thus difficult to implement or modify for most palaeoclimate researchers.
+
+To make inferences on a regional or global scale, proxy-based climate reconstructions need some way of extrapolating a generally sparse record of local findings. Taking the mean of multiple local estimates to summarise regional or global climate variables [e.g. @Veizer2015] is a straightforward approach, but is likely to result in biased climate reconstructions [@Jones2022]. Reconstructions that take into account the spatial distribution of climate data are... ### HERE###
+provide an alternative that can be employed more readily by a broad range of workers. 
+
+
+Here, we present a Bayesian, hierarchical model for inferring sea surface temperatures (SST) that expands upon existing, spatial reconstructions of palaeoclimate by allowing for the integration of 1) prior information based on physical principles and the observed, modern SST distribution, and of 2) geochemical and ecological climate proxies in a common, quantitative framework. We apply this approach to the early Eocene climatic optimum (EECO), the interval with the warmest sustained temperatures of the Cenozoic. Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical, shallow marine proxy record to model the latitudinal SST gradient and its uncertainty. 
+
+
+<!--
+
+Hook -> Generic problem:
+- Reconstructing past climate important for understanding current/future global warming
+- Two main pathways: highly complex ESM <-> proxy compilations
+- Problems with proxy data: only provides a local picture (few local sites interpreted as global signal)
+- Problems with ESM (long time to run, very complex, a lot of assumptions on processes/doesn't consider how they may change, need to be constrained with proxy data)
+- Lack of intermediate-complexity models to make full use of the proxy data
+
+Specific problem:
+- exemplified with the EECO: proxies and ESM hard to reconcile, EECO important climate analogue
+- a lot of proxies recrystallised <-> unreliable data or lack of data
+
+
+Solution:
+- Proxy-driven model (no strong assumptions on processes)
+- Integrate more data (quantify biological / geological information)
+- Integrate additional knowledge (constraints on such gradients)
+
+Application:
+- EECO time of extreme warming
+- problem of the Early Eocene:
+- apply solution to EECO to constrain EECO lat. T gradient
+
+Here:
+
+- EECO specific information
+- Disagreement between GCM + geochem data
+-->
+
+<!--
+
+The early Eocene climate optimum (EECO, ~ 53--49 million years ago) is thought to have been the warmest episode of [...]. The EECO is of particular interest due to its use as an analogue for extreme warming scenarios, depicting a possible future high-CO2 world. To reconstruct the climate of EECO, a variety of proxy data and Earth System Models have been used. Early modelers have soon noticed that their models struggle to reproduce the climate indicated by proxy data: Without unrealistically high concentrations of atmospheric CO2, early climate models were unable to reproduce the equitable polar climates indicated by early Eocene proxy data, e.g. the occurrence of mangroves in polar latitudes, and d18O data from x indicates a temperature of ~ y at latitude z.  
+
+Contrast between complex, process-driven Earth system models and very simplistic use of the proxy data as local temperature estimates or global averages. Here, we introduce a proxy-driven modelling approach of relatively low complexity, which places the available chemical and biological proxy data in a single climate model.
+In order to properly compare model output to proxy data, latitudinal temperature patterns need to be reconstructed from noisy data (impossible to properly compare model gradients with scattered proxy points "by eye")
+
+Reconstructing Earth's climate history is fundamental for understanding the evolution of the Earth system and its consequences for life in the past and future. The geological record, the only empirical source of information on the palaeoclimate of the deep past, holds evidence.  
+
+
+Here, we present a Bayesian hierarchical model to integrate geological data---with established temperature proxies---into a unified quantitative framework. We apply this approach to the early Eocene climatic optimum (EECO), the interval with the warmest sustained temperatures of the Cenozoic. Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad sea surface temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical shallow marine proxy record to model the latitudinal temperature gradient and its uncertainty.
+
+Our hierarchical approach accounts for different sample sizes between and uncertainties within proxy sites, and 
+
+-->
+
+
+
 ## Condensed methods Bayesian framework
 We model the relationship between sea surface temperature and latitude with a generalised logistic regression (`growth curve` or `Richard's curve`). Specifically, we modelled the estimate of the mean temperature $\mu_{j}$ at location $j$ as  $\mu_{j}  \sim N(\nu_j, \sigma)$, with
 $$\nu_{j} = A~+\frac{K-A}{e^{B(abs(l_j)-M)}}~, ~~~~~ j = 1,...,n,  $$
