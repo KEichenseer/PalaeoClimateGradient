@@ -32,7 +32,8 @@ col_proxgrad_shade <- rgb(0.85,0.6,0,0.27)
 xlab1 <- expression("|latitude| ("*degree*")")
 ylab1 <- expression("temperature ("*degree*"C)")
 lat_obs <- mode[[1]]$lat
-
+alpha2 <- 0.75
+col1 <- c(rgb(.9,.8,.5,alpha2), rgb(.8,.7,.5,alpha2), rgb(.7,.6,.5,alpha2), rgb(.65,.6,.6,alpha2))
 eecoprox <- readRDS("results/eeco/eeco_climate_model_output_just_proxy.rds")
 eecoproxcomb <- combine_posterior(eecoprox, burnin = 100000)
 
@@ -50,9 +51,8 @@ par(mar=c(4.2,4.2,0.5,0.5), mgp = c(2.5,0.8,0)
     ,las = 1)
 plot(obsmat$p_lat,obsmat$temperature, pch = pch1[proxind1], col = col1[proxind1], xlim = c(-2,92), ylim = c(14,41.5),
      xlab = xlab1, ylab = ylab1, cex = cex1[proxind1], type = "n", xaxs = "i", yaxs = "i")
-alpha2 <- 0.75
-col1 <- c(rgb(.9,.8,.5,alpha2), rgb(.8,.7,.5,alpha2), rgb(.7,.6,.5,alpha2), rgb(.65,.6,.6,alpha2))
-plot_gradient(mode_all,add=T, line_col = rgb(0,0.1,0.1,0.5), confint_col = rgb(0,0.1,0.1,0.15))
+
+plot_gradient(mode_all,add=T, line_col = rgb(0,0.3,0.8,0.5), confint_col = rgb(0,0.3,0.8,0.15))
 
 plot_gradient(eecoproxcomb,add=T, line_col = col_proxgrad, confint_col = col_proxgrad_shade)
 
@@ -63,6 +63,6 @@ points(lat_obs[1:23], mu_obs[1:23], col = col1[ind1_mu], pch = pch1[ind1_mu], lw
 sapply(1:23, function(x) points(rep(lat_obs[x],2), c(low_obs[x],upp_obs[x]), type = "l", lwd = 2, col = col1[ind1_mu[x]]))
 
 text(15,39.5,"only geochemical proxies", col = col_proxgrad, adj = 0)
-text(5,26,"all proxies", col = rgb(0,0.1,0.1,0.5), adj = 0)
+text(5,26,"all proxies", col = rgb(0,0.3,0.8,0.5), adj = 0)
 
 dev.off()

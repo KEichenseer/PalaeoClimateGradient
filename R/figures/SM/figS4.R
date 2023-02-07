@@ -102,3 +102,14 @@ points(seq(0,90,0.2),true_grad,type = "l", lwd = 2)
 plot_gradient(r4,add = T, line_col = "red", confint_col = rgb(1,0,0,0.2))
 mtext("d",side=2,line=3,padj=-4.7,adj=0,cex=1.2)
 dev.off()
+
+
+## cos test
+
+lat <- seq(-90,90,1)
+a = 10
+b = -0.03
+c = 0.0003
+d = 5
+t1 <- a + b*lat + d*cos(c*lat^2)
+plot(lat,t1, type = "l")

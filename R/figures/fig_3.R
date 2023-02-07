@@ -28,7 +28,8 @@ temp$bin <- ceiling(temp$lat) - 0.5
 grad <- tapply(temp$SST, temp$bin, median)
 grad <- data.frame(lat = as.numeric(names(grad)), 
                        SST = as.vector(grad))
-
+# save for later use
+saveRDS(grad,"results/modern/empirical_median_1-deg-lat.rds")
 # Calculate modern temperatures from sample
 lat <- seq(from = 0, to = 90, by = 0.1)
 modern_sample <- temp_from_gradient(lat = lat, model_out = modern_sample)
