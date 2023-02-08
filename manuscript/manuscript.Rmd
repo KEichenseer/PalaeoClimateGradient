@@ -129,7 +129,6 @@ For the Eocene model, we ran four chains with 600,000 iterations each, discardin
 Modelled sea surface temperature estimates were generated with eq. ?, calculating the sea surface temperatures at any latitude with the parameter estimates of each iteration from the posterior. The median, $2.5^{th}$ and $97.5^{th}$ percentile of temperatures where then taken from all temperature estimates obtained at the latitude of interest.
 
 Differences between Eocene and modern temperatures at a certain latitude were calculated by randomly pairing all iterations of the posterior from the Eocene and modern temperature gradient model, calculating the Eocene and modern temperature using the respective iterations, taking the difference, and then calculating the median ($2.5^{th}$, $97.5^{th}$ percentile) from all pairs of iterations.  
-
 Global average temperatures were calculated by taking the weighted mean of the median ($2.5^{th}$, $97.5^{th}$ percentile) temperature estimates in 1 degree latitudinal bins. The weights were set to the proportion of global surface area in each latitudinal bin, i.e. decreasing with increasing latitude as:
 $$weights = sin(\alpha_{1,i}) - sin(\alpha_{2,i}) ,$$
 where $\alpha1$ is the upper, and $\alpha2$ is the lower latitudinal boundary of bin $i$.
@@ -182,7 +181,7 @@ The average modern temperature gradient can be closely approximated with our mod
 
 Additional model runs with simulated SST data show that latitudinal gradients following a flat, linear or quadratic function can also be adequately reconstructed by our model (Fig. S4). The generalised logistic function underlying the reconstruction leads to the inferred gradient being pushed towards a sigmoidal shape in the absence of proxies (see very high latitudes in Fig. S4a,c). This is intended, as in the absence of data, the shape of the reconstructed gradient should be broadly similar to the sigmoidal shape of the modern SST gradient, as it is the only empirically observed SST gradient.
 
-Modeling the latitudinal temperature gradient facilitates accurate reconstruction of global average temperatures. The modern, global mean sea surface temperature estimate is `r motemp_global$"50%"` degC when using the full, modern data set. When reduced to the early Eocene sampling distribution, the modern global mean sea surface temperature is estimated at `r moeotemp_global$"50%"` (`r moeotemp_global$"2.5%"` - `r moeotemp_global$"97.5%"`) degC. The deviations from the full modern estimate are again very low, with a 95 % credible interval of `r moeotemp_global_diff$"2.5%"` to `r moeotemp_global_diff$"97.5%"` degC.
+Modeling the latitudinal temperature gradient facilitates accurate reconstruction of global mean surface temperatures (GMST). The modern, global mean sea surface temperature (GMsST) estimate is `r motemp_global$"50%"` degC when using the full, modern data set. When reduced to the early Eocene sampling distribution, the modern GMsST is estimated at `r moeotemp_global$"50%"` (`r moeotemp_global$"2.5%"` - `r moeotemp_global$"97.5%"`) degC. The deviations from the full modern estimate are again very low, with a 95 % credible interval of `r moeotemp_global_diff$"2.5%"` to `r moeotemp_global_diff$"97.5%"` degC.
 
 
 ## EECO reconstruction
@@ -191,7 +190,7 @@ The modeled Eocene temperature gradient is starkly different from the modern (Fi
 
 The high variability of early Eocene palaeotemperature proxies, particularly in the mid-latitudes, and the scarcity of high-latitude data, result in substantial uncertainties in the modeled temperature gradient. This is reflected in the residual standard deviation ($\sigma$) of the early Eocene gradient, `r eeco_sdy$"50%"` (`r eeco_sdy$"2.5%"` - `r eeco_sdy$"97.5%"`) degC, more than twice as high than $\sigma$ of the modern gradient, `r modern_sdy$"50%"`. This signifies that the early Eocene data fit less well to the logistic, latitudinal gradient model, which can also be seen from the drastic departure of some of the proxy data from the gradient estimates (Fig. 4). 
 
-The global early Eocene mean sea surface temperature is estimated at `r eotemp_global$"50%"` (`r eotemp_global$"2.5%"` - `r eotemp_global$"97.5%"`) degC, significantly higher than the modern (`r motemp_global$"50%"` degC).
+The early Eocene GMsST is estimated at `r eotemp_global$"50%"` (`r eotemp_global$"2.5%"` - `r eotemp_global$"97.5%"`) degC,  `r  round(as.numeric(eotemp_global$"50%") - as.numeric(motemp_global$"50%"),1)` degC  higher than the modern.
 
 A model run excluding the ecological proxies results in a similar median latitudinal gradient, `r eocene_proxy_gradient$"50%"` degC, but with a `r proxy_uncertain_diff_percent`% wider 95% CI (Supplementary materials). This indicates that the ecological proxy data are broadly in agreement with the geochemical proxies, while providing additional constraints on the shape of the early Eocene temperature gradient. 
 
@@ -208,7 +207,28 @@ The Bayesian model presented herein accurately reconstructs the modern, latitudi
 
 In parametric models, placing informative priors on parameters can improve interpolation and prediction. For example, the greater amount of solar radiation per unit area in low latitudes causes Earth's latitudinal temperature gradient to be broadly negative [@Beer2008]. Prior information on the shape of latitudinal temperature gradients on Earth thus exists for all geological time periods, and should be used in any palaeoclimate reconstruction. The ease with which such prior information can be integrated is a major advantage of our method: The Bayesian framework allows to specify arbitrary priors on the four parameters that control the shape of the gradient (see Methods). In practice, those priors are informed by physical constraints, e.g. restricting water temperatures to above the freezing point. A further improvement to existing methods is that the hierarchical structure of our model explicitly accounts for variation of temperature estimates at individual localities, and for uncertainty associated with the ecological temperature proxies. 
 
-Modelling the latitudinal temperature gradient from the equator to the poles facilitates reconstruction of the global mean temperature.
+Palaeoclimate reconstructions are often summarised as global mean surface temperatures, to provide a standardised metric for characterising the state of the Earth's climate [@Royer2004;@Inglis2020]. The calculation of global mean surface temperatures from sparse proxy data is susceptible to bias [@Jones2022]. By modeling the temperature variation across latitudes, a complete temperature distribution is obtained, filling in gaps in the proxy record through inter- or extrapolation, eliminating the problem that specific climate zones may dominate the proxy record. Intersecting the modeled temperature gradient at narrow latitudinal intervals and accounting for the varying sizes of latitudinal bands by weighting provides unbiased GMST estimates. Recent deep-time GMST reconstructions are sometimes accounting for different sampling by calculating zonal averages, but assum [@Inglis2020]. We anticipate that applying this method to intervals with a small or biased sample of temperature proxies will change Phanerozoic, proxy-based temperature curves [@Royer2004;@Veizer2015;@Jones2022]. 
+
+Estimating the GMST without bias is achieved by intersecting the modeled temperature gradient at narrow latitudinal intervals and adjusting for the differing sizes of latitudinal bands through weighting.
+
+
+
+Estimating the GMST from sparse proxies is prone to bias [@Jones2022], and 
+
+Modeling the latitudinal temperature gradient provides a comprehensive temperature distribution across all latitudes, which allows to estimate GMST even 
+
+Modeling the latitudinal temperature gradient provides a comprehensive temperature distribution across all latitudes, which can be used to improve estimates of the global mean temperature. Even if the underlying proxy data is sparse or incomplete, the model allows for effective utilization of data through interpolation and extrapolation techniques. The model also takes into account the different areas represented by each latitude band, weighting the temperatures accordingly, resulting in a more accurate estimate of the global mean temperature.
+
+popularity of reporting global mean temperature in paleoclimate studies is due to its utility as a comprehensive and standardized metric for characterizing and comparing the state of the Earth's climate and evaluating climate models.
+
+
+
+
+
+ 
+Modeling the latitudinal temperature gradient provides a comprehensive temperature distribution across all latitudes. This information can be used to improve estimates of the global mean temperature. Even if the underlying proxy data is sparse or incomplete, the model allows for effective utilization of data through interpolation and extrapolation techniques. The model also takes into account the different areas represented by each latitude band, weighting the temperatures accordingly, resulting in a more accurate estimate of the global mean temperature.
+
+Modeling the latitudinal temperature gradient provides a comprehensive representation of the temperature distribution across different latitudes. This information can be used to make more informed estimates of the global mean temperature. Even if the data is sparse or incomplete, the model allows for effective utilization of data through interpolation and extrapolation techniques. The model also takes into account the different areas represented by each latitude band, weighting the temperatures accordingly, resulting in a more accurate estimate of the global mean temperature.
 
 Our parametric model has four parameters that describe the shape of the modeled gradient, and they clearly relate to its magnitude, steepness and the latitude of its greatest steepness. 
 
