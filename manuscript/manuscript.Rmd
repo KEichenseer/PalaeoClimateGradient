@@ -1,5 +1,5 @@
 ---
-title: "A Bayesian method for latitudinal temperature gradients in the early Eocene"
+title: "A Bayesian model of latitudinal temperature gradients applied to the Early Eocene" 
 
 author:
   - Kilian Eichenseer^[Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom] and Lewis A. Jones^[Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Universidade de Vigo, 36310 Vigo, Spain]
@@ -203,11 +203,25 @@ Due to the limited spatial coverage of the early Eocene proxy record, and due to
 - x2 generate global average temperature, and tropical, temperate, polar temperatures in a similar way, accounting for area
 
 # Discussion
+## Improved reconstruction of temperature gradients and global average temperatures
 The Bayesian model presented herein accurately reconstructs the modern, latitudinal SST gradient from a patchy and relatively small (n = 34) sample of temperature data. This is an advancement over previously used linear or quadratic approximations [e.g. @Refs], which are inherently unable to capture the sigmoidal shape of the modern SST gradient. Our generalised logistic function is flexible enough to approximate the shapes of all of those functions. As such, our model presents an alternative to non-parametric methods for inferring latitudinal temperature gradients, which are sometimes favoured as they can very flexibly follow the shape of an unknown temperature gradient [e.g. @Zhang2019; @Jones2022]. However, when used for interpolation or prediction outside the proxy range, non-parametric methods such as Gaussian process regression strictly respond to the data [e.g. @Inglis2020], and the resulting large-scale patterns are informed by the idiosyncracies of a patchy proxy record. 
 
-In parametric models, placing informative priors on parameters can improve interpolation and prediction. For example, the greater amount of solar radiation per unit area in low latitudes causes Earth's latitudinal temperature gradient to be broadly negative [@Beer2008]. Prior information on the shape of latitudinal temperature gradients on Earth thus exists for all geological time periods, and should be used in any palaeoclimate reconstruction. The ease with which such prior information can be integrated is a major advantage of our method: The Bayesian framework allows to specify arbitrary priors on the four parameters that control the shape of the gradient (see Methods). In practice, those priors are informed by physical constraints, e.g. restricting water temperatures to above the freezing point. A further improvement to existing methods is that the hierarchical structure of our model explicitly accounts for variation of temperature estimates at individual localities, and for uncertainty associated with the ecological temperature proxies. 
+In our Bayesian, parametric model, informative priors on the model parameters improve the prediction of sea surface temperatures in the unsampled, very high latitudes: Notice that the upper limit of the credible interval does not increase beyond the range of the data, whereas unconstrained approaches such as splines, Gaussian processes or even standard linear regression could lead to unrealistically high upper bounds in this case [see @Rasmussen2008]. Prior information on the shape of latitudinal temperature gradients on Earth exists for all geological time periods, and should be used in any palaeoclimate reconstruction. For example, the greater amount of solar radiation per unit area in low latitudes causes Earth's latitudinal temperature gradient to be broadly negative [@Beer2008]. The ease with which such prior information can be integrated is a major advantage of our method, as the shape of the modeled gradient is controlled by four parameters which clearly relate to its magnitude, steepness and the latitude of its greatest steepness. 
 
-Palaeoclimate reconstructions are often summarised as global mean surface temperatures, to provide a standardised metric for characterising the state of the Earth's climate [@Royer2004;@Inglis2020]. The calculation of global mean surface temperatures from sparse proxy data is susceptible to bias [@Jones2022]. By modeling the temperature variation across latitudes, a complete temperature distribution is obtained, filling in gaps in the proxy record through inter- or extrapolation, eliminating the problem that specific climate zones may dominate the proxy record. Intersecting the modeled temperature gradient at narrow latitudinal intervals and accounting for the varying sizes of latitudinal bands by weighting provides unbiased GMST estimates. Recent deep-time GMST reconstructions are sometimes accounting for different sampling by calculating zonal averages, but assum [@Inglis2020]. We anticipate that applying this method to intervals with a small or biased sample of temperature proxies will change Phanerozoic, proxy-based temperature curves [@Royer2004;@Veizer2015;@Jones2022]. 
+Palaeoclimate reconstructions are often summarised as global mean surface temperatures (GMST), providing a standardised metric for characterising the state of the Earth's climate [@Royer2004;@Inglis2020]. However, the calculation of global mean surface temperatures from sparse proxy data is susceptible to bias [@Jones2022]. By modeling the temperature variation across latitudes, a complete temperature distribution is obtained, filling in gaps in the proxy record through inter- or extrapolation. This eliminates the problem that specific climate zones may dominate the proxy record, as intersecting the modeled temperature gradient at narrow latitudinal intervals and accounting for the varying sizes of latitudinal bands by weighting provides unbiased GMST estimates. Some deep-time GMST reconstructions account for differential sampling by calculating zonal averages, but do not use the full latitudinal range of temperatures [@Inglis2020]. We anticipate that applying this improved will significantly alter Phanerozoic, proxy-based temperature curves, particularly when applied to intervals with small or biased samples of temperature proxies. [@Royer2004;@Veizer2015;@Jones2022]. 
+
+## Incorporating ecological constraints in palaeoclimate reconstructions
+
+Our results show that incorporating quantified ecological temperature constraints can improve temperature reconstructions base on geochemical proxies alone. Given the significant body of research on the climatic significance of e.g. plants [@ @ @], reptiles [@ ] and lithology types [@ ], there is great potential for improving quantitative palaeoclimate reconstructions across the Phanerozoic. Although the quantification of each climate constraint needs to account for specific information, our modelling framework offers a straightforward way of integrating the quantified information with other proxy data: The hierarchical model structure accounts for variation of temperature estimates from proxies at individual localities, which is treated equivalent to the uncertainty associated with the ecological temperature proxies. A local temperature estimate, based on multiple geochemical proxies, thus has the same weight as a local temperature estimate obtained from the occurrence of a climate-sensitive plant community, whilst preserving the uncertainty associated with each estimate.
+
+As with other nearest-living relative methods, our ecological temperature estimates come with limitations: 1) 
+
+However, our simple approach to constructing probability distributions for the thermal range of coral reefs has limitations. The use of only modern coral reefs and mangrove taxa as analogues for their fossil counterparts assumes that the thermal preferences of these taxa have remained unchanged over time, which may not always be the case. In addition, the use of only nearest living relatives as proxies assumes that past reefs may have thrived under the same temperatures as those observed today, which may not always be accurate. Climate change and shifting biogeographical patterns may have resulted in different thermal conditions for ancient reefs. Therefore, our approach should be supplemented with other methods that take into account changes in the thermal tolerance of reef taxa over time.
+
+
+Ecological data and other semi-quantiative or qualitative climate constraints are readily incorporated in this modelling framework: The hierarchical structure accounts for variation of temperature estimates from proxies at individual localities, which is treated equivalent to the uncertainty associated with the ecological temperature proxies. Existing palaeoclimate studies have mostly 
+
+## Early Eocene climate
 
 Estimating the GMST without bias is achieved by intersecting the modeled temperature gradient at narrow latitudinal intervals and adjusting for the differing sizes of latitudinal bands through weighting.
 
@@ -223,6 +237,9 @@ popularity of reporting global mean temperature in paleoclimate studies is due t
 
 
 
+
+
+: The Bayesian framework allows to specify arbitrary priors on the four parameters that control the shape of the gradient (see Methods). In practice, those priors are informed by physical constraints, e.g. restricting water temperatures to above the freezing point. A further improvement to existing methods is that the hierarchical structure of our model explicitly accounts for variation of temperature estimates at individual localities, and for uncertainty associated with the ecological temperature proxies. 
 
 
  
@@ -249,7 +266,7 @@ A major theme of the discussions on the early Eocene greenhouse climate has been
 - discuss utility of the model and future applications
 
 # Conclusions
-
+In conclusion, the Bayesian hierarchical model presented in this study represents a significant improvement over existing methods for reconstructing past temperatures by incorporating both geochemical and ecological data. The use of a Bayesian framework allows for the specification of prior information based on physical constraints, which can improve interpolation and prediction. By modeling the temperature variation across latitudes, a complete temperature distribution is obtained, filling in gaps in the proxy record and reducing the risk of bias in global mean surface temperature (GMST) estimates. The hierarchical structure of the model accounts for the variation of temperature estimates at individual localities and uncertainty associated with the ecological temperature proxies. This improved method is expected to significantly alter the proxy-based temperature reconstructions of the past, particularly for intervals with small or biased samples of temperature proxies.
 # Acknowledgements
 
 # Author contributions
