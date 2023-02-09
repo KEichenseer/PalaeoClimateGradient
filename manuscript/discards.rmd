@@ -119,6 +119,35 @@ Our hierarchical approach accounts for different sample sizes between and uncert
 
 -->
 
+## Discussion discards
+
+
+or even adjacent time intervals 
+the fossil record indicates that many taxa 
+
+ This approach is showcased by nearest living relative methods, commonly employed in terrestrial, Cenozoic climate reconstructions, which work on the premise that the climatic requirements of ancient plant taxa were similar to those of there nearest modern relatives [@Kvacek2007]. A plethora of methods have been developed to derive numerical climate values from taxonomic data [@Faucette2007; @...]. Approaches based on probability density functions have the advantage of naturally capturing the uncertainty associated with the climatic occupancy of modern nearest relatives [@Greenwood2017], and probability distributions can be readily integrated in a quantitative modelling framework. Here, we employ a similar approach, constructing probability distributions broadly reflecting the thermal preferences of modern coral reefs and mangrove taxa [@...], which we assign to fossil occurrences of coral reefs and mangroves.
+
+
+Quantifying climatic constraints provided by fossil organisms relies on the assumption that the climatic conditions under which they lived are similar to those occupied by their modern relatives.
+
+ Similarly
+
+Our approach for quantifying climatic constraints as normal distributions broadely based on their modern, climatic equivalents, deviated from recent 
+
+tQuantifying climatic constraints provided by fossil organisms 
+
+relies on the assumption that the climatic conditions under which they lived are similar to those occupied by their modern relatives. Similarly
+
+Whilst our approach provides normal probability distributions for deriving temperature estimates of corals and mangrove communities, 
+
+As with other nearest-living relative methods, our ecological temperature estimates come with limitations: 1) 
+
+Although the quantification of each climate constraint needs to account for specific information, o
+
+However, our simple approach to constructing probability distributions for the thermal range of coral reefs has limitations. The use of only modern coral reefs and mangrove taxa as analogues for their fossil counterparts assumes that the thermal preferences of these taxa have remained unchanged over time, which may not always be the case. In addition, the use of only nearest living relatives as proxies assumes that past reefs may have thrived under the same temperatures as those observed today, which may not always be accurate. Climate change and shifting biogeographical patterns may have resulted in different thermal conditions for ancient reefs. Therefore, our approach should be supplemented with other methods that take into account changes in the thermal tolerance of reef taxa over time.
+
+
+Ecological data and other semi-quantiative or qualitative climate constraints are readily incorporated in this modelling framework: The hierarchical structure accounts for variation of temperature estimates from proxies at individual localities, which is treated equivalent to the uncertainty associated with the ecological temperature proxies. Existing palaeoclimate studies have mostly 
 
 
 ## Condensed methods Bayesian framework
