@@ -32,6 +32,12 @@ modern_eocene_t90 <- gradient(90,modm[,1:4])
 eocene_t90 <- gradient(90,mode[,1:4])
 eeco_prox_t90 <- gradient(90,eeco_prox[,1:4])
 
+eocene_t66.6 <- gradient(66.6,mode[,1:4])
+
+#quantile(eocene_t0-eocene_t66.6,probs = c(0.025,0.5,0.975))
+#quantile(eocene_t0-eocene_t90,probs = c(0.025,0.5,0.975))
+
+
 eeco_north_t0 <- gradient(0,eeco_north[,1:4])
 eeco_south_t0 <- gradient(0,eeco_south[,1:4])
 eeco_north_t90 <- gradient(90,eeco_north[,1:4])
@@ -50,6 +56,9 @@ eocene_gradient <- as.list(format(round(quantile(eocene_t0 - eocene_t90, probs =
 modern_gradient <- as.list(format(round(quantile(modern_t0 - modern_t90, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
 modern_eocene_gradient <- as.list(format(round(quantile(modern_eocene_t0 - modern_eocene_t90, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
 eocene_proxy_gradient <- as.list(format(round(quantile(eeco_prox_t0 - eeco_prox_t90, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+
+eocene_gradient_polar_circle <- as.list(format(round(quantile(eocene_t0 - eocene_t66.6, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+
 
 eocene_gradient_uncertainty <- quantile(eocene_t0 - eocene_t90, probs = c(0.975))-quantile(eocene_t0 - eocene_t90, probs = c(0.025))
 eocene_proxy_gradient_uncertainty <- quantile(eeco_prox_t0 - eeco_prox_t90, probs = c(0.975))-quantile(eeco_prox_t0 - eeco_prox_t90, probs = c(0.025))
@@ -74,6 +83,8 @@ saveRDS(tdiff_lat0, "./results/eeco/eocene_modern_difference_equator.rds")
 saveRDS(tdiff_lat90, "./results/eeco/eocene_modern_difference_poles.rds")
 saveRDS(eocene_gradient, "./results/eeco/eocene_overall_gradient.rds")
 saveRDS(eocene_proxy_gradient, "./results/eeco/eocene_proxy_gradient.rds")
+
+saveRDS(eocene_gradient_polar_circle, "./results/eeco/eocene_overall_gradient_polar_circle.rds")
 
 saveRDS(modern_gradient, "./results/modern/modern_overall_gradient.rds")
 saveRDS(modern_eocene_gradient, "./results/modern/modern_eocene_sampling_overall_gradient.rds")
