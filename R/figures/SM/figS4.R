@@ -54,11 +54,14 @@ m3 <- run_MCMC_simple(n_iter = 20000,
 r3 <- combine_posterior(list(m3))
 plot_chains(list(m1))
 
-## 4. Inverse Sigmoidal
+## 4. Quadratic, relaxed A prior
+# relax prior on A
+priors$f1 <- function(x,log) dnorm(x,0,12,log)
+priors$f3 <- function(x,log) dnorm(x,45,25,log)
+priors$f4 <- function(x,log) dgamma(x,shape = 3,rate = 21,log=log)
 set.seed(1)
 #lat <- runif(30,0,90)
-temp4 <- 14-3*log(lat/(90-lat))
-plot(lat,temp4)
+temp4 <- 30-lat^2/270
 m4 <- run_MCMC_simple(n_iter = 20000,
                       n_thin = 10,
                       x = lat,
@@ -66,7 +69,22 @@ m4 <- run_MCMC_simple(n_iter = 20000,
                       prior_input = priors,
                       adapt_sd = NULL)
 r4 <- combine_posterior(list(m4))
-plot_chains(list(m4))
+plot_chains(list(m1))
+
+
+# ## 4. Inverse Sigmoidal
+# set.seed(1)
+# #lat <- runif(30,0,90)
+# temp4 <- 14-3*log(lat/(90-lat))
+# plot(lat,temp4)
+# m4 <- run_MCMC_simple(n_iter = 20000,
+#                       n_thin = 10,
+#                       x = lat,
+#                       y = temp4,
+#                       prior_input = priors,
+#                       adapt_sd = NULL)
+# r4 <- combine_posterior(list(m4))
+# plot_chains(list(m4))
 
 
 png("figures/SM/FigS4_different_gradients.png",width = 5,height = 4.5,unit = "in", res = 300)
@@ -76,14 +94,14 @@ plot(lat,temp1, xlab = expression("|latitude| ("*degree*")"),
      ylab = expression("temperature ("*degree*"C)"),
      pch = 21, col = NA, bg = rgb(0,0,0,0.5), ylim = ylim, xlim = xlim, cex = 1.4)
 points(c(0,90),c(30,0),type = "l", lwd = 2)
-plot_gradient(r1,add = T, line_col = "red", confint_col = rgb(1,0,0,0.2))
+plot_gradient(r1,add = T, line_col = "red", confint_col = rgb(0.95,0,0,0.33))
 mtext("a",side=2,line=3,padj=-4.7,adj=0,cex=1.2)
 
 plot(lat,temp2, xlab = expression("|latitude| ("*degree*")"), 
      ylab = expression("temperature ("*degree*"C)"),
      pch = 21, col = NA, bg = rgb(0,0,0,0.5), ylim = c(23,27), xlim = xlim, cex = 1.4)
 points(c(0,90),c(25,25),type = "l", lwd = 2)
-plot_gradient(r2,add = T, line_col = "red", confint_col = rgb(1,0,0,0.2))
+plot_gradient(r2,add = T, line_col = "red", confint_col = rgb(0.95,0,0,0.33))
 mtext("b",side=2,line=3,padj=-4.7,adj=0,cex=1.2)
 
 plot(lat,temp3, xlab = expression("|latitude| ("*degree*")"), 
@@ -91,15 +109,16 @@ plot(lat,temp3, xlab = expression("|latitude| ("*degree*")"),
      pch = 21, col = NA, bg = rgb(0,0,0,0.5), ylim = ylim, xlim = xlim, cex = 1.4)
 true_grad <- 30- seq(0,90,0.2)^2/270
 points(seq(0,90,0.2),true_grad,type = "l", lwd = 2)
-plot_gradient(r3,add = T, line_col = "red", confint_col = rgb(1,0,0,0.2))
+plot_gradient(r3,add = T, line_col = "red", confint_col = rgb(0.95,0,0,0.33))
 mtext("c",side=2,line=3,padj=-4.7,adj=0,cex=1.2)
 
 plot(lat,temp4, xlab = expression("|latitude| ("*degree*")"), 
      ylab = expression("temperature ("*degree*"C)"),
      pch = 21, col = NA, bg = rgb(0,0,0,0.5), ylim = ylim, xlim = xlim, cex = 1.4)
-true_grad <- 14-3*log(seq(0,90,0.2)/(90-seq(0,90,0.2)))
+#true_grad <- 14-3*log(seq(0,90,0.2)/(90-seq(0,90,0.2)))
+true_grad <- 30- seq(0,90,0.2)^2/270
 points(seq(0,90,0.2),true_grad,type = "l", lwd = 2)
-plot_gradient(r4,add = T, line_col = "red", confint_col = rgb(1,0,0,0.2))
+plot_gradient(r4,add = T, line_col = "red", confint_col = rgb(0.95,0,0,0.33))
 mtext("d",side=2,line=3,padj=-4.7,adj=0,cex=1.2)
 dev.off()
 
