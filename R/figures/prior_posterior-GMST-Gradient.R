@@ -20,22 +20,30 @@ prior_t0 <- gradient(0,modp_all[,1:4])
 moeo_t0 <- gradient(0,modem_all[,1:4])
 
 eo_t90 <- gradient(90,mode_all[,1:4])
+eo_t67 <- gradient(66.6,mode_all[,1:4])
+
 prior_t90 <- gradient(90,modp_all[,1:4])
 moeo_t90 <- gradient(90,modem_all[,1:4])
 
 # gradient
 eo_grad <- eo_t0 - eo_t90
+eo_grad67 <- eo_t0 - eo_t67
+
 prior_grad <- prior_t0 - prior_t90
 moeo_grad <- moeo_t0 - moeo_t90
 
 # densities
 d_eo <- density(eo_grad, n=length(eo_grad))
+d_eo67 <- density(eo_grad67, n=length(eo_grad67))
+
 d_prior <- density(prior_grad, n=length(prior_grad))
 d_moeo <- density(moeo_grad, n=length(moeo_grad))
 
 plot(0,0,type = "n", xlim = c(0,50), ylim = c(0,0.26), xaxs = "i", yaxs = "i", ylab = "posterior density")
 error_polygon(d_prior$x,d_prior$y,rep(0,length(d_prior$y)))
-points(d_prior$x, type = "l", col = rgb(0,0,0,0.4), lwd = 2)
+points(d_prior$x, d_prior$y, type = "l", col = rgb(0,0,0,0.4), lwd = 2)
+error_polygon(d_eo67$x,d_eo67$y,rep(0,length(d_eo67$y)), col = rgb(.8,.6,0,0.2))
+points(d_eo67, type = "l", col = rgb(.8,.6,0,0.4), lwd = 2,lty=2)
 error_polygon(d_eo$x,d_eo$y,rep(0,length(d_eo$y)), col = rgb(1,0,0,0.2))
 points(d_eo, type = "l", col = rgb(1,0,0,0.4), lwd = 2)
 error_polygon(d_moeo$x,d_moeo$y,rep(0,length(d_moeo$y)), col = rgb(0,0.5,1,0.2))
@@ -67,7 +75,7 @@ d_eo <- density(eotemp_global_all, n=length(eotemp_global_all))
 d_prior <- density(priortemp_global_all, n=length(priortemp_global_all))
 d_moeo <- density(motemp_global_all, n=length(motemp_global_all))
 
-plot(0,0,type = "n", xlim = c(8,38), ylim = c(0,0.81), xaxs = "i", yaxs = "i", ylab = "posterior density")
+plot(0,0,type = "n", xlim = c(10,36), ylim = c(0,0.81), xaxs = "i", yaxs = "i", ylab = "posterior density")
 error_polygon(d_prior$x,d_prior$y,rep(0,length(d_prior$y)))
 points(d_prior, type = "l", col = rgb(0,0,0,0.4), lwd = 2)
 error_polygon(d_eo$x,d_eo$y,rep(0,length(d_eo$y)), col = rgb(1,0,0,0.2))
