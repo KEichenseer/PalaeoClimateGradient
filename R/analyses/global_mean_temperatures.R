@@ -25,22 +25,26 @@ eotemp <- gradient(seq(0.5,89.5,1), mode_all[,1:4],0)
 # eocene temperature gradient quantiles
 eotempq <- apply(eotemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
 # eocene global average temperature with 95% CI
-eotemp_global <- apply(eotempq,1, function(x) round(sum(x*latweight),1), simplify = FALSE)
+eotemp_global <- as.list(format(round(quantile(apply(eotemp,1, function(x) sum(x*latweight), simplify = TRUE),probs = c(0.025,0.5,0.975)),1),nsmall = 1))
 # modern temperature gradient
 motemp <- gradient(seq(0.5,89.5,1), modm_all[,1:4],0)
 # modern temperature gradient quantiles
 motempq <- apply(motemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
 # modern global average temperature with 95% CI
-motemp_global <- apply(motempq,1, function(x) round(sum(x*latweight),1), simplify = FALSE)
+motemp_global <- as.list(format(round(quantile(apply(motemp,1, function(x) sum(x*latweight), simplify = TRUE),probs = c(0.025,0.5,0.975)),1),nsmall = 1))
 # modern eocene sampled temperature gradient
 moeotemp <- gradient(seq(0.5,89.5,1), modem_all[,1:4],0)
 # modern eocene sampled temperature gradient quantiles
 moeotempq <- apply(moeotemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
 # modern eocene sampled global average temperature with 95% CI
-moeotemp_global <- apply(moeotempq,1, function(x) round(sum(x*latweight),1), simplify = FALSE)
-#
+moeotemp_global <- as.list(format(round(quantile(apply(moeotemp,1, function(x) sum(x*latweight), simplify = TRUE),probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+
+
 # eocene proxy only temperature gradient
 eotempprox <- gradient(seq(0.5,89.5,1), eeco_prox[,1:4],0)
+# eocene proxy only global average temperature with 95% CI
+eotempprox_global <- as.list(format(round(quantile(apply(eotempprox,1, function(x) sum(x*latweight), simplify = TRUE),probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+
 
 
 # eocene northern temperature gradient
@@ -48,14 +52,14 @@ eeconorthtemp <- gradient(seq(0.5,89.5,1), eeco_north[,1:4],0)
 # eocene northern temperature gradient quantiles
 eeconorthtempq <- apply(eeconorthtemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
 # eocene northern global average temperature with 95% CI
-eeconorthtemp_global <- apply(eeconorthtempq,1, function(x) round(sum(x*latweight),1), simplify = FALSE)
+eeconorthtemp_global <- as.list(format(round(quantile(apply(eeconorthtemp,1, function(x) sum(x*latweight), simplify = TRUE),probs = c(0.025,0.5,0.975)),1),nsmall = 1))
 #
 # eocene southern temperature gradient
 eecosouthtemp <- gradient(seq(0.5,89.5,1), eeco_south[,1:4],0)
 # eocene southern temperature gradient quantiles
 eecosouthtempq <- apply(eecosouthtemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
 # eocene southern global average temperature with 95% CI
-eecosouthtemp_global <- apply(eecosouthtempq,1, function(x) round(sum(x*latweight),1), simplify = FALSE)
+eecosouthtemp_global <- as.list(format(round(quantile(apply(eecosouthtemp,1, function(x) sum(x*latweight), simplify = TRUE),probs = c(0.025,0.5,0.975)),1),nsmall = 1))
 #
 
 moeotemp_global_all <- apply(moeotemp,1, function(x) (sum(x*latweight)), simplify = T)
@@ -78,6 +82,8 @@ eocene_eoceneproxy_gradient_deviation <- as.list(format(round(quantile(eotemppro
 saveRDS(motemp_global,"results/modern/global_mean_modern.rds")
 saveRDS(eotemp_global,"results/eeco/global_mean_eeco.rds")
 saveRDS(moeotemp_global,"results/eeco/global_mean_modern_eocene_sampling_eeco.rds")
+saveRDS(eotempprox_global,"results/eeco/global_mean_eeco_proxy_only.rds")
+
 saveRDS(modern_eocene_gradient_deviation,"results/eeco/global_mean_modern_eocene_sampling_difference.rds")
 saveRDS(eocene_eoceneproxy_gradient_deviation,"results/eeco/global_mean_eocene_eoceneproxy_difference.rds")
 saveRDS(eeconorthtemp_global,"results/SM/global_mean_northern_eeco.rds")
