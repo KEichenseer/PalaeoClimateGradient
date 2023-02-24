@@ -220,7 +220,7 @@ Our approach for deriving fully quantitative climate reconstructions from ecolog
 This dilemma could be resolved in future studies by applying machine learning approaches to inferring quanitative temperatures from ecological and lithological proxies (e.g. @Salonen2019; @Wei2020; @Chandra2021) in novel way: If geochemical proxies and ecological or lithological data are derived from the same location and time interval, the climatic requirements of these taxa or sediments can be learned by using palaeotemperatures from that time interval, instead of or in addition to modern modern temperatures. This approach would ultimately rely on geochemical proxies providing absolute temperature estimates, but the resulting information could be exported to other locations lacking a good coverage of geochemical proxies via their fossil or sedimentary record. 
 
 ## Early Eocene climate
-The geochemical proxy record and ecological data indicate that the latitudinal SST gradient of the early Eocene climatic optimum was significantly shallower than the modern [@Huber2011], but beyond that, there is little agreement. @Evans2018 estimate the SST gradient at 32+-10% of the modern, which would correspond to ~`r round( as.numeric(modern_gradient$"50%") - 0.32*as.numeric(modern_gradient$"50%"),0)`+- `r format(round( 0.10*as.numeric(modern_gradient$"50%"),0),nsmall=0)`degC, using the difference between the mean tropical and deep ocean data. The modeled SST of @Tierney2017 using TEX86 is ~ `r round(35.8-23.8,0)` degC, when taking the difference between temperatures at the polar circles and the equator. @Inglis2020 include both terrestrial air temperature and SST estimates in their model of the latitudinal temperature gradient in their Figure S4a; they model a polar circle to equatorial gradient of ~ `r round(30.7-(20.2+14.3)/2,0)`degC. All of those estimates are significantly lower than the SST gradient predicted by an EECO climate model ensemble (@Lunt2012, as shown in @Tierney2017), which predicts a polar circle to equatorial gradient of  `r round(31.5-5.5,0)`degC. @Keating-Bitoni show a proxy-based SST gradient of ~ `r round(30-(19+15.6)/2,0)`degC, and @Bij2009 model a gradient of ~`r round(36-27,0)`degC in the northern and only ~`r 36-31`degC in the southern hemisphere.
+The geochemical proxy record and ecological data indicate that the latitudinal SST gradient of the early Eocene climatic optimum was significantly shallower than the modern [@Huber2011], but beyond that, there is little agreement. @Evans2018 estimate the SST gradient at 32+-10% of the modern, which would correspond to ~`r round( as.numeric(modern_gradient$"50%") - 0.32*as.numeric(modern_gradient$"50%"),0)`+- `r format(round( 0.10*as.numeric(modern_gradient$"50%"),0),nsmall=0)`degC, using the difference between the mean tropical and deep ocean data. The modeled SST of @Tierney2017 using TEX86 is ~ `r round(35.8-23.8,0)` degC, when taking the difference between temperatures at the polar circles and the equator. @Inglis2020 include both terrestrial air temperature and SST estimates in their model of the latitudinal temperature gradient in their Figure S4a; they model a polar circle to equatorial gradient of ~ `r round(30.7-(20.2+14.3)/2,0)`degC. All of those estimates are significantly lower than the SST gradient predicted by an EECO climate model ensemble (@Lunt2012, as shown in @Tierney2017), which predicts a polar circle to equatorial gradient of  `r round(31.5-5.5,0)`degC. @Keating-Bitoni show a proxy-based SST gradient of ~ `r round(30-(19+15.6)/2,0)`degC, and @Bij2009 model a gradient of ~`r round(36-27,0)`degC in the northern and only ~`r 36-31`degC in the southern hemisphere for the early Eocene.
 Our polar circle to equatorial gradient is lower than most previous estimates at `r eocene_gradient_polar_circle$"50%"`degC, although the 95% credible interval overlap with several of the listed gradient estimates. 
 
 [add table on lat gradients]
@@ -229,59 +229,8 @@ In latitudes beyond the polar circle, the discrepancy between our model predicti
 
 The very high variability of the proxy record in mid-latitudes results in large uncertainties on the shape of temperature gradient and on the GMSsT. Biases and errors in the proxy reconstructions likely contribute to the observed variability, as geochemical proxies reflect many other factors besides seawater temperature [@Hollis2019]. Despite excluding d18O measurements from recrystallised fossils, systematic offsets remain between mostly warm temperatures derived from TEX86, and cooler temperatures derived from d18O, delta47, and the ecological proxies. Seasonality [@Keating-Bitoni] and temporal changes within the EECO [@Westerhold2018] may also contribute to the large variability of the EECO proxy data. 
 
-Our GMSsT estimate is 
+Recent GMSsT estimates of the EECO and of the early Eocene range from 23.4 to 37.1 degC, with the lowest GMSTs being derived from d18O, and the higher estimates including TEX86 [@Inglis2020]. Many studies include both marine and terrestrial proxies to derive GMST estimates, but despite great differences in proxy selection and in the calculation of global average temperatures, most estimates fall in the range of 27 - 29.5 degC [@@@@], similar to our GMSsT estimate of `r eotemp_global$"50%"` degC.
 
-28 degC from bottom water temperatures
-
-
-
-as shown in their Supplementary figure S4a would be ~ `r round(30.7-(13.3+5.0)/2,1)`degC when taking difference between temperatures at the equator and at the poles, but only ~ `r round(30.7-(20.2+14.3)/2,1)`degC when taking the difference between temperatures at the polar circles and the equator. This stark difference is due the almost linear gradient in mid - high latitudes modeled by the authors. 
-
-on the exact nature of the EECO SST gradientProxy-based estimates put the EECO SST gradient at ~ `r round(30.7-(13.3+5.0)/2,1)` [@Inglis2020], at ~ `r as.numeric(modern_gradient$"50%") - 0.32*as.numeric(modern_gradient$"50%")` [@Evans2018]
-
-
-
-Estimating the GMST without bias is achieved by intersecting the modeled temperature gradient at narrow latitudinal intervals and adjusting for the differing sizes of latitudinal bands through weighting.
-
-
-
-Estimating the GMST from sparse proxies is prone to bias [@Jones2022], and 
-
-Modeling the latitudinal temperature gradient provides a comprehensive temperature distribution across all latitudes, which allows to estimate GMST even 
-
-Modeling the latitudinal temperature gradient provides a comprehensive temperature distribution across all latitudes, which can be used to improve estimates of the global mean temperature. Even if the underlying proxy data is sparse or incomplete, the model allows for effective utilization of data through interpolation and extrapolation techniques. The model also takes into account the different areas represented by each latitude band, weighting the temperatures accordingly, resulting in a more accurate estimate of the global mean temperature.
-
-popularity of reporting global mean temperature in paleoclimate studies is due to its utility as a comprehensive and standardized metric for characterizing and comparing the state of the Earth's climate and evaluating climate models.
-
-
-
-
-
-: The Bayesian framework allows to specify arbitrary priors on the four parameters that control the shape of the gradient (see Methods). In practice, those priors are informed by physical constraints, e.g. restricting water temperatures to above the freezing point. A further improvement to existing methods is that the hierarchical structure of our model explicitly accounts for variation of temperature estimates at individual localities, and for uncertainty associated with the ecological temperature proxies. 
-
-
- 
-Modeling the latitudinal temperature gradient provides a comprehensive temperature distribution across all latitudes. This information can be used to improve estimates of the global mean temperature. Even if the underlying proxy data is sparse or incomplete, the model allows for effective utilization of data through interpolation and extrapolation techniques. The model also takes into account the different areas represented by each latitude band, weighting the temperatures accordingly, resulting in a more accurate estimate of the global mean temperature.
-
-Modeling the latitudinal temperature gradient provides a comprehensive representation of the temperature distribution across different latitudes. This information can be used to make more informed estimates of the global mean temperature. Even if the data is sparse or incomplete, the model allows for effective utilization of data through interpolation and extrapolation techniques. The model also takes into account the different areas represented by each latitude band, weighting the temperatures accordingly, resulting in a more accurate estimate of the global mean temperature.
-
-Our parametric model has four parameters that describe the shape of the modeled gradient, and they clearly relate to its magnitude, steepness and the latitude of its greatest steepness. 
-
-**Methodological advances.** Latitudinal temperature gradients have been estimated with a variety of parametric and non-parametric statistical techniques. Parametric methods include polynomials [@Greenwood1995; @Bijl2009] and a cosine function [@Inglis2020]. Whilst some of those functions are flexible enough to model a range of empirical temperature gradients, the logistic function used herein has the added advantage of an easily understandable relationship between each of the model parameters and the shape of the latitudinal gradient (Fig. 2). Non-parametric models can very flexibly follow the shape of an unknown temperature gradient [@Jones2022, but see @Zhang2019], but have the disadvantage of having no model parameters that can be compared between data sets. Parametric methods should therefore be preferred to non-parametric temperature gradient models, as long as very broad prior information on the shape of the gradients exists. The ease with which such prior information can be integrated is perhaps the major advantage of our method: The Bayesian framework allows to specify arbitrary priors on the four parameters that control the upper and lower temperature limits, the steepness of the gradient, and the latitudinal position of the steepest point in the gradient (see Methods). A further improvement to existing methods is that the hierarchical structure of our model explicitly accounts for variation of temperature estimates at individual localities, and for uncertainty associated with the ecological temperature proxies. An extension of the model additionally accounts for measurement uncertainty of the geochemical proxies (Supplementary Materials).
- Disadvanand have no model parameters that can be readily compared between data sets. 
--GP regression and interpolation can give rise to inverse gradients ect. --> our method nicely prevents this.
-
-An extension of the model additionally accounts for measurement uncertainty of the geochemical proxies (maybe cut, otherwise put something to prove that in SM).  
-
-**Eocene temperature gradients.**
-**Comparison to Eocene proxy and modelling studies**. 
-
-A major theme of the discussions on the early Eocene greenhouse climate has been the discrepancy between proxy records, particularly ecological climate indicators such as macrofloral assemblage data, have 
-
-- x1 compare lat gradient to literature estimates, e.g. Zhang2019
-- compare lat gradient to climate models and the "early EECO problem"
-- discuss insufficiency of proxies (high variability, ...)
-- discuss utility of the model and future applications
 
 # Conclusions
 
