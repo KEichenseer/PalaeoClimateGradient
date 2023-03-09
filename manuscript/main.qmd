@@ -1,22 +1,34 @@
 ---
-title: "Bayesian multi-proxy reconstruction of latitudinal temperature gradients applied to the Early Eocene" 
-
+title: "Bayesian multi-proxy reconstruction of latitudinal temperature gradients applied to the Early Eocene"
 author:
-  - Kilian Eichenseer^[Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom] and Lewis A. Jones^[Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Universidade de Vigo, 36310 Vigo, Spain]
-output:
-  word_document:
-    reference_docx: "template.docx"
-
-
+  - "---"
+  - Kilian Eichenseer^1^ and Lewis A. Jones^2^
+  - "---"
+  - "^1^Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom"
+  - "^2^Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Departamento de Ecoloxía e Bioloxía Animal, Universidade de Vigo, 36310 Vigo, Spain."
+  - "---"
+  - "**Corresponding author:** kilian.eichenseer@durham.ac.uk"
+abstract: \newpage Abstract
+format:
+  docx:
+    reference-doc: template.docx
+    highlight-style: github
+    fig-dpi: 900
+  pdf:
+    documentclass: scrartcl
+    papersize: letter
+    geometry:
+      - top=25.4mm
+      - bottom=25.4mm
+      - left=25.4mm
+      - right=25.4mm
+      - heightrounded
 bibliography: references.bib
-csl: palaeontology.csl
-
-
-
+csl: geology.csl
 ---
 
-
 <!-- discarded titles:
+Bayesian multi-proxy reconstruction of latitudinal temperature gradients applied to the Early Eocene
 A Bayesian model of latitudinal temperature gradients applied to the Early Eocene
 Bayesian multi-proxy reconstruction of latitudinal temperature gradients for the Early Eocene
 Bayesian multi-proxy reconstruction of the early Eocene latitudinal temperature gradient
@@ -28,10 +40,9 @@ Modelling latitudinal temperature gradients from geological proxies: An early Eo
 "An Early Eocene temperature gradient modelled with geological and ecological proxies"
 -->
 
-Abstract
-===============================================================================
 Accurately reconstructing large-scale palaeoclimate patterns from sparse local records is critical for understanding the evolution of Earth's climate. Challenges arise particularly from the patchiness and uneven sampling of palaeoclimate data, and from the disparate nature of the proxy data. Geochemical data usually provide temperature estimates via transfer functions informed by experiments, and transfer functions based on the climatic requirements of modern taxa exist for some fossil plant assemblages. In contrast, most ecological and lithological data, e.g. coral reefs and evaporites, only convey information on broad climatic requirements. Historically, most large-scale proxy-based reconstructions have been based on either geochemical or ecological data, but few approaches exist for combining multiple proxy types into a single, quantitative reconstruction. Large spatial gaps in existing proxy records have often been bridged by simple averaging, without taking into consideration the spatial distribution of the samples, leading to biased temperature reconstructions. Here, we present a Bayesian hierarchical model to integrate ecological data with established geochemical proxies into a unified quantitative framework, bridging gaps in the latitudinal coverage of proxy data. We apply this approach to the early Eocene climatic optimum (EECO), the interval with the warmest sustained temperatures of the Cenozoic. Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad sea surface temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical shallow marine proxy record to model the latitudinal sea surface temperature gradient and global average temperatures. Our results confirm the presence of a flattened latitudinal temperature gradient and unusually high polar temperatures during the EECO, which is supported by high-latitude ecological data. We show that the inclusion of ecological data and adequate prior information can substantially reduce uncertainty in palaeoclimate reconstructions, and allow for unbiased temperature estimates from sparse data.
 
+# Keywords
 
 <!--Geochemical data such as oxygen isotopes (d18O), tetraether indices (TEX86) and magnesium calcium ratios (Mg/Ca) are routinely used to reconstruct ocean temperatures in deep time. However, limited spatial coverage and disagreements between geochemical proxies compromise the accuracy of these reconstructions. Geological data such as coral reefs, mangroves, and evaporites have the potential to supplement geochemical data by improving spatial coverage and constraining temperature estimates. Historically, these data have been used to qualitatively inform upon palaeoclimatic conditions at broad spatial scales, yet no transfer functions exist to convert geological data into temperature estimates. Quantitative temperature reconstructions have therefore not made use of these data. Likewise, the large spatial gaps in existing proxy records have often been bridged by simple averaging, without taking into consideration the spatial distribution of the samples. Here, we present a Bayesian hierarchical model to integrate geological data–with established temperature proxies–into a unified quantitative framework. We apply this approach to the early Eocene climatic optimum (EECO), the interval with the warmest sustained temperatures of the Cenozoic. Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad sea surface temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical shallow marine proxy record to model the latitudinal temperature gradient and its uncertainty. Our results confirm the presence of a flattened latitudinal temperature gradient and unusually high polar temperatures during the EECO. We show that the inclusion of ecological data can substantially reduce the uncertainty on temperature estimates in climate zones lacking geochemical data. -->
 

@@ -1,18 +1,31 @@
 ---
-title: "Supplementary material for  \nBayesian multi-proxy reconstruction of the early Eocene latitudinal temperature gradient"
+title: "Supplementary Material: Bayesian multi-proxy reconstruction of latitudinal temperature gradients applied to the Early Eocene"
 author:
-  - Kilian Eichenseer^[Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom] and Lewis A. Jones^[Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Universidade de Vigo, 36310 Vigo, Spain]
-output:
-  word_document:
-    reference_docx: "template.docx"
-
-
+  - "---"
+  - Kilian Eichenseer^1^ and Lewis A. Jones^2^
+  - "---"
+  - "^1^Department of Earth Sciences, Durham University, South Road, DH1 3LE, Durham, United Kingdom"
+  - "^2^Centro de Investigación Mariña, Grupo de Ecoloxía Animal, Departamento de Ecoloxía e Bioloxía Animal, Universidade de Vigo, 36310 Vigo, Spain."
+  - "---"
+  - "**Corresponding author:** kilian.eichenseer@durham.ac.uk"
+format:
+  docx:
+    reference-doc: template.docx
+    highlight-style: github
+    fig-dpi: 900
+  pdf:
+    documentclass: scrartcl
+    papersize: letter
+    geometry:
+      - top=25.4mm
+      - bottom=25.4mm
+      - left=25.4mm
+      - right=25.4mm
+      - heightrounded
 bibliography: references.bib
-csl: palaeontology.csl
-
-
-
+csl: geology.csl
 ---
+
 ```{r, setup, include=FALSE}
 #knitr::opts_knit$set(root.dir = '..')
 ```
