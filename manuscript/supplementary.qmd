@@ -23,7 +23,7 @@ format:
       - right=25.4mm
       - heightrounded
 bibliography: references.bib
-csl: geology.csl
+csl: climate-of-the-past.csl
 ---
 
 ```{r, setup, include=FALSE}
