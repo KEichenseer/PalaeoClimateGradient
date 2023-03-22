@@ -192,6 +192,13 @@ eeco_south_north_global_diff <- readRDS("results/SM/global_mean_diff_south_north
 
 ## Model validation
 
+::: {#fig-2}
+![](../figures/fig_2.png){width="15cm"}
+
+Model reconstructions of simulated latitudinal temperature gradients at various sample sizes. Each column depicts a different reconstruction for a given sample size (5, 10, 20, and 50). Each row depicts a different simulated latitudinal temperature gradient that represents idealised climatic states: extreme greenhouse (flat), greenhouse (quadratic), icehouse (linear), extreme icehouse (steep). The black line illustrates the simulated gradient. The blue line depicts the reconstructed gradient represented by the median sea surface temperature value estimated from 1000 model runs. The blue shading depicts the 90%, 95%, and 99% credible intervals. Each gradient is depicted in absolute latitude.
+
+:::
+
 ```{=html}
 <!-- - Show that the 4-parameter logistic function can adequatly describe the modern temperature gradient
 - Show that the modern gradient can be reproduced with Eocene sampling distribution
