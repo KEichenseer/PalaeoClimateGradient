@@ -200,14 +200,19 @@ for(i in 1:4) {
   
   }
 
+m_lin <- four_gradients_model[[1]]
+m_flat <- four_gradients_model[[2]]
+m_quad <- four_gradients_model[[3]]
+m_steep <- four_gradients_model[[4]]
 
 ### save list of all temperature outputs
 four_gradients_model <- list(m_lin_proc,m_flat_proc,m_quad_proc,m_steep_proc)
 four_gradients_temp <- list(temp_lin,temp_flat,temp_quad,temp_steep)
 
-saveRDS(four_gradients_model, "D://OneDrive - Durham University/projects/four_gradients_model.rds")
+saveRDS(four_gradients_model, "D://OneDrive - Durham University/projects/four_gradients_model_proc.rds")
 saveRDS(four_gradients_temp, "D://OneDrive - Durham University/projects/four_gradients_temp.rds")
 
+gradient_formulas <- list( function(x) 30-x/3, function(x) rep(25,length(x)), function(x) 30-x^2/270, function(x) 8.5*atan(-0.5*x+15)+12.5)
 
 ### get temperatures from combining all gradients
 t_list <- list()
@@ -224,7 +229,8 @@ for(i in 1:4) {
                                    p_100 = apply(grad,2, function(x) quantile(x,0.1)),
                                    p_900 = apply(grad,2, function(x) quantile(x,0.9)),
                                    p_975 = apply(grad,2, function(x) quantile(x,0.975)),
-                                   p_995 = apply(grad,2, function(x) quantile(x,0.995))
+                                   p_995 = apply(grad,2, function(x) quantile(x,0.995)),
+                                   known = gradient_formulas[[i]](lats)
                                    
     )
   }
