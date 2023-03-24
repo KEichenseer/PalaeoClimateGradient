@@ -104,7 +104,6 @@ for(i in 1:4) {
   temp_2[[i]] <- apply(temp,2,function(x) quantile(x,probs = c(0.5,0.005,0.995,0.025,0.975,0.1,0.9)))
 }
 
-par(mfrow=c(4,4))
 for(i in 1:4) {
   plot(0,0,type = "n", xlim = c(0,90), ylim = c(0,40), xlab = "abs. latitude", ylab = "temperature")
   points(lats, gradient_formulas[[grad_type]](lats), type = "l", lwd = 2)
@@ -154,7 +153,6 @@ for(i in 1:4) {
   temp_3[[i]] <- apply(temp,2,function(x) quantile(x,probs = c(0.5,0.005,0.995,0.025,0.975,0.1,0.9)))
 }
 
-par(mfrow=c(4,4))
 for(i in 1:4) {
   plot(0,0,type = "n", xlim = c(0,90), ylim = c(0,40), xlab = "abs. latitude", ylab = "temperature")
   points(lats, gradient_formulas[[grad_type]](lats), type = "l", lwd = 2)
@@ -203,7 +201,6 @@ for(i in 1:4) {
   temp_4[[i]] <- apply(temp,2,function(x) quantile(x,probs = c(0.5,0.005,0.995,0.025,0.975,0.1,0.9)))
 }
 
-par(mfrow=c(4,4))
 for(i in 1:4) {
   plot(0,0,type = "n", xlim = c(0,90), ylim = c(0,40), xlab = "abs. latitude", ylab = "temperature")
   points(lats, gradient_formulas[[grad_type]](lats), type = "l", lwd = 2)
