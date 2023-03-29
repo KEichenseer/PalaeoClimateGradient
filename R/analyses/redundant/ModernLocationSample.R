@@ -27,11 +27,12 @@ locs <- locs[order(locs$p_lat),]
 row.names(locs) <- 1:nrow(locs)
 # Sample data
 samples <- lapply(1:nrow(locs), function(i) {
+  print(i)
   # Set extent values
   xmin <- -180
   xmax <- 180
-  ymin <- floor(locs$p_lat[i])
-  ymax <- ceiling(locs$p_lat[i])
+  ymin <- locs$p_lat[i] - 0.5
+  ymax <- locs$p_lat[i] + 0.5
   # Set extent for sampling
   e <- raster::extent(c(xmin, xmax, ymin, ymax))
   # Sample raster for given extent
