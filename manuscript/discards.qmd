@@ -11,7 +11,11 @@ A relatively recent, proxy-based studies inferred a SST gradient that was shallo
 
 is an . 
 
+The early Eocene is the focus of a substantial body of palaeoclimate literature [e.g. @Berggren1998; @Thomas2000; @Hyland2017; @Lunt2021], as it is the interval with the warmest sustained temperatures of the Cenozoic [@Pross2012], and potentially represents an analogue for extreme climate warming scenarios [@Burke2018]. For palaeoclimate modelers, the early Eocene presents a challenge: Geochemical proxy data [@Hollis2019] and ecological data [@Markwick1994; @Greenwood1995] indicate tropical to subtropical conditions up to high latitudes, but early climate models have not been able to model warm polar temperatures and a shallow latitudinal temperature gradient under realistic conditions [@Sloan1990]. Although more recent climate models have been able to better align their simulations with the proxy record [@Huber2011], the nature of the early Eocene temperature gradient remains a matter of debate [@Tierney2017]. The shape and magnitude of the inferred EECO latitudinal gradient depends on the selection of proxies, on the method for dealing with spatial gaps and uneven sampling, on the inclusion or exclusion of terrestrial, shallow and deep marine data, while differential reporting of the results complicates comparisons of different approaches [@Evans2018; @Hollis2019; @Inglis2020]. Our goal is to provide a robust, yet simple method for inferring and comparing temperature gradients that can be readily used with different proxy types and with patchy records. We use this model to quantify the latitudinal SST gradient and the global mean SST of the early Eocene, but the unspecific design of our method means it can be readily applied to other time intervals and proxy records.
 
+
+
+constrain palaeoclimatic conditions, but no experimentally determined transfer functions exist to directly infer quantitative climate parameters from these records [e.g. @Wolfe1995; @Kvavcek2007; @Cao2019]. Instead, palaeoclimate signals (3)
 
 
 Assuming the conservation of thermal tolerances of modern coral reefs and mangrove taxa, we establish broad temperature ranges for EECO coral reef and mangrove sites. We integrate these temperature estimates with the EECO geochemical, shallow marine proxy record to model the latitudinal SST gradient and its uncertainty. 

@@ -11,14 +11,27 @@ modern_sample <- readRDS("./results/modern/modern_climate_model_output.rds")
 
 # Data preparation -------------------------------------------------------
 # Filter chem data
-chem <- chem[, c("p_lat", "temperature", "sd")]
+chem <- chem[, c("p_lat", "temperature", "sd", "proxy")]
 chem$type <- "Geochemical"
 # Filter eco data
 bio <- bio[, c("p_lat", "mu", "scale")]
 names(bio) <- c("p_lat", "temperature", "sd")
 bio$type <- "Ecological"
+bio$proxy <- "Mangrove"
+# Update reef occurrences
+bio$proxy[which(bio$sd == 2.125)] <- "Coral Reef"
 # Bind data
 locs <- rbind.data.frame(chem, bio)
+
+# Set factors
+levels <- c("Coral Reef", "Mangrove", "d18O", "d47", "TEX86", "MgCa")
+locs$proxy <- factor(locs$proxy, levels = levels)
+
+# Rename data for plotting
+locs[which(locs$proxy == "d18O"), c("type")] <- expression(delta^18*"O")
+locs[which(locs$proxy == "d47"), c("type")] <- expression(Delta[47])
+locs[which(locs$proxy == "TEX86"), c("type")] <- expression(TEX[86])
+locs[which(locs$proxy == "MgCa"), c("type")] <- "Mg/Ca"
 
 # eeco model
 eeco_mod <- combine_posterior(mod = eeco_mod, burnin = 100000)
@@ -28,10 +41,16 @@ eeco_temp <- temp_from_gradient(lat = lat, model_out = eeco_mod)
 modern_sample <- temp_from_gradient(lat = lat, model_out = modern_sample)
 
 # Plot data --------------------------------------------------------------
+# Labels
+labs <- c("Coral reef", "Mangrove", 
+          expression(delta^18*"O"), 
+          expression(Delta[47]), 
+          expression(TEX[86]),
+          "Mg/Ca")
 # Modern gradient
 ggplot() + 
   geom_point(data = locs,
-             aes(x = p_lat, y = temperature, shape = type, fill = type),
+             aes(x = p_lat, y = temperature, shape = proxy, fill = proxy),
              colour = "black", size = 2) +
   geom_line(data = modern_sample,
             aes(x = lat, y = median, colour = "Modern gradient"),
@@ -48,15 +67,11 @@ ggplot() +
   scale_colour_manual(values = c("#02818a", "#54278f"),
                      breaks = c("Modern gradient",
                                 "EECO gradient")) + 
-  scale_fill_manual(values = c("#33a02c", "#fdbf6f"),
-                     breaks = c("Ecological",
-                                "Geochemical")) + 
-  scale_shape_manual(values = c(21, 22),
-                     breaks = c("Ecological",
-                                "Geochemical")) +
+  scale_shape_manual(values = 20:26, labels = labs) +
+  scale_fill_manual(values = 1:6, labels = labs) +
   theme_bw() +
   theme(plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"),
-        legend.position = c(0.2, 0.15),
+        legend.position = c(0.2, 0.25),
         legend.title = element_blank(),
         legend.background = element_blank(),
         legend.text = element_text(size = 12),
