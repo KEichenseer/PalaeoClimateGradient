@@ -16,7 +16,7 @@ chem$type <- "Geochemical"
 # Filter eco data
 bio <- bio[, c("p_lat", "mu", "scale")]
 names(bio) <- c("p_lat", "temperature", "sd")
-bio$type <- "Geoecological"
+bio$type <- "Ecological"
 # Bind data
 locs <- rbind.data.frame(chem, bio)
 
@@ -39,20 +39,20 @@ ggplot() +
   geom_ribbon(data = eeco_temp,
               aes(x = lat, ymin = l_ci_95, ymax = u_ci_95),
               colour = NA, fill = "#54278f", alpha = 0.5) +
-  geom_point(data = eeco_temp,
+  geom_line(data = eeco_temp,
              aes(x = lat, y = median, colour = "EECO gradient"),
-             size = 0.7, alpha = 0.7) +
-  xlab("Abs. Latitude (\u00B0)") +
+             size = 1.5, alpha = 0.85) +
+  xlab("Absolute Latitude (\u00B0)") +
   ylab("Sea surface temperature (\u00B0C)") +
-  scale_x_continuous(limits = c(0, 90), breaks = seq(0, 90, 30), labels = seq(0, 90, 30)) +
-  scale_color_manual(values = c("#02818a", "#54278f"),
+  scale_x_continuous(limits = c(0, 90), labels = seq(0, 90, 15), breaks = seq(0, 90, 15)) +
+  scale_colour_manual(values = c("#02818a", "#54278f"),
                      breaks = c("Modern gradient",
                                 "EECO gradient")) + 
   scale_fill_manual(values = c("#33a02c", "#fdbf6f"),
-                     breaks = c("Geoecological",
+                     breaks = c("Ecological",
                                 "Geochemical")) + 
   scale_shape_manual(values = c(21, 22),
-                     breaks = c("Geoecological",
+                     breaks = c("Ecological",
                                 "Geochemical")) +
   theme_bw() +
   theme(plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"),

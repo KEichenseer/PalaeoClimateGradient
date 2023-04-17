@@ -44,13 +44,13 @@ p1 <- ggplot() +
             aes(x = lat, y = SST, colour = "Empirical gradient"),
             linewidth = 1, alpha = 1) +
   geom_line(data = modern_sample,
-            aes(x = lat, y = median, colour = "Modelled gradient \n(complete distribution)"),
+            aes(x = lat, y = median, colour = "Modelled gradient \n(full distribution)"),
             linewidth = 1.5, alpha = 0.85) +
   scale_color_manual(values = c("black", "#02818a")) +
   scale_x_continuous(limits = c(0, 90),
-                     breaks = seq(0, 90, 30),
-                     labels = seq(0, 90, 30)) +
-  xlab("Abs. latitude (\u00B0)") +
+                     breaks = seq(0, 90, 15),
+                     labels = seq(0, 90, 15)) +
+  xlab("Absolute latitude (\u00B0)") +
   ylab("Sea surface temperature (\u00B0C)") +
   theme_bw() +
   theme(plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"),
@@ -58,43 +58,45 @@ p1 <- ggplot() +
         legend.title = element_blank(),
         legend.background = element_blank(),
         legend.text = element_text(size = 12),
-        axis.text = element_text(size = 14),
-        axis.title = element_text(size = 14, face = "bold"),
-        axis.ticks = element_line(colour = "grey70", linewidth = 0.2),
-        panel.grid.major = element_line(colour = "grey70", size = 0.2),
-        panel.grid.minor = element_blank())
-# Modern model using Eocene sample distribution
-p2 <- ggplot() + 
-  geom_pointrange(data = eocene_reps,
-                  aes(x = p_lat, y = median, ymin = min, ymax = max),
-                  colour = "#54278f", size = 0.7, fatten = 1, alpha = 0.35) +
-  geom_ribbon(data = eocene_sample,
-              aes(x = lat, ymin = l_ci_95, ymax = u_ci_95),
-              fill = "#54278f", colour = NA, alpha = 0.3) +
-  geom_line(data = grad,
-            aes(x = lat, y = SST, colour = "Empirical gradient"),
-            size = 1, alpha = 1) +
-  geom_line(data = eocene_sample,
-            aes(x = lat, y = median, colour = "Modelled gradient \n(sampled distribution)"),
-            size = 1.5, alpha = 0.9) +
-  xlab("Abs. latitude (\u00B0)") +
-  ylab("Sea surface temperature (\u00B0C)") +
-  scale_color_manual(values = c("black", "#54278f")) +
-  scale_x_continuous(limits = c(0, 90),
-                     breaks = seq(0, 90, 30),
-                     labels = seq(0, 90, 30)) +
-  theme_bw() +
-  theme(plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"),
-        legend.position = c(0.8, 0.9),
-        legend.title = element_blank(),
-        legend.background = element_blank(),
-        legend.text = element_text(size = 12),
+        legend.spacing.y = unit(0.5, "mm"),
         axis.text = element_text(size = 14),
         axis.title = element_text(size = 14, face = "bold"),
         axis.ticks = element_line(colour = "grey70", size = 0.2),
-        panel.grid.major = element_line(colour = "grey70", linewidth = 0.2),
+        panel.grid.major = element_line(colour = "grey70", size = 0.2),
         panel.grid.minor = element_blank())
-# Combine plots and save ------------------------------------------------------
-ggarrange(p1, p2, ncol = 1, labels = "AUTO", font.label = list(size = 18))
-ggsave("./figures/fig_3.png",
-       units = "mm", width = 150, height = 250, dpi = 600)
+# # Modern model using Eocene sample distribution
+# p2 <- ggplot() + 
+#   geom_pointrange(data = eocene_reps,
+#                   aes(x = p_lat, y = median, ymin = min, ymax = max),
+#                   colour = "#54278f", size = 0.7, fatten = 1, alpha = 0.35) +
+#   geom_ribbon(data = eocene_sample,
+#               aes(x = lat, ymin = l_ci_95, ymax = u_ci_95),
+#               fill = "#54278f", colour = NA, alpha = 0.3) +
+#   geom_line(data = grad,
+#             aes(x = lat, y = SST, colour = "Empirical gradient"),
+#             size = 1, alpha = 1) +
+#   geom_line(data = eocene_sample,
+#             aes(x = lat, y = median, colour = "Modelled gradient \n(sampled distribution)"),
+#             size = 1.5, alpha = 0.9) +
+#   xlab("Abs. latitude (\u00B0)") +
+#   ylab("Sea surface temperature (\u00B0C)") +
+#   scale_color_manual(values = c("black", "#54278f")) +
+#   scale_x_continuous(limits = c(0, 90),
+#                      breaks = seq(0, 90, 30),
+#                      labels = seq(0, 90, 30)) +
+#   theme_bw() +
+#   theme(plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"),
+#         legend.position = c(0.8, 0.9),
+#         legend.title = element_blank(),
+#         legend.background = element_blank(),
+#         legend.text = element_text(size = 12),
+#         axis.text = element_text(size = 14),
+#         axis.title = element_text(size = 14, face = "bold"),
+#         axis.ticks = element_line(colour = "grey70", size = 0.2),
+#         panel.grid.major = element_line(colour = "grey70", linewidth = 0.2),
+#         panel.grid.minor = element_blank())
+# # Combine plots and save ------------------------------------------------------
+# ggarrange(p1, p2, ncol = 1, labels = "AUTO", font.label = list(size = 18))
+ggsave("./figures/fig_3.png", p1,
+       units = "mm", width = 150, height = 150, dpi = 600, scale = 1)
+
