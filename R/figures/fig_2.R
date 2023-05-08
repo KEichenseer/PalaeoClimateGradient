@@ -1,6 +1,7 @@
 # Load libraries --------------------------------------------------------
 library(ggplot2)
 library(ggthemes)
+library(ggtext)
 # Read data -------------------------------------------------------------
 df <- readRDS("./results/simulation/simulated_gradients_temperature_estimates.rds")
 # Remove modern gradient
@@ -40,9 +41,7 @@ r2$sample_size <- factor(x = r2$sample_size, levels = c(5, 10, 20, "34 (Eocene s
 r2$median <- round(r2$median, 3)
 r2$p_025 <- round(r2$p_025, 3)
 r2$p_975 <- round(r2$p_975, 3)
-r2$value <- paste0("2.5% = ", r2$p_025, "\n", 
-                   "50% = ", r2$median, "\n", 
-                   "97.5% = ", r2$p_975, "")
+r2$value <- paste0("*R*^2^ = ", r2$median, "  \n(95% CI: ", r2$p_025, "--", r2$p_975, ")") 
 # Plot data -------------------------------------------------------------
 col <- "#02818a"
 ggplot(data = df, aes(x = lat, y = median)) +
@@ -54,7 +53,8 @@ ggplot(data = df, aes(x = lat, y = median)) +
               fill = col, alpha = 0.2) +
   geom_line(aes(x = lat, y = known), linetype = 1, colour = "black", size = 0.75, alpha = 1) +
   geom_line(colour = col, linetype = 1, size = 0.75, alpha = 0.9) +
-  geom_text(data = r2, aes(x = 55, y = 38, label = value), hjust = 0, fontface = "bold", size = 2.5) +
+  geom_richtext(data = r2, aes(x = 90, y = 39.5, label = value), hjust = 1, fontface = "bold", size = 2.75,
+                fill = NA, colour = NA, text.colour = "black") +
   facet_grid(gradient_type~sample_size) +
   scale_x_continuous(limits = c(0, 90), labels = seq(0, 90, 15), breaks = seq(0, 90, 15)) +
   labs(y = "Sea surface temperature (\u00B0C)", x = "Absolute latitude (\u00B0)") +
