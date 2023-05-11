@@ -99,9 +99,14 @@ dat$proxy_value <- as.numeric(dat$proxy_value)
 dat$preservation[which(dat$preservation=="Recrystallized")] <- "recrystallised"
 dat$preservation[which(dat$preservation=="Recrystallization")] <- "recrystallised"
 
+
 # select data from one stage to test, exclude NA data
 data_sub <- subset(dat,EECO == 1 & !(is.na(temperature))  &
                      (is.na(depth_habitat) | depth_habitat %in% c("Mixed-layer",     "Mixed layer")))
+# number of d18O samples
+table(data_sub$proxy)
+
+
 # exclude recrystallised data
 data_sub <- subset(data_sub,preservation != "recrystallised" | proxy !="d18O")
 
