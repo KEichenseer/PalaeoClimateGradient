@@ -34,3 +34,18 @@ mod_med <- (temp_from_gradient(lat,modern_gradient))$median
 R2_modern <- 1-sum((mod_emp_med$SST - mod_med)^2)/sum((mod_emp_med$SST-mean(mod_emp_med$SST))^2)
 R2_modern <- format(round(R2_modern,3),nsmall = 1)
 saveRDS(R2_modern,"results/modern/modern_model_empirical_R2.rds")
+
+# Gelman's R2
+lats <- seq(0.5,89.5,1)
+
+mod_t <- gradient(lats,modern_gradient)
+
+var_fit <- apply(mod_t,1,function(x) var(x))
+var_res <- apply(mod_t,1,function(x) var(x-mod_emp_med$SST))
+
+R_squared_gelman_modern <- var_fit/(var_fit+var_res)
+quantile(R_squared_gelman_modern, probs = c(0.025,0.5,0.975))
+saveRDS(format(round(median(R_squared_gelman_modern),3),nsmall = 1) ,"results/modern/modern_model_empirical_R2_gelman.rds")
+
+# modern empirical gradient
+saveRDS(format(round(mod_emp_med$SST[1]-mod_emp_med$SST[90],1),nsmall = 1),"results/modern/modern_empirical_gradient.rds")
