@@ -1,5 +1,5 @@
 ---
-title: "Supplementary Material: Bayesian multi-proxy reconstruction of latitudinal temperature gradients applied to the Early Eocene"
+title: "Supplementary Material: Bayesian multi-proxy reconstruction of early Eocene latitudinal temperature gradients"
 author:
   - "---"
   - Kilian Eichenseer^1^ and Lewis A. Jones^2^
