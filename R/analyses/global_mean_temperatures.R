@@ -16,6 +16,10 @@ eeco_prox <- combine_posterior(eeco_prox, burnin = 100000)
 eeco_north <- readRDS("results/SM/eeco_climate_model_northern_hemisphere_output_combined.rds")
 eeco_south <- readRDS("results/SM/eeco_climate_model_southern_hemisphere_output_combined.rds")
 
+# modern empirical median
+mod_emp_med <- readRDS("results/modern/empirical_median_1-deg-lat.rds")
+
+
 # latitudinal weights in 1 deg lat bands
 alpha1 <- seq(1,90,1)
 alpha2 <- seq(0,89,1)
@@ -38,6 +42,14 @@ moeotemp <- gradient(seq(0.5,89.5,1), modem_all[,1:4],0)
 moeotempq <- apply(moeotemp,2,function(x) quantile(x, probs = c(0.025,0.5,0.975)))
 # modern eocene sampled global average temperature with 95% CI
 moeotemp_global <- as.list(format(round(quantile(apply(moeotemp,1, function(x) sum(x*latweight), simplify = TRUE),probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+
+
+
+# modern empirical gradient
+saveRDS(format(round(mod_emp_med$SST[1]-mod_emp_med$SST[90],1),nsmall = 1),"results/modern/modern_empirical_gradient.rds")
+
+# modern empirical average temperature
+motemp_empirical_global <- as.list(format(round(sum(mod_emp_med$SST*latweight),1),nsmall = 1))
 
 
 # eocene proxy only temperature gradient
@@ -80,6 +92,7 @@ eocene_eoceneproxy_gradient_deviation <- as.list(format(round(quantile(eotemppro
 
 # save results
 saveRDS(motemp_global,"results/modern/global_mean_modern.rds")
+saveRDS(motemp_empirical_global,"results/modern/global_mean_empirical_modern.rds")
 saveRDS(eotemp_global,"results/eeco/global_mean_eeco.rds")
 saveRDS(moeotemp_global,"results/eeco/global_mean_modern_eocene_sampling_eeco.rds")
 saveRDS(eotempprox_global,"results/eeco/global_mean_eeco_proxy_only.rds")
