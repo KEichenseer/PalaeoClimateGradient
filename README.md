@@ -2,7 +2,7 @@
 
 Author(s): [Kilian Eichenseer](mailto:kilian.eichenseer@durham.ac.uk) and [Lewis A. Jones](mailto:LewisA.Jones@outlook.com)
 
-This repository contains the data and code required to run the analyses and results of the article, "Bayesian multi-proxy reconstruction of early Eocene latitudinal temperature gradients" (Eichenseer and Jones, 2023). 
+This repository contains the data and code required to run the analyses and generate the results for the article "Bayesian multi-proxy reconstruction of early Eocene latitudinal temperature gradients" (Eichenseer and Jones, 2023). 
 
 To cite the paper: 
 > Kilian Eichenseer and Lewis A. Jones. 2023. Bayesian multi-proxy reconstruction of early Eocene latitudinal temperature gradients. Submitted to *Climate of the Past*.
