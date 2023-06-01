@@ -342,6 +342,6 @@ The authors declare that they have no conflicts of interest.
 
 # Data accessibility
 
-The data and code used to produce the results of this study are available via GitHub (<https://github.com/KEichenseer/PalaeoClimateGradient>) and the linked Zenodo repository (XXX).
+The data and code used to produce the results of this study are available via GitHub (<https://github.com/KEichenseer/PalaeoClimateGradient>) and the linked Zenodo repository (<https://zenodo.org/record/7995969>).
 
 # References
