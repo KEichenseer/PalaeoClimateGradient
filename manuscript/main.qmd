@@ -329,7 +329,7 @@ The Bayesian hierarchical model presented here is able to reconstruct latitudina
 
 # Acknowledgements
 
-The authors are grateful to all those who have enabled this work by collecting, measuring, collating and screening geochemical and fossil data. The contribution of L.A.J. was supported by a Juan de la Cierva-formación 2021 fellowship (FJC2021-046695-I/MCIN/AEI/10.13039/501100011033) from the European Union "NextGenerationEU"/PRTR. 
+The authors are grateful to all those who have enabled this work by collecting, measuring, collating and screening geochemical and fossil data. The contribution of L.A.J. was supported by a Juan de la Cierva-formación 2021 fellowship (FJC2021-046695-I/MCIN/AEI/10.13039/501100011033) from the European Union "NextGenerationEU"/PRTR. For the purpose of open access, the authors have applied a Creative Commons Attribution (CC BY) licence to any Author Accepted Manuscript version arising from this submission.
 <!-- regarding funding acknowledgement, I talked to my boss and he says I don't need to credit my funding as I have done this work largely in my spare time -->
 
 # Author contributions
