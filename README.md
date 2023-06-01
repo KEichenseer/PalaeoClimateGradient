@@ -1,4 +1,4 @@
-# Article title
+# Bayesian multi-proxy reconstruction of early Eocene latitudinal temperature gradients
 
 Author(s): [Kilian Eichenseer](mailto:kilian.eichenseer@durham.ac.uk) and [Lewis A. Jones](mailto:LewisA.Jones@outlook.com)
 
