@@ -37,21 +37,20 @@ saveRDS(distrmat, "./data/processed/distribution_matrix_for_EECO_model.rds")
 ### Prepare for model run
 # set up clusters for parallel computing
 library(doParallel)
-nClust <- 4
+nClust <- n_chains # from the options script
 cl <- parallel::makeCluster(nClust)
 doParallel::registerDoParallel(cl)
 
-nChains = nClust # run 1 chain per cluster
 ### Run model
 # source script
-mode <- foreach(pc = 1:nChains) %dopar% {
+mode <- foreach(pc = 1:n_chains) %dopar% { # run 1 chain per cluster
   # call model functions
   source("R/functions/model_components/climate_model_EECO.R")
   # set random seed
   set.seed(pc)
-  hierarchical_model(n_iter = 600000, n_thin = 100,
+  hierarchical_model(n_iter = n_iter, n_thin = n_thin,
                   obsmat = obsmat, distrmat = distrmat, 
-                  prior_input = priors,adapt_sd = 5000)
+                  prior_input = priors,adapt_sd = adapt_sd)
 }
 
 ### stop cluster
@@ -61,38 +60,10 @@ parallel::stopCluster(cl)
 saveRDS(mode, "results/eeco/eeco_climate_model_output.rds")
 
 # combine chains and discard burn-in
+source("R/functions/model_processing/combine_posterior.R")
 mode_all <- combine_posterior(mode,100000)
+
 # save combined chains
 saveRDS(mode_all, "results/eeco/eeco_climate_model_output_combined.rds")
 
-### To check results use the "assess_EECO-climate_model_output_script.R
-
-
-### Run a model on just the priors
-nClust <- 4
-cl <- parallel::makeCluster(nClust)
-doParallel::registerDoParallel(cl)
-nChains = nClust # run 1 chain per cluster
-
-# source script
-modp <- foreach(pc = 1:nChains) %dopar% {
-  # call model functions
-  source("R/functions/model_components/climate_model_EECO.R")
-  # set random seed
-  set.seed(pc)
-  hierarchical_model(n_iter = 60000, n_thin = 10,
-                     obsmat = NULL, distrmat = NULL, 
-                     prior_input = priors,adapt_sd = 5000)
-}
-
-### stop cluster
-parallel::stopCluster(cl)
-
-### save output
-saveRDS(modp, "results/eeco/just_prior_model_output.rds")
-
-# combine chains and discard burn-in
-modp_all <- combine_posterior(modp,10000)
-# save combined chains
-saveRDS(modp_all, "results/eeco/just_prior_model_output.rds_combined.rds")
-
+### To check results use the "processing/assess_EECO-climate_model_output_script.R

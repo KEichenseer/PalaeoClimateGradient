@@ -64,6 +64,7 @@ p1 <- ggplot() +
         axis.ticks = element_line(colour = "grey70", size = 0.2),
         panel.grid.major = element_line(colour = "grey70", size = 0.2),
         panel.grid.minor = element_blank())
+p1
 # # Modern model using Eocene sample distribution
 # p2 <- ggplot() + 
 #   geom_pointrange(data = eocene_reps,

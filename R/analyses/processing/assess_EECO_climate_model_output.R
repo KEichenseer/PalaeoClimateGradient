@@ -18,12 +18,10 @@ lats <- mod[[1]]$lat # latitudes of locations is saved in model output
 ### Assess output
 # monitor the chains to check for convergence and mixing
 plot_chains(mod) # default is A, dKA, M and log B
-# plot chains of sdy and lof posterior
-plot_chains(mod, params = c("sdy", "logpost"))
 
 # combine chains, discard burnin
 mode_all <- combine_posterior(mod,100000)
-saveRDS(mode_all,"results/eeco/eeco_climate_model_output_params.rds")
+#saveRDS(mode_all,"results/eeco/eeco_climate_model_output_params.rds")
 # check effective sample size for A, dKA, M, and B
 mcmcse::multiESS(mode_all[,1:4])
 

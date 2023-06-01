@@ -5,10 +5,17 @@
 #
 # check for missing packages and install if needed
 list.of.packages <- c("cli", "doParallel","foreach","parallel","mvnfast","truncnorm",
-                      "broom", "ggplot2", "ggthemes", "readxl", "mapproj", "magick",
+                      "broom", "ggplot2", "ggtext", "ggthemes", "readxl", "mapproj", "magick",
                       "png", "ggpubr", "mcmcse")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)>=1) install.packages(new.packages)
+
+# ggplot2 needs to be version >= 3.4.0!
+if (packageVersion("ggplot2") < "3.4.0") {
+  # If the version is older than 3.4.0, update and reload
+  install.packages("ggplot2")
+  library("ggplot2")
+}
 
 # Data preparation -------------------------------------------------------------
 source("./R/data_preparation/01_data_wrangle_hollis2019.R") ### Not yet working - Check!
@@ -20,10 +27,10 @@ rm(list = ls())
 #
 # Analyses
 # Fig. 1 - Geographical distribution of EECO proxy data and palaeotemperatures
-source("./R/figures/Fig_1.R", print.eval=TRUE)
+source("./R/figures/fig_1.R", print.eval=TRUE)
 #
 # for Fig. 2 - plot priors
-source("./R/figures/prior_plot.R")
+source("./R/figures/fig_2.R")
 #
 # Estimate modern latitudinal temperature gradient - run model
 # !!! WARNING !!! This can take 30 minutes or longer!

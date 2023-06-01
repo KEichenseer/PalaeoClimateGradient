@@ -139,3 +139,6 @@ names(R_squared_list) <- c("extreme_icehouse","icehouse","greenhouse","extreme_g
 # save in long format
 r2_long <- bind_rows(lapply(R_squared_list, function(x) bind_rows(x,.id = "sample_size")),.id="gradient_type")
 saveRDS(r2_long,"./results/simulation/simulated_gradients_r_squared_gelman_unweighted.rds")
+
+# set par mfrow back to 1,1
+par(mfrow = c(1,1))
