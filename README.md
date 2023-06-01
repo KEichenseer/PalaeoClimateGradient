@@ -56,6 +56,11 @@ and generate the palaeocoordinates for these data and the palaeoecological data.
 * **./R/figures/**
 This folder contains the R scripts to generate the figures.
 
+* **./R/functions/**
+This folder contains the R scripts with the Bayesian models for latitudinal 
+temperature gradients, as well as auxiliary functions for the modelling and for
+processing the modelling results.
+
 -------
 
 ## Results
