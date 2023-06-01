@@ -1,0 +1,13 @@
+cff-version: 0.1.1
+message: "Please cite this manuscript as below."
+authors:
+  - family-names: Eichenseer
+    given-names: Kilian
+    orcid: https://orcid.org/0000-0002-0477-8878
+  - family-names: Jones
+    given-names: Lewis A.
+    orcid: https://orcid.org/0000-0003-3902-8986
+title: Bayesian multi-proxy reconstruction of early Eocene latitudinal temperature gradients.
+version: v0.1.1
+date-released: 2023-06-01
+            
