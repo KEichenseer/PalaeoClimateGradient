@@ -1,4 +1,4 @@
-# Supplementary Figure S2 - gradient on Northern and Southern hemisphere
+# Supplementary Figure S2 - gradient with just geochem.
 
 # load figures for plotting, distributions ect.
 source("./R/functions/auxiliary_functions.R")
