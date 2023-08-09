@@ -4,9 +4,9 @@
 #define options
 n_chains = 4 # number of separate chains to run
 #
-n_iter = 100000 # number of iterations
+n_iter = 600000 # number of iterations
 # 
-n_thin = 10 # thinning of the chains (save only every n_thinth iteration)
+n_thin = 100 # thinning of the chains (save only every n_thinth iteration)
 # 
 adapt_sd = 5000 # number of iterations to adapt the proposal standard deviation
 #
