@@ -58,7 +58,7 @@ mode <- foreach(pc = 1:n_chains) %dopar% { # run 1 chain per cluster
   source("R/functions/model_components/climate_model_EECO.R")
   # set random seed
   set.seed(pc)
-  hierarchical_model(n_iter = 6*n_iter, n_thin = n_thin,
+  hierarchical_model(n_iter = n_iter, n_thin = n_thin,
                      obsmat = obsmat, distrmat = distrmat, 
                      prior_input = priors,adapt_sd = adapt_sd)
 }
