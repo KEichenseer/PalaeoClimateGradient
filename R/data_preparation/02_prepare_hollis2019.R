@@ -100,7 +100,7 @@ dat$preservation[which(dat$preservation=="Recrystallized")] <- "recrystallised"
 dat$preservation[which(dat$preservation=="Recrystallization")] <- "recrystallised"
 
 
-# select data from one stage to test, exclude NA data
+# select data from EECO, exclude NA data
 data_sub <- subset(dat,EECO == 1 & !(is.na(temperature))  &
                      (is.na(depth_habitat) | depth_habitat %in% c("Mixed-layer",     "Mixed layer")))
 # number of d18O samples

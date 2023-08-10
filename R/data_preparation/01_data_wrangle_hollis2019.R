@@ -215,8 +215,9 @@ for(i in 1:nrow(locpar)) {
 ### EECO could be 53.3 - 49.2 Ma (according to the figures in Hollis et al 2019)
 ### However, data between range(as.numeric(dat$Age[which(dat$Timeslice=="EECO")]),na.rm=T)
 ### i.e. from 48.57246 to 53.48746 has been assigned to EECO in their database. Hence, we use that
+# not needed anymore, age selection will be done in 02_prepare_hollis2019.R:
 #dat$Timeslice[which(is.na(dat$Timeslice) & (as.numeric(dat$Age) >= 48.57246 | as.numeric(dat$Age) <= 53.48746))] <- "EECO"
-# DON'T DO THIS IT IS WRONG, WILL BE TAKEN CARE OF IN THE SYNTHESIZE SCRIPT
+# 
 
 saveRDS(dat,"data/processed/Hollis_2019_TEX86_2022_07_18.rds")
 
