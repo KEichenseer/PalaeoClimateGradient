@@ -42,7 +42,7 @@ doParallel::registerDoParallel(cl)
 
 ### Run model
 # source script
-mode <- foreach(pc = 1:n_chains) %dopar% { # run 1 chain per cluster
+mode_sd <- foreach(pc = 1:n_chains) %dopar% { # run 1 chain per cluster
   # call model functions
   source("R/functions/model_components/climate_model_EECO.R")
   # set random seed
@@ -61,9 +61,9 @@ saveRDS(mode, "results/SM/eeco_climate_model__with_observation_sd_output.rds")
 
 # combine chains and discard burn-in
 source("R/functions/model_processing/combine_posterior.R")
-mode_all <- combine_posterior(mode,100000)
+mode_all_sd <- combine_posterior(mode_sd,100000)
 
 # save combined chains
-saveRDS(mode_all, "results/eeco/eeco_climate_model__with_observation_sd_output_combined.rds")
+saveRDS(mode_all_sd, "results/SM/eeco_climate_model__with_observation_sd_output_combined.rds")
 
 ### To check results use the "processing/assess_EECO-climate_model_output_script.R
