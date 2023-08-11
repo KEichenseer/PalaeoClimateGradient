@@ -34,7 +34,7 @@ run_MCMC_simple <- function(x, y, n_iter, n_thin = 1,
   # random setting of initial values for the regression parameters
   if(is.null(coeff_inits)) {coeff_inits = rep(NA,4)
   coeff_inits[1] = rnorm(1,10,3) # 20,45),c(1,2,4.5)
-  coeff_inits[2] = coeff_inits[1] + truncnorm::rtruncnorm(1,0,Inf,12,6)
+  coeff_inits[2] = max(0,coeff_inits[1] + truncnorm::rtruncnorm(1,0,Inf,12,6)) # may never be below zero!
   coeff_inits[3] = rnorm(1,45,7.5)
   coeff_inits[4] = exp(rnorm(1,-2.3,0.25))
   }
@@ -104,10 +104,15 @@ run_MCMC_simple <- function(x, y, n_iter, n_thin = 1,
     
     #if(any(proposal[4] <= 0)) HR = 0 else # B needs to be >0
     # Hastings ratio of the proposal
-    HR = exp(logposterior(x = x, y = y, coeff = proposal_coeff, sdy = sdy[i], logprior = logprior) -
-               logposterior(x = x, y = y, coeff = coefficients[i-1,], sdy = sdy[i], logprior = logprior) +
-               (-log(coefficients[i-1,4])) -
+    lp_prop <- logposterior(x = x, y = y, coeff = proposal_coeff, sdy = sdy[i], logprior = logprior)
+    lp_old <- logposterior(x = x, y = y, coeff = coefficients[i-1,], sdy = sdy[i], logprior = logprior)
+    HR = exp(lp_prop -
+              lp_old + 
+             (-log(coefficients[i-1,4])) -
                (-log(proposal_coeff[4])))
+    
+    if(lp_prop == -Inf) HR <- 0 # safeguard
+    
     # accept proposal with probability = min(HR,1)
     if (runif(1) < HR){
       accept[i] = 1
