@@ -67,3 +67,7 @@ mode_all_sd <- combine_posterior(mode_sd,100000)
 saveRDS(mode_all_sd, "results/SM/eeco_climate_model__with_observation_sd_output_combined.rds")
 
 ### To check results use the "processing/assess_EECO-climate_model_output_script.R
+
+# sdy
+eeco_sd_sdy <- as.list(format(round(quantile(mode_all_sd$sdy,probs = c(.025,.5,.975)),1),nsmall = 1))
+saveRDS(eeco_sd_sdy, "results/SM/eeco_sd_sdy.rds")

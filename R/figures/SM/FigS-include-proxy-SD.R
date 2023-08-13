@@ -17,24 +17,6 @@ obsmat <- readRDS("./data/processed/observation_matrix_for_EECO_model.rds")
 distrmat <- readRDS("./data/processed/distribution_matrix_for_EECO_model.rds")
 
 
-wider_coral_mean <- mean(c(35.6,16.0))
-wider_coral_sd <- round(1/(1.96*2) * (35.6-16.0),2)
-proxy_distributions$mean[3] <- wider_coral_mean
-proxy_distributions$sd[3] <- wider_coral_sd
-
-wider_avi_rhi_mean <- wider_coral_mean
-wider_avi_rhi_sd <- wider_coral_sd
-proxy_distributions$mean[2] <- wider_avi_rhi_mean
-proxy_distributions$sd[2] <- wider_avi_rhi_sd
-
-distrmat2 = data.frame(p_lat = abs(bioprox$p_lat), 
-                       mu = proxy_distributions$mean[proxy_index],
-                       scale = proxy_distributions$sd[proxy_index],
-                       shape = proxy_distributions$shape[proxy_index],
-                       distribution = proxy_distributions$distribution[proxy_index])
-
-
-
 # calculate location means of observation input data for easier plotting
 ylist <- lapply(unique(obsmat$sample), function(x) obsmat$temperature[which(obsmat$sample == x)])
 yobs_mean= c(sapply(ylist,mean))
@@ -74,7 +56,7 @@ plot_posterior(mode_sd[[1]], col_obs = rgb(0,0.6,1,1), col_dist = NA, add=T)# li
 plot_posterior(mode[[1]], col_obs = rgb(0,0,0,0.5), col_dist = NA, add=T,
                pch = 19)# line_col = rgb(0,0,1,0.5), confint_col = rgb(0,0,1,0.1))
 
-legend("topright", legend = c("original analysis", "with observation sd"), fill = c(rgb(0,0,0,0.75), rgb(0,0.6,1,1)),
-       bty = "n")
+legend("topright", legend = c("original analysis", "with proxy uncertainty"), fill = c(rgb(0,0,0,0.75), rgb(0,0.6,1,1)),
+       bty = "n", col = NA)
 
 dev.off()

@@ -39,6 +39,32 @@ csl: climate-of-the-past.csl
 Traceplots of a subset of the unknown model parameters. The four colours correspond to the four independent model runs. a) Traceplot of A, K-A, M, B and $\sigma$; b) Traceplot of five selected $\mu_j$; c) Traceplot of five selected $\sigma_j$. All traceplots display mixing of the chains, and relatively quick convergence.
 :::
 
+```{r results block - for in-line code, echo = FALSE}
+setwd('..') # move up to parent folder of /manuscript
+
+# sdy
+eeco_sdy <- readRDS("results/eeco/eeco_sdy.rds")
+eeco_sd_sdy <- readRDS("results/SM/eeco_sd_sdy.rds")
+
+```
+
+
+# EECO gradient with uncertainty on proxy observations 
+Most of the geochemical proxy data used in the EECO analysis (300 of 308) come with uncertainties around their temperature estimates. Due to their negligible influence on the model results, we have not included them in the main analysis, but we show a comparison between the main EECO model output (see Fig. 4) and an the results of an expanded model, including uncertainties, below. 
+
+Specifically, we took the 95 or 90% confidence intervals of the temperature estimates to calculate the standard deviation representative of this uncertainty ($t_{\sigma,i,j}$), which we used for the analysis. Instead of using fixed mean proxy temperature observations $t_{i,j}$ directly in Equation 3, we let $t_{i,j}$ be the function of a normal distribution with mean $t_{\mu,i,j}$ and standard deviation $t_{\sigma,i,j}$, where $t_{\mu,i,j}$ and $t_{\sigma,i,j}$ are provided by the proxy data set:
+
+$$t_{\mu,i,j}  \sim N(t_{i,j}, t_{\sigma,i,j}), ~~~~~ i = 1,...,m, ~~~~ j = 1,...,n, $${#eq-obs} where $m$ is the number of observations at each location, and $n$ denotes the number of locations.
+
+The resulting gradient estimated with this expanded model is very similar to that estimated with the original model (Fig. S2). The uncertainty around the proxy temperatures allows the estimated location mean temperatures to be drawn closer to the gradient line, resulting in a slightly lower median residual standard deviation (`r eeco_sd_sdy$"50%"` as opposed to `r eeco_sdy$"50%"` in the original model).
+
+
+::: {#fig-S2}
+![](../figures/SM/FigS_sd_included.png){width="10.5cm"}
+
+Estimated latitudinal temperature gradient using only the geochemical proxy data (orange), showing the median (line) and 95% credible interval (shading). Symbols with vertical lines show the median and 95% credible intervals of $\mu_j$. The blue line and shading in the background show the latitudinal temperature gradient with the geochemical and ecological proxy data, as in Figure 4.
+:::
+
 ::: {#fig-S2}
 ![](../figures/SM/FigS2_geochem_eeco.png){width="10.5cm"}
 
