@@ -10,6 +10,13 @@ source("R/functions/auxiliary_functions.R")
 # source options for analysis
 source("R/options.R")
 
+## wider priors on M and K
+# change prior on M
+priors$f3 <- function(x,log) dunif(x, min = 0, max = 90, log = log) # dnorm(x, mean = 42, sd = 25, log = log) #
+# change prior on K
+priors$f2 <- function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28, sd = 20, log = log)
+
+
 ## Hollis data
 dat <- readRDS("data/processed/Hollis_processed_EECO_2022_07_19.rds")
 #
@@ -375,8 +382,8 @@ for(i in 1:4) {
 four_gradients_model <- list(m_1_proc,m_2_proc,m_3_proc,m_4_proc)
 four_gradients_temp <- list(temp_2,temp_2,temp_3,temp_4)
 
-saveRDS(four_gradients_model, "D://OneDrive - Durham University/projects/four_gradients_revised_model_proc.rds")
-saveRDS(four_gradients_temp, "D://OneDrive - Durham University/projects/four_gradients_revised_temp.rds")
+saveRDS(four_gradients_model, "D://OneDrive - Durham University/projects/four_gradients_revised_model_proc_M_wider.rds")
+saveRDS(four_gradients_temp, "D://OneDrive - Durham University/projects/four_gradients_revised_temp_M_wider.rds")
 
 #gradient_formulas <- list( function(x) 30-x/3, function(x) rep(25,length(x)), function(x) 30-x^2/270, function(x) 8.5*atan(-0.5*x+15)+12.5)
 
@@ -423,4 +430,4 @@ names(t_list) <- c("extreme_icehouse","icehouse (modern)","greenhouse","extreme_
 t_long <- bind_rows(lapply(t_list, function(x) bind_rows(x,.id = "sample_size")),.id="gradient_type")
 #t_long$sample_size <- as.numeric(t_long$sample_size) # no longer works with `eocene`
 
-saveRDS(t_long,"./results/simulation/simulated_gradients_temperature_estimates_with_noise_eocene_resampled.rds")
+saveRDS(t_long,"./results/simulation/simulated_gradients_temperature_estimates_with_noise_eocene_resampled_M_wider.rds")

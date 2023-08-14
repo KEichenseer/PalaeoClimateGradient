@@ -84,4 +84,5 @@ eeco_temp_ori <- temp_from_gradient(lat = 0:90, model_out = mode_all)
 points(eeco_temp_ori$lat,eeco_temp_ori$median, col = "black", type = "l", ylim = c(-3,36))
 error_polygon(eeco_temp_ori$lat,eeco_temp_ori$l_ci_95, eeco_temp_ori$u_ci_95, col = rgb(0,0,0,0.2))
 
-legend("bottomleft", )
+legend("bottomleft", legend = c("original", "relaxed priors on M (and K)"), col = c("black", "red"),
+       lwd = 1)
