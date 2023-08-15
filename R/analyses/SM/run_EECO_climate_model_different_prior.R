@@ -6,7 +6,7 @@ source("./R/options.R")
 # change prior on M
 priors$f3 <- function(x,log) dunif(x, min = 0, max = 90, log = log) # dnorm(x, mean = 42, sd = 25, log = log) #
 # change prior on K
-priors$f2 <- function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28, sd = 20, log = log)
+priors$f2 <- function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28, sd = 15, log = log)
 
 ### Read data
 ## Hollis data
@@ -46,7 +46,7 @@ doParallel::registerDoParallel(cl)
 
 ### Run model
 # source script
-mode <- foreach(pc = 1:n_chains) %dopar% { # run 1 chain per cluster
+mode3 <- foreach(pc = 1:n_chains) %dopar% { # run 1 chain per cluster
   # call model functions
   source("R/functions/model_components/climate_model_EECO.R")
   # set random seed
@@ -66,9 +66,10 @@ saveRDS(mode, "results/SM/eeco_climate_model_output_different_M_prior.rds")
 source("R/functions/model_processing/combine_posterior.R")
 mode_all <- combine_posterior(mode,100000*0.1)
 mode_all2 <- combine_posterior(mode2,100000*0.1)
+mode_all3 <- combine_posterior(mode3,100000*0.1)
 
 plot_gradient(mode_all, ylim = c(-5,37))
-plot_gradient(mode_all2, add = T, line_col = rgb(0,0,1,.7), confint_col = rgb(0,0,1,0.2))
+plot_gradient(mode_all3, add = T, line_col = rgb(0,1,1,.7), confint_col = rgb(0,0,1,0.2))
 plot_gradient(mode_all2, add = T, line_col = rgb(1,0,0,.7), confint_col = rgb(1,0,0,0.2))
 
 plot_chains(mode)
@@ -80,9 +81,14 @@ saveRDS(mode_all, "results/eeco/eeco_climate_model_output_combined.rds")
 
 
 eeco_temp_ori <- temp_from_gradient(lat = 0:90, model_out = mode_all)
- 
+eeco_temp_3 <- temp_from_gradient(lat = 0:90, model_out = mode_all3)
+
 points(eeco_temp_ori$lat,eeco_temp_ori$median, col = "black", type = "l", ylim = c(-3,36))
 error_polygon(eeco_temp_ori$lat,eeco_temp_ori$l_ci_95, eeco_temp_ori$u_ci_95, col = rgb(0,0,0,0.2))
+
+points(eeco_temp_3$lat,eeco_temp_3$median, col = "blue", type = "l", ylim = c(-3,36))
+error_polygon(eeco_temp_3$lat,eeco_temp_3$l_ci_95, eeco_temp_3$u_ci_95, col = rgb(0,1,1,0.2))
+
 
 legend("bottomleft", legend = c("original", "relaxed priors on M (and K)"), col = c("black", "red"),
        lwd = 1)
