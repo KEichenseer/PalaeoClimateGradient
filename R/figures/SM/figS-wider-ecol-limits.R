@@ -14,7 +14,6 @@ mode_all_ecowide <-  readRDS("./results/SM/eeco_climate_model_wider_ecol_combine
 obsmat <- readRDS("./data/processed/observation_matrix_for_EECO_model.rds")
 distrmat <- readRDS("./data/processed/distribution_matrix_for_EECO_model.rds")
 
-
 wider_coral_mean <- mean(c(35.6,16.0))
 wider_coral_sd <- round(1/(1.96*2) * (35.6-16.0),2)
 proxy_distributions$mean[3] <- wider_coral_mean
