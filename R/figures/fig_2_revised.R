@@ -3,7 +3,7 @@ library(ggplot2)
 library(ggthemes)
 library(ggtext)
 # Read data -------------------------------------------------------------
-df <- readRDS("./results/simulation/simulated_gradients_temperature_estimates_with_noise_eocene_resampled_M_wider.rds")
+df <- readRDS("./results/simulation/simulated_gradients_temperature_estimates_with_noise_eocene_resampled_M_wider_noise.rds")
 
 # Rename sample size
 df$sample_size[which(df$sample_size == "eocene")] <- "34 (all Eocene samples)"
@@ -20,7 +20,7 @@ df$gradient_type <- factor(x = df$gradient_type, levels = c("Extreme Icehouse",
 df$sample_size <- factor(x = df$sample_size, levels = c(5, 10, 20, "34 (all Eocene samples)"))
 
 # Get R2 values
-r2 <- readRDS("./results/simulation/simulated_gradients_r_squared_gelman_unweighted_revised_M_wider.rds")
+r2 <- readRDS("./results/simulation/simulated_gradients_r_squared_gelman_unweighted_revised_M_wider_noise.rds")
 # Rename gradients
 r2$gradient_type[which(r2$gradient_type == "extreme_greenhouse")] <- "Extreme Greenhouse"
 r2$gradient_type[which(r2$gradient_type == "greenhouse")] <- "Greenhouse"
@@ -68,5 +68,5 @@ ggplot(data = df, aes(x = lat, y = median)) +
         panel.grid.major = element_line(colour = "grey70"),
         panel.grid.minor = element_blank())
 # Save plot -------------------------------------------------------------
-ggsave("./figures/fig_2_revised_M_wider.png",
+ggsave("./figures/fig_2_revised_M_wider_noise.png",
        units = "mm", width = 200, height = 200, dpi = 600)
