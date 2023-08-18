@@ -84,4 +84,5 @@ plot_gradient(mod_all_south, line_col = "red", confint_col = rgb(1,0,0,0.2), add
 
 
 # save output
-saveRDS(mod_all, "results/modern/modern_climate_model_output.rds")
+saveRDS(mod_all, "results/SM/modern_climate_model_output_north.rds")
+saveRDS(mod_all, "results/SM/modern_climate_model_output_south.rds")
