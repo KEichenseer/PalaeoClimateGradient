@@ -122,7 +122,7 @@ Geochemical climate proxy data were extracted from a latest Paleocene and early 
 2)  *Avicennia* and Rhizophoraceae assemblages ($n=5$): the presence of both groups suggests that the locality should have a minimum temperature of 20.7&deg;C (lower temperature limit of *Rhizophora*). As the upper thermal limits of *Aviciennia* and *Rhizophora* are not well established in @Quisthoudt2012, we assign the same maximum temperature limits (29.5&deg;C) as coral reef localities, because mangroves are also widely distributed throughout tropical regions. Consequently, we define the temperature distribution for this locality as a normal distribution with a mean of 25.1 and a standard deviation of 2.2, with 95% probability density within the temperature limits.
 
 ::: {#fig-1}
-![](../figures/fig_1.png){width="15cm"}
+![](../figures/fig_1_revised.png){width="15cm"}
 
 Palaeogeographic distribution of the geochemical and ecological data compilation used in this study. <!--  I cut repetition from the methods, but maybe cite where the map is coming from. 
 Palaeocoordinates of samples were estimated via the palaeoverse R package [version 1.2.0,@jones2023]. To do so, the @merdith2021 Global Plate Model was used to palaeorotate present-day coordinates to 51.2 Ma. --> Map is presented in the Robinson projection (ESRI:54030).
@@ -249,7 +249,7 @@ eeco_south_north_global_diff <- readRDS("results/SM/global_mean_diff_south_north
 ## Model validation
 
 ::: {#fig-2}
-![](../figures/fig_2.png){width="15cm"}
+![](../figures/fig_2_revised_final.png){width="15cm"}
 
 Model reconstructions of simulated latitudinal temperature gradients at various sample sizes. Each column depicts a different reconstruction for given sample sizes: 5, 10, 20, and 34 (latitudes of EECO samples). Each row depicts a different simulated latitudinal temperature gradient that represents idealised climatic states: extreme icehouse, icehouse, greenhouse, and extreme greenhouse. The black line illustrates the simulated gradient. The blue line depicts the reconstructed gradient represented by the median sea surface temperature value estimated from 1,000 model runs with different random samples (first three columns), and a single run with the EECO latitudinal sampling distribution (fourth column). The blue shadings depict the 90%, 95%, and 99% credible intervals. Bold black text within each panel depicts the coefficient of determination ($R^2$) for estimating goodness of fit between the simulated and modelled gradient. The median (50%) $R^2$ value along with the 95% credible intervals from all model runs are shown. Each gradient is depicted in absolute latitude.
 :::

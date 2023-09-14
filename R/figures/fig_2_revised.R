@@ -68,5 +68,5 @@ ggplot(data = df, aes(x = lat, y = median)) +
         panel.grid.major = element_line(colour = "grey70"),
         panel.grid.minor = element_blank())
 # Save plot -------------------------------------------------------------
-ggsave("./figures/fig_2_revised_M_wider_noise.png",
+ggsave("./figures/fig_2_revised_final.png",
        units = "mm", width = 200, height = 200, dpi = 600)
