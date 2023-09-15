@@ -40,23 +40,33 @@ alpha2 <- 0.75
 col1 <- c(rgb(.9,.8,.5,alpha2), rgb(.8,.7,.5,alpha2), rgb(.7,.6,.5,alpha2), rgb(.65,.6,.6,alpha2))
 
 
+lat <- seq(0,90,1)
+
+all_temp <- temp_from_gradient(lat = lat, model_out = mode_all)
+all_sd_temp <- temp_from_gradient(lat = lat, model_out = mode_all_sd)
+
+
 
 png("figures/SM/FigS_sd_included.png", width = 4.75, height = 3.5, units = "in", res = 400)
 par(mar=c(4.2,4.2,0.5,0.5), mgp = c(2.5,0.8,0)
     ,las = 1)
-plot(obsmat$p_lat,obsmat$temperature, pch = pch1[proxind1], col = col1[proxind1], xlim = c(-2,92), ylim = c(14,41.5),
+plot(obsmat$p_lat,obsmat$temperature, pch = pch1[proxind1], col = col1[proxind1], xlim = c(-2,92), ylim = c(0,41.5),
      xlab = xlab1, ylab = ylab1, cex = cex1[proxind1], type = "n", xaxs = "i", yaxs = "i")
 
-plot_gradient(mode_all,add=T, line_col = rgb(0,0,0,1), confint_col = rgb(0,0,0,0.2))
+error_polygon(lat, all_temp$l_ci_95, all_temp$u_ci_95, col =  rgb(0,0,0,0.2))
 
-plot_gradient(mode_all_sd, add=T, line_col = rgb(0,.6,1,0.75), confint_col = rgb(0,.6,1,0.15))
+error_polygon(lat, all_sd_temp$l_ci_95, all_sd_temp$u_ci_95, col = rgb(0,.6,1,0.15))
+
+
+points(lat, all_temp$median, type = "l", lwd = 2, col = "black")
+points(lat, all_sd_temp$median, type = "l", lwd = 2, col = rgb(0,.6,1,0.75))
 
 plot_posterior(mode_sd[[1]], col_obs = rgb(0,0.6,1,1), col_dist = NA, add=T)# line_col = rgb(0,0,1,0.5), confint_col = rgb(0,0,1,0.1))
 
 plot_posterior(mode[[1]], col_obs = rgb(0,0,0,0.5), col_dist = NA, add=T,
                pch = 19)# line_col = rgb(0,0,1,0.5), confint_col = rgb(0,0,1,0.1))
 
-legend("topright", legend = c("original analysis", "with proxy uncertainty"), fill = c(rgb(0,0,0,0.75), rgb(0,0.6,1,1)),
+legend("bottomleft", legend = c("original analysis", "with proxy uncertainty"), fill = c(rgb(0,0,0,0.75), rgb(0,0.6,1,1)),
        bty = "n", col = NA)
 
 dev.off()

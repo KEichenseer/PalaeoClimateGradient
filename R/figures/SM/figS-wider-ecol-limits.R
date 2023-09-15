@@ -40,6 +40,14 @@ n_obs <- length(yobs_mean)
 mean_t <- c(yobs_mean,distrmat$mu)
 lats <- mode[[1]]$lat # latitudes of locations is saved in model output
 
+lat <- seq(0,90,0.5)
+
+
+# get temperatures from gradient
+eeco_temp <- temp_from_gradient(lat = lat, model_out = mode_all)
+eeco_wide_temp <- temp_from_gradient(lat = lat, model_out = mode_all_ecowide)
+
+
 
 cex1 <- c(1.05,1,1.15,0.92)
 alpha2 <- 0.75
@@ -56,17 +64,20 @@ col1 <- c(rgb(.9,.8,.5,alpha2), rgb(.8,.7,.5,alpha2), rgb(.7,.6,.5,alpha2), rgb(
 
 
 
+
 png("figures/SM/FigS_wider-ecol-limits.png", width = 4.75, height = 3.5, units = "in", res = 400)
 par(mar=c(4.2,4.2,0.5,0.5), mgp = c(2.5,0.8,0)
     ,las = 1)
-plot(obsmat$p_lat,obsmat$temperature, pch = pch1[proxind1], col = col1[proxind1], xlim = c(-2,92), ylim = c(14,41.5),
+plot(obsmat$p_lat,obsmat$temperature, pch = pch1[proxind1], col = col1[proxind1], xlim = c(-2,92), ylim = c(0,40.5),
      xlab = xlab1, ylab = ylab1, cex = cex1[proxind1], type = "n", xaxs = "i", yaxs = "i")
 
-plot_gradient(mode_all,add=T, line_col = rgb(0,0,0,1), confint_col = rgb(0,0,0,0.2))
 
-plot_gradient(mode_all_ecowide, add=T, line_col = col_proxgrad, confint_col = col_proxgrad_shade)
+error_polygon(lat, eeco_temp$l_ci_95, eeco_temp$u_ci_95, col = rgb(0,0,0,0.2))
+error_polygon(lat, eeco_wide_temp$l_ci_95, eeco_wide_temp$u_ci_95, col = col_proxgrad_shade)
 
 
+points(lat, eeco_temp$median, type = "l", lwd = 2, col = "black")
+points(lat, eeco_wide_temp$median, type = "l", lwd = 2, col = col_proxgrad)
 
 sapply(1:11, function(x) points(rep(distrmat2$p_lat[x],2), distrmat2$mu[x] + distrmat2$scale[x] * c(-2,2), type = "l", lwd = 2,
                                 col = rgb(0.9,0.3,0,0.75)))
@@ -81,7 +92,7 @@ points(distrmat2$p_lat, distrmat2$mu, col = rgb(0.9,0.3,0,0.75), pch = c(rep(17,
        lwd = 1, cex = 1)
 
 
-legend("topright", legend = c("original analysis", "wider ecological limits"), fill = c(rgb(0,0,0,0.75), rgb(0.9,0.3,0,0.75)),
+legend("bottomleft", legend = c("original analysis", "wider ecological limits"), fill = c(rgb(0,0,0,0.75), rgb(0.9,0.3,0,0.75)),
        bty = "n")
 
 dev.off()

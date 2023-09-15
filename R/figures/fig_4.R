@@ -57,7 +57,7 @@ ggplot() +
             size = 1.5, alpha = 0.85) +
   geom_ribbon(data = eeco_temp,
               aes(x = lat, ymin = l_ci_95, ymax = u_ci_95),
-              colour = NA, fill = "#54278f", alpha = 0.5) +
+              colour = NA, fill = "#54278f", alpha = 0.35) +
   geom_line(data = eeco_temp,
              aes(x = lat, y = median, colour = "EECO gradient"),
              size = 1.5, alpha = 0.85) +
@@ -82,4 +82,4 @@ ggplot() +
         panel.grid.major = element_line(colour = "grey70", size = 0.2),
         panel.grid.minor = element_blank())
 
-ggsave("./figures/fig_4.png", units = "mm", width = 150, height = 150, dpi = 600)
+ggsave("./figures/fig_4_revised.png", units = "mm", width = 150, height = 150, dpi = 600)

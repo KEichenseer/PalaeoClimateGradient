@@ -62,18 +62,77 @@ n_obs_south <- length(yobs_mean_south)
 mean_t_south <- c(yobs_mean_south)
 lats_south <- mode_south[[1]]$lat # latitudes of locations is saved in model output
 
+lat <- seq(0,90,1)
+
+all_temp <- temp_from_gradient(lat = lat, model_out = mode_all)
+north_temp <- temp_from_gradient(lat = lat, model_out = mode_all_north)
+south_temp <- temp_from_gradient(lat = lat, model_out = mode_all_south)
+
+
+
+
+### Modern
+source("./R/functions/model_processing/temp_from_gradient.R")
+source("./R/functions/model_processing/combine_posterior.R")
+# Load data --------------------------------------------------------------
+temp <- rast("./data/raw/climate/BioOracle_20220711/Present.Surface.Temperature.Mean.asc")
+modern_sample <- readRDS("./results/modern/modern_climate_model_output.rds")
+# Data preparation -------------------------------------------------------
+# Reduce resolution of raster
+r <- rast(res = 1)
+temp <- resample(x = temp, y = r)
+# Extract temperature data
+temp <- terra::as.data.frame(x = temp, xy = TRUE)
+colnames(temp) <- c("lng", "lat", "SST")
+# Remove data from continents
+temp <- na.omit(temp)
+
+# north south seperate
+temp_ns <- temp
+# Add 1 deg latitudinal bins
+temp_ns$bin <- ceiling(temp_ns$lat) - 0.5
+# Calculate median per lat bin
+grad_ns <- tapply(temp_ns$SST, temp_ns$bin, median)
+grad_ns <- data.frame(lat = as.numeric(names(grad_ns)), SST = as.vector(grad_ns))
+
+
+# Make lats absolute values
+temp$lat <- abs(temp$lat)
+# Add 1 deg latitudinal bins
+temp$bin <- ceiling(temp$lat) - 0.5
+# Calculate median per lat bin
+grad <- tapply(temp$SST, temp$bin, median)
+grad <- data.frame(lat = as.numeric(names(grad)), SST = as.vector(grad))
+
+
 # Plot north south
 png("figures/SM/FigS3_north_south_eeco.png", width = 5.5, height = 3.5, units = "in", res = 400)
 
 par(las = 1, mar = c(4.2,4.2,.5,.5), mgp = c(2.5,0.8,0))
-plot(0,0,type = "n", xlim = c(-94,94), ylim = c(10,40), yaxs = "i", xaxs = "i",
+plot(0,0,type = "n", xlim = c(-94,94), ylim = c(-3,40), yaxs = "i", xaxs = "i",
      xlab = expression("latitude ("*degree*")"), ylab = expression("temperature ("*degree*"C)"), xaxt = "n")
 
-plot_gradient(mode_all,ylim = c(-2,39), add = T, line_col = rgb(0,0,0,0.5), confint_col = rgb(0,0,0,0.15))
-plot_gradient(mode_all,ylim = c(-2,39), add = T, negative=T, line_col = rgb(0,0,0,0.5), confint_col = rgb(0,0,0,0.15))
+error_polygon(lat, all_temp$l_ci_95, all_temp$u_ci_95, col = rgb(0,0,0,0.2))
+error_polygon(-lat, all_temp$l_ci_95, all_temp$u_ci_95, col = rgb(0,0,0,0.2))
 
-plot_gradient(mode_all_north, add = T, negative = F, line_col = rgb(0,0,0.8), confint_col = rgb(0,0,0.8,0.2))
-plot_gradient(mode_all_south, add = T, negative = T, line_col = rgb(0.8,0,0), confint_col = rgb(0.8,0,0,0.2))
+error_polygon(lat, north_temp$l_ci_95, north_temp$u_ci_95, col = rgb(0,0,0.8,0.2))
+
+error_polygon(-lat, south_temp$l_ci_95, south_temp$u_ci_95, col = rgb(0.8,0,0,0.2))
+
+
+points(lat, all_temp$median, type = "l", lwd = 2, col = "black")
+points(-lat, all_temp$median, type = "l", lwd = 2, col = "black")
+
+points(lat, north_temp$median, type = "l", lwd = 2, col =  rgb(0,0,0.8))
+points(-lat, south_temp$median, type = "l", lwd = 2, col =  rgb(0.8,0,0))
+
+points(grad$lat, grad$SST, lwd = 2, type = "l", lty = 2)
+points(-grad$lat, grad$SST, lwd = 2, type = "l", lty = 2)
+
+points(grad_ns$lat[which(grad_ns$lat < 0)], grad_ns$SST[which(grad_ns$lat < 0)], lwd = 2, type = "l", lty = 2,
+       col =  rgb(0.8,0,0))
+points(grad_ns$lat[which(grad_ns$lat > 0)], grad_ns$SST[which(grad_ns$lat > 0)], lwd = 2, type = "l", lty = 2,
+       col =  rgb(0,0,0.8))
 
 # add median of the poster estimates of location means
 plot_posterior(mode_north[[1]], col_obs = rgb(0,0,1), col_dist = rgb(0,.75,.72)) # select the first run, doesn't yet work for combined chains
@@ -83,6 +142,8 @@ axis(1,seq(-90,90,30))
 
 text(-87.5,38.25,"Southern Hemisphere", col = rgb(.8,0,0), adj = 0)
 text(87.5,38.25,"Northern Hemisphere", col = rgb(0,0,0.8), adj = 1)
+
+legend("bottom", legend = c("EECO", "modern"), lwd = 2, lty = c(1,2), bty = "n")
 
 dev.off()
 

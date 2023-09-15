@@ -32,14 +32,18 @@ saveRDS(grad,"results/modern/empirical_median_1-deg-lat.rds")
 lat <- seq(from = 0, to = 90, by = 0.1)
 modern_sample <- temp_from_gradient(lat = lat, model_out = modern_sample)
 # Calculate modern temperatures from palaeodistribution of Eocene data
-eocene_sample <- combine_posterior(mod = eocene_sample, burnin = 5000)
-eocene_sample <- temp_from_gradient(lat = lat, model_out = eocene_sample)
+#eocene_sample <- combine_posterior(mod = eocene_sample, burnin = 5000)
+#eocene_sample <- temp_from_gradient(lat = lat, model_out = eocene_sample)
 # Plot ------------------------------------------------------------------------
 # Modern gradient
 p1 <- ggplot() + 
-  geom_point(data = temp,
-             aes(x = lat, y = SST), 
-             colour = "grey80", size = 0.7, alpha = 0.7) +
+   geom_point(data = temp,
+              aes(x = lat, y = SST), 
+              colour = "grey80", size = 0.7, alpha = 0.7) +
+  stat_density2d(data = temp, aes(x = lat, y = SST, fill = sqrt(..density..)), geom = "tile", contour = FALSE,
+                 show.legend=FALSE) +
+  scale_fill_gradient(low = "transparent", high = "grey20", guide = "none") + 
+  guides(fill = "none",  color = guide_legend(override.aes = list(fill = NA))) +  # Remove fill legend
   geom_line(data = grad,
             aes(x = lat, y = SST, colour = "Empirical gradient"),
             linewidth = 1, alpha = 1) +
@@ -57,6 +61,10 @@ p1 <- ggplot() +
         legend.position = c(0.8, 0.9),
         legend.title = element_blank(),
         legend.background = element_blank(),
+        legend.key = element_blank(), # Remove the key background
+        legend.key.size = unit(1, 'lines'),
+        legend.box.background = element_blank(),
+        legend.box.margin = margin(0, 0, 0, 0),
         legend.text = element_text(size = 12),
         legend.spacing.y = unit(0.5, "mm"),
         axis.text = element_text(size = 14),
@@ -98,6 +106,6 @@ p1
 #         panel.grid.minor = element_blank())
 # # Combine plots and save ------------------------------------------------------
 # ggarrange(p1, p2, ncol = 1, labels = "AUTO", font.label = list(size = 18))
-ggsave("./figures/fig_3.png", p1,
+ggsave("./figures/fig_3_revised.png", p1,
        units = "mm", width = 150, height = 150, dpi = 600, scale = 1)
 

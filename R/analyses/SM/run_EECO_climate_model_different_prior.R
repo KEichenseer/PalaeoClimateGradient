@@ -46,12 +46,12 @@ doParallel::registerDoParallel(cl)
 
 ### Run model
 # source script
-mode3 <- foreach(pc = 1:n_chains) %dopar% { # run 1 chain per cluster
+mode <- foreach(pc = 1:n_chains) %dopar% { # run 1 chain per cluster
   # call model functions
   source("R/functions/model_components/climate_model_EECO.R")
   # set random seed
   set.seed(pc)
-  hierarchical_model(n_iter = 0.1*n_iter, n_thin = 0.1*n_thin,
+  hierarchical_model(n_iter = n_iter, n_thin = n_thin,
                   obsmat = obsmat, distrmat = distrmat, 
                   prior_input = priors,adapt_sd = adapt_sd)
 }
@@ -60,17 +60,23 @@ mode3 <- foreach(pc = 1:n_chains) %dopar% { # run 1 chain per cluster
 parallel::stopCluster(cl)
 
 ### save output
-saveRDS(mode, "results/SM/eeco_climate_model_output_different_M_prior.rds")
+saveRDS(mode, "results/eeco/eeco_climate_model_output.rds")
 
 # combine chains and discard burn-in
 source("R/functions/model_processing/combine_posterior.R")
-mode_all <- combine_posterior(mode,100000*0.1)
-mode_all2 <- combine_posterior(mode2,100000*0.1)
-mode_all3 <- combine_posterior(mode3,100000*0.1)
+source("R/functions/auxiliary_functions.R")
+source("R/functions/model_components/gradient.R")
+
+mode_all <- combine_posterior(mode,100000)
+lat <- seq(from = 0, to = 90, by = 0.1)
+
+source("./R/functions/model_processing/temp_from_gradient.R")
+eeco_temp <- temp_from_gradient(lat = lat, model_out = mode_all)
+
+plot(lat, eeco_temp$median)
+error_polygon(lat, eeco_temp$l_ci_95, eeco_temp$u_ci_95, col = rgb(1,0,0,0.2))
 
 plot_gradient(mode_all, ylim = c(-5,37))
-plot_gradient(mode_all3, add = T, line_col = rgb(0,1,1,.7), confint_col = rgb(0,0,1,0.2))
-plot_gradient(mode_all2, add = T, line_col = rgb(1,0,0,.7), confint_col = rgb(1,0,0,0.2))
 
 plot_chains(mode)
 

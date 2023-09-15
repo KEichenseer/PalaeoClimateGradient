@@ -19,6 +19,14 @@ priors <- list(  # a list with one function per parameter of the logistic regres
   f3 = function(x,log) dnorm(x, mean = 42, sd = 10, log = log), # prior on M (latitude of steepest point of the gradient)
   f4 = function(x,log) dgamma(x, shape = 4.3, rate = 30, log = log)# prior on B (growth rate)
 )
+
+### --- for revision:
+# change prior on M
+priors$f3 <- function(x,log) dunif(x, min = 0, max = 90, log = log) # dnorm(x, mean = 42, sd = 25, log = log) #
+# change prior on K
+priors$f2 <- function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28, sd = 15, log = log)
+### ---
+
 #
 # Define temperature distributions for Eocene ecological data
 proxy_distributions <- data.frame(name = c("Avicennia", "Avicennia-Rhizophoraceae", "Reef"),

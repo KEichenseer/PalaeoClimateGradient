@@ -2,6 +2,8 @@
 ###
 ### seperate gradients- northern hemisphere
 ###
+# source options for analysis
+source("./R/options.R")
 
 ### Read data
 ## Hollis data

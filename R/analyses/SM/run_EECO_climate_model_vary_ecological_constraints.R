@@ -3,6 +3,11 @@
 # source options for analysis
 source("./R/options.R")
 #
+# change prior on M
+priors$f3 <- function(x,log) dunif(x, min = 0, max = 90, log = log) # dnorm(x, mean = 42, sd = 25, log = log) #
+# change prior on K
+priors$f2 <- function(x,lower,log) dtnorm(x, lower, upper = Inf, mean = 28, sd = 15, log = log)
+
 ### Read data
 ## Hollis data
 dat <- readRDS("data/processed/Hollis_processed_EECO_2022_07_19.rds")
