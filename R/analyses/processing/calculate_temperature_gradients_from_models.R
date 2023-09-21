@@ -1,6 +1,7 @@
 ### calculating results
 source("./R/functions/model_processing/temp_from_gradient.R")
 source("./R/functions/model_components/gradient.R")
+source("./R/functions/model_processing/combine_posterior.R")
 
 # modern
 modm <- readRDS("./results/modern/modern_climate_model_output.rds")
