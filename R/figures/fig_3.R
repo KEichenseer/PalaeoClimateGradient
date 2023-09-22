@@ -39,17 +39,17 @@ modern_sample <- temp_from_gradient(lat = lat, model_out = modern_sample)
 p1 <- ggplot() + 
    geom_point(data = temp,
               aes(x = lat, y = SST), 
-              colour = "grey80", size = 0.7, alpha = 0.7) +
-  stat_density2d(data = temp, aes(x = lat, y = SST, fill = sqrt(..density..)), geom = "tile", contour = FALSE,
-                 show.legend=FALSE) +
-  scale_fill_gradient(low = "transparent", high = "grey20", guide = "none") + 
-  guides(fill = "none",  color = guide_legend(override.aes = list(fill = NA))) +  # Remove fill legend
+              colour = "grey40", size = 0.7, alpha = 0.075) +
+  # stat_density2d(data = temp, aes(x = lat, y = SST, fill = sqrt(..density..)), geom = "tile", contour = FALSE,
+  #                show.legend=FALSE) +
+  # scale_fill_gradient(low = "transparent", high = "grey20", guide = "none") + 
+  # guides(fill = "none",  color = guide_legend(override.aes = list(fill = NA))) +  # Remove fill legend
   geom_line(data = grad,
             aes(x = lat, y = SST, colour = "Empirical gradient"),
-            linewidth = 1, alpha = 1) +
+            size = 1.15, alpha = 1) +
   geom_line(data = modern_sample,
             aes(x = lat, y = median, colour = "Modelled gradient \n(full distribution)"),
-            linewidth = 1.5, alpha = 0.85) +
+            size = 1.6, alpha = 0.85) +
   scale_color_manual(values = c("black", "#02818a")) +
   scale_x_continuous(limits = c(0, 90),
                      breaks = seq(0, 90, 15),
