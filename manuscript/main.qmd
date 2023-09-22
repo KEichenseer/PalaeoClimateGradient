@@ -74,21 +74,23 @@ Table 1: Inferred latitudinal sea surface temperature (SST) gradients for the ea
 library(knitr)
 
 data <- data.frame(
-  Source = c("Bijl et al. (2009)", "Keating-Bitoni et al. (2011)", "Tierney et al. (2017)", "Cramwinckel et al. (2018)", "Evans et al. (2018)", "Pross et al. (2012), as shown in Tierney et al. (2017)"),
-  Time = c("EE", "EECO", "EE", "EECO", "EE", "EE"),
-  Gradient = c("7", "13", "12", "21 (±1)", "20 (±3)", "26"),
-  Type_of_gradient = c("equator - polar circle", "equator - polar circle", "equator - polar circle", "equator - deep water", "tropics - deep water", "equator - polar circle"),
+  Source = c("Bijl et al. (2009)", "Keating-Bitoni et al. (2011)", "Tierney et al. (2017)", "Cramwinckel et al. (2018)", "Evans et al. (2018)", "Pross et al. (2012), as shown in Tierney et al. (2017)", "Lunt et al. (2021)"),
+  Time = c("EE", "EECO", "EE", "EECO", "EE", "EE", "EECO"),
+  Gradient = c("7", "13", "12", "21 (±1)", "20 (±3)", "26", "18 - 26"), 
+  Type_of_gradient = c("equator - polar circle", "equator - polar circle", "equator - polar circle", "equator - deep water", "tropics - deep water", "equator - polar circle", "tropics - high latitude"),
   Model = c("$2^{nd}$ order polynomial",
             "$2^{nd}$ order polynomial",
             "Gaussian function",
             "-",
             "-",
-            "climate model ensemble (GCM)"),
+            "climate model ensemble",
+            "DeepMIP climate models"),
   Proxy_system = c("$TEX_{86}$, $UK_{37}^{K'}$",
                    "$TEX_{86}$, MBT/CBT, $\\Delta_{47}$, Mg/Ca, $\\delta^{18}O$",
                    "$TEX_{86}$",
                    "$TEX_{86}$, $\\Delta_{47}$, Mg/Ca, $\\delta^{18}O$, deepwater $\\delta^{18}O$",
                    "$\\Delta_{47}$, deepwater Mg/Ca",
+                   "none (GCM simulations)",
                    "none (GCM simulations)")
 )
 
@@ -320,7 +322,7 @@ Our approach for deriving fully quantitative climate reconstructions from ecolog
 
 ## Early Eocene climate
 
-The geochemical proxy record and ecological data indicate that the latitudinal SST gradient of the early Eocene climatic optimum was significantly shallower than the modern [@Huber2011], but beyond that, there is little agreement. Earlier, reconstructed early Eocene and EECO SST gradients range from 7 -- 21&deg;C (Table 1); a more recent reconstruction that includes terrestrial air and sea surface temperatures arrives at a gradient of ~13&deg;C [@Inglis2020]. Our median polar circle to equatorial gradient estimate is similar at `r eocene_gradient$"50%"`&deg;C. The confirmation of a very flat gradient by both geochemical and ecological shallow water data indicates that inferred SST gradients based on tropical, shallow water and deep water samples [@Cramwinckel2018; @Evans2018] may overestimate the SST gradient of the early Eocene greenhouse world.
+The geochemical proxy record and ecological data indicate that the latitudinal SST gradient of the early Eocene climatic optimum was significantly shallower than the modern [@Huber2011], but beyond that, there is little agreement. Earlier, reconstructed early Eocene and EECO SST gradients range from 7 -- 21&deg;C (Table 1); a more recent reconstruction that includes terrestrial air and sea surface temperatures arrives at a gradient of ~13&deg;C [@Inglis2020]. Our median polar circle to equatorial gradient estimate is similar at `r eocene_gradient$"50%"`&deg;C. The confirmation of a very flat gradient by both geochemical and ecological shallow water data indicates that inferred SST gradients based on tropical, shallow water and deep water samples [@Cramwinckel2018; @Evans2018] may overestimate the SST gradient of the early Eocene greenhouse world. Likewise, climate simulations using general circulation or Earth system models tend to estimate steeper gradients than most proxy records [Table 1\; @Pross2012; @Lunt2021]
 
 <!-- @Evans2018 estimate the SST gradient at 32+-10% of the modern, which would correspond to \~`r round( as.numeric(modern_gradient$"50%") - 0.32*as.numeric(modern_gradient$"50%"),0)`+- `r format(round( 0.10*as.numeric(modern_gradient$"50%"),0),nsmall=0)`&deg;C, using the difference between the mean tropical and deep ocean data. The modelled SST of @Tierney2017 using TEX86 is \~ `r round(35.8-23.8,0)`&deg;C, when taking the difference between temperatures at the polar circles and the equator. @Inglis2020 include both terrestrial air temperature and SST estimates in their model of the latitudinal temperature gradient in their Figure S4a; they model a polar circle to equatorial gradient of \~ `r round(30.7-(20.2+14.3)/2,0)`&deg;C. All of those estimates are significantly lower than the SST gradient predicted by an EECO climate model ensemble [@Lunt2012, as shown in @Tierney2017], which predicts a polar circle to equatorial gradient of `r round(31.5-5.5,0)`&deg;C. @Keating-Bitonti2011 show a proxy-based SST gradient of \~ `r round(30-(19+15.6)/2,0)`&deg;C, and @Bijl2009 model a gradient of \~`r round(36-27,0)`&deg;C in the northern and only \~`r 36-31`&deg;C in the southern hemisphere for the early Eocene. Our polar circle to equatorial gradient is lower than most previous estimates at `r eocene_gradient_polar_circle$"50%"`&deg;C, although the 95% credible interval overlap with several of the listed gradient estimates. -->
 
