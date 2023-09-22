@@ -50,15 +50,26 @@ n <- length(modern_t0)
 # randomly recombine iterations of modern and eocene gradient and take difference
 set.seed(1)
 tdiff_lat0 <- as.list(format(round(quantile(eocene_t0[sample(1:n,n)] - modern_t0[sample(1:n,n)], probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+tdiff_lat0 <- lapply(tdiff_lat0, function(x) gsub(" ", "", x))
+
 tdiff_lat90 <- as.list(format(round(quantile(eocene_t90[sample(1:n,n)] - modern_t90[sample(1:n,n)], probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+tdiff_lat90 <- lapply(tdiff_lat90, function(x) gsub(" ", "", x))
 
 # calculate overall gradient for modern and eocene (polar - equatorial difference)
 eocene_gradient <- as.list(format(round(quantile(eocene_t0 - eocene_t90, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+eocene_gradient <- lapply(eocene_gradient, function(x) gsub(" ", "", x))
+
 modern_gradient <- as.list(format(round(quantile(modern_t0 - modern_t90, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+modern_gradient <- lapply(modern_gradient, function(x) gsub(" ", "", x))
+
 modern_eocene_gradient <- as.list(format(round(quantile(modern_eocene_t0 - modern_eocene_t90, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+modern_eocene_gradient <- lapply(modern_eocene_gradient, function(x) gsub(" ", "", x))
+
 eocene_proxy_gradient <- as.list(format(round(quantile(eeco_prox_t0 - eeco_prox_t90, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+eocene_proxy_gradient <- lapply(eocene_proxy_gradient, function(x) gsub(" ", "", x))
 
 eocene_gradient_polar_circle <- as.list(format(round(quantile(eocene_t0 - eocene_t66.6, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+eocene_gradient_polar_circle <- lapply(eocene_gradient_polar_circle, function(x) gsub(" ", "", x))
 
 
 eocene_gradient_uncertainty <- quantile(eocene_t0 - eocene_t90, probs = c(0.975))-quantile(eocene_t0 - eocene_t90, probs = c(0.025))
@@ -71,9 +82,15 @@ modern_eocene_gradient_diff <- as.list(format(round(quantile((modern_eocene_t0 -
 
 #north south
 eocene_northern_gradient <- as.list(format(round(quantile(eeco_north_t0 - eeco_north_t90, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+eocene_northern_gradient <- lapply(eocene_northern_gradient, function(x) gsub(" ", "", x))
+
 eocene_southern_gradient <- as.list(format(round(quantile(eeco_south_t0 - eeco_south_t90, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+eocene_southern_gradient <- lapply(eocene_southern_gradient, function(x) gsub(" ", "", x))
+
 eocene_north_south_gradient_diff_all <- (eeco_north_t0 - eeco_north_t90) - (eeco_south_t0 - eeco_south_t90)
+
 eocene_north_south_gradient_diff <- as.list(format(round(quantile(eocene_north_south_gradient_diff_all, probs = c(0.025,0.5,0.975)),1),nsmall = 1))
+eocene_north_south_gradient_diff <- lapply(eocene_north_south_gradient_diff, function(x) gsub(" ", "", x))
 
 
 
