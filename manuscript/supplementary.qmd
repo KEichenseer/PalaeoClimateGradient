@@ -53,7 +53,7 @@ eeco_sd_sdy <- readRDS("results/SM/eeco_sd_sdy.rds")
 ::: {#fig-S2}
 ![](../figures/SM/FigS2_geochem_eeco.png){width="10.5cm"}
 
-Estimated latitudinal temperature gradient using only the geochemical proxy data (yellow), showing the median (line) and 95% credible interval (shading). Symbols with vertical lines show the median and 95% credible intervals of $\mu_j$. The blue line and shading in the background show the latitudinal temperature gradient with the geochemical and ecological proxy data, as in Figure 4.
+Estimated latitudinal temperature gradient using only the geochemical proxy data (yellow), showing the median (line) and 95% credible interval (shading). Symbols with vertical lines show the median and 95% credible intervals of the location means $\mu_j$. The blue line and shading in the background show the latitudinal temperature gradient with the geochemical and ecological proxy data, as in Figure 4.
 :::
 
 
@@ -61,7 +61,7 @@ Estimated latitudinal temperature gradient using only the geochemical proxy data
 ::: {#fig-S3}
 ![](../figures/SM/FigS_wider-ecol-limits.png){width="10.5cm"}
 
-Estimated latitudinal temperature gradient using only wider ecological limits for the coral data and for the *Avicennia*-Rhizophoraceae mangrove assemblage (orange), showing the median (line) and 95% credible interval (shading). The ecological limits were expanded to include $95\%$ of the probability density in the interval of $16.0$ to $35.6$&deg;C, using the minimal monthly temperature experienced by coral reefs (Kleypas et al., 1999), and a theoretical maximum derived by Jones et al. (2022). Symbols with vertical lines show the median and 95% credible intervals of $\mu_j$. The black line and shading in the background show the latitudinal temperature gradient with the narrower ecological limits, as in Figure 4.
+Estimated latitudinal temperature gradient using only wider ecological limits for the coral data and for the *Avicennia*-Rhizophoraceae mangrove assemblage (orange), showing the median (line) and 95% credible interval (shading). The ecological limits were expanded to include $95\%$ of the probability density in the interval of $16.0$ to $35.6$&deg;C, using the minimal monthly temperature experienced by coral reefs (Kleypas et al., 1999), and a modelled maximum derived by Jones et al. (2022). Symbols with vertical lines show the median and 95% credible intervals of $\mu_j$. The black line and shading in the background show the latitudinal temperature gradient with the narrower ecological limits, as in Figure 4.
 :::
 
 
@@ -69,7 +69,7 @@ Estimated latitudinal temperature gradient using only wider ecological limits fo
 ::: {#fig-S4}
 ![](../figures/SM/FigS3_north_south_eeco.png){width="12cm"}
 
-Estimated latitudinal temperature gradients for each hemisphere, showing the medians (lines) and 95% credible intervals (shadings) in the Southern (red) and Northern Hemisphere (blue). Symbols with vertical lines show the median and 95% credible intervals of $\mu_j$. Turquoise symbols in the Northern Hemisphere highlight the ecological proxy data. The grey line and shading in the background show the latitudinal temperature gradient with the data from both hemispheres combined, plotted in both hemispheres. The dotted lines show the empirical, modern gradient, averaged across bins of 1&deg, for both hemispheres combined (black), and for the Northern hemisphere (blue) and Southern hemisphere (red), separately.
+Estimated latitudinal temperature gradients for each hemisphere, showing the medians (lines) and 95% credible intervals (shadings) in the Southern (red) and Northern Hemisphere (blue). Symbols with vertical lines show the median and 95% credible intervals of the location means $\mu_j$. Turquoise symbols in the Northern Hemisphere highlight the ecological proxy data. The grey line and shading in the background show the latitudinal temperature gradient with the data from both hemispheres combined, plotted in both hemispheres. The dotted lines show the empirical, modern gradient, averaged across bins of 1&deg;, for both hemispheres combined (black), and for the Northern hemisphere (blue) and Southern hemisphere (red), separately.
 :::
 
 
@@ -81,13 +81,13 @@ Specifically, we took the 95 or 90% confidence intervals of the temperature esti
 
 $$t_{\mu,i,j}  \sim N(t_{i,j}, t_{\sigma,i,j}), ~~~~~ i = 1,...,m, ~~~~ j = 1,...,n, $${#eq-obs} where $m$ is the number of observations at each location, and $n$ denotes the number of locations.
 
-The resulting gradient estimated with this expanded model is very similar to that estimated with the original model (Fig. S2). The uncertainty around the proxy temperatures allows the estimated location mean temperatures to be drawn closer to the gradient line, resulting in a slightly lower median residual standard deviation (`r eeco_sd_sdy$"50%"` as opposed to `r eeco_sdy$"50%"` in the original model).
+The resulting gradient estimated with this expanded model is very similar to that estimated with the original model (Fig. S5). The uncertainty around the proxy temperatures allows the estimated location mean temperatures to be drawn closer to the gradient line, resulting in a slightly lower median residual standard deviation (`r eeco_sd_sdy$"50%"` as opposed to `r eeco_sdy$"50%"` in the original model).
 
 
 ::: {#fig-S5}
 ![](../figures/SM/FigS_sd_included.png){width="10.5cm"}
 
-Estimated latitudinal temperature gradient using only the geochemical proxy data (orange), showing the median (line) and 95% credible interval (shading). Symbols with vertical lines show the median and 95% credible intervals of $\mu_j$. The blue line and shading in the background show the latitudinal temperature gradient with the geochemical and ecological proxy data, as in Figure 4.
+Estimated latitudinal temperature gradient with uncertainty on proxy observations (blue), compared to the original model result (black, as in Fig. 4). Gradients are depicted as medians (lines) and 95% credible intervals (shadings). Symbols with vertical lines show the median and 95% credible intervals of the location means $\mu_j$ for the geochemical data. 
 :::
 
 
@@ -95,7 +95,7 @@ Estimated latitudinal temperature gradient using only the geochemical proxy data
 ::: {#fig-S6}
 ![](../figures/SM/FigS_temp_location_sd.png){width="8.5cm"}
 
-Standard deviation of temperature estimates from individual localities of the EECO geochemical proxy data from Hollis et al. (2019) with more than one sample, against the absolute latitude of the locality (n = 17). The line shows a linear regression, suggesting a moderate effect of absolute latitude on proxy data variability, with mid- and hight-latitude data being more variable than low-latitude data.
+Standard deviation of temperature estimates from individual localities of the EECO geochemical proxy data from Hollis et al. (2019) with more than one sample, against the absolute latitude of the locality (n = 17). The line shows a linear regression, suggesting a moderate effect of absolute latitude on proxy data variability, with mid- and high-latitude data being more variable than low-latitude data.
 :::
 <!-- REMOVED
 ```{r out.width='100%', echo = FALSE, fig.cap = "Fig S4. Simulated latitudinal temperature gradients sampled at the absolute latitudes of the EECO data. The dark grey points show the simulated temperature data, the black line shows the shape of the true gradient, and the medians (lines) and 95% credible intervals (shadings) of the inferred gradients using the model are shown in red. \\\n a) linear gradient; $SST = 30-|latitude|/3$ \\\n b) flat gradient; $SST = 25$ \\\n c) quadratic gradient; $SST = 30-|latitude|^2/270$ \\\n d) as c), but the priors on A, M, and B were relaxed to allow for a better fit to the quadratic gradient in high latitudes \\\n  All latitudinal temperature gradients are well captured by the model in the latitudinal range for which data is provided. If the priors, particularly the prior on the lower limit of the gradient (A), are relaxed (d), the model can approximate a quadratic or linear function even in high latitudes and at cold temperatures."}

@@ -3,6 +3,8 @@
 # load figures for plotting, distributions ect.
 source("./R/functions/auxiliary_functions.R")
 source("./R/functions/model_components/gradient.R")
+source("./R/functions/model_processing/temp_from_gradient.R")
+
 # read model output
 mode <- readRDS("./results/eeco/eeco_climate_model_output.rds")
 mode_all <- readRDS("./results/eeco/eeco_climate_model_output_combined.rds")
@@ -35,8 +37,8 @@ proxind1 <- sapply(obsmat$proxy, function(x) which(x == c("d18O","MgCa","TEX86",
 alpha3 <- 0.9
 col_proxgrad <- rgb(0.85,0.6,0,0.9)
 col_proxgrad_shade <- rgb(0.85,0.6,0,0.27)
-xlab1 <- expression("|latitude| ("*degree*")")
-ylab1 <- expression("temperature ("*degree*"C)")
+xlab1 <- expression("absolute latitude ("*degree*")")
+ylab1 <- expression("sea surface temperature ("*degree*"C)")
 lat_obs <- mode[[1]]$lat
 alpha2 <- 0.75
 col1 <- c(rgb(.9,.8,.5,alpha2), rgb(.8,.7,.5,alpha2), rgb(.7,.6,.5,alpha2), rgb(.65,.6,.6,alpha2))

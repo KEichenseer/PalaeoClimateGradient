@@ -4,6 +4,8 @@ source("./R/options.R")
 # load figures for plotting, distributions ect.
 source("./R/functions/auxiliary_functions.R")
 source("./R/functions/model_components/gradient.R")
+source("./R/functions/model_processing/temp_from_gradient.R")
+
 # read model output
 mode <- readRDS("./results/eeco/eeco_climate_model_output.rds")
 mode_all <- readRDS("./results/eeco/eeco_climate_model_output_combined.rds")
@@ -23,6 +25,19 @@ wider_avi_rhi_mean <- wider_coral_mean
 wider_avi_rhi_sd <- wider_coral_sd
 proxy_distributions$mean[2] <- wider_avi_rhi_mean
 proxy_distributions$sd[2] <- wider_avi_rhi_sd
+
+
+### Mangrove and Coral data
+# read and assign proxy type
+bioprox <- readRDS("data/processed/bio_proxies_2022_08_08.RDS")
+bioprox$proxy <- rep("Reef",nrow(bioprox))
+bioprox$proxy[which(bioprox$taxa=="Avicennia")] <- "Avicennia"
+bioprox$proxy[which(bioprox$type=="mangrove" & bioprox$taxa!="Avicennia")] <- 
+  "Avicennia-Rhizophoraceae"
+
+# create distribution matrix for use with model (distributions defined in options)
+proxy_index <- sapply(bioprox$proxy, function(f) which(proxy_distributions$name==f))
+
 
 distrmat2 = data.frame(p_lat = abs(bioprox$p_lat), 
                       mu = proxy_distributions$mean[proxy_index],
@@ -56,8 +71,8 @@ proxind1 <- sapply(obsmat$proxy, function(x) which(x == c("d18O","MgCa","TEX86",
 alpha3 <- 0.9
 col_proxgrad <- rgb(0.9,0.3,0,0.9)
 col_proxgrad_shade <- rgb(0.9,0.3,0,0.27)
-xlab1 <- expression("|latitude| ("*degree*")")
-ylab1 <- expression("temperature ("*degree*"C)")
+xlab1 <- expression("absolute latitude ("*degree*")")
+ylab1 <- expression("sea surface temperature ("*degree*"C)")
 lat_obs <- mode[[1]]$lat
 alpha2 <- 0.75
 col1 <- c(rgb(.9,.8,.5,alpha2), rgb(.8,.7,.5,alpha2), rgb(.7,.6,.5,alpha2), rgb(.65,.6,.6,alpha2))

@@ -3,6 +3,8 @@
 # load figures for plotting, distributions ect.
 source("./R/functions/auxiliary_functions.R")
 source("./R/functions/model_components/gradient.R")
+source("./R/functions/model_processing/temp_from_gradient.R")
+
 # read model output
 mode <- readRDS("./results/eeco/eeco_climate_model_output.rds")
 mode_all <- readRDS("./results/eeco/eeco_climate_model_output_combined.rds")
@@ -110,7 +112,7 @@ png("figures/SM/FigS3_north_south_eeco.png", width = 5.5, height = 3.5, units = 
 
 par(las = 1, mar = c(4.2,4.2,.5,.5), mgp = c(2.5,0.8,0))
 plot(0,0,type = "n", xlim = c(-94,94), ylim = c(-3,40), yaxs = "i", xaxs = "i",
-     xlab = expression("latitude ("*degree*")"), ylab = expression("temperature ("*degree*"C)"), xaxt = "n")
+     xlab = expression("latitude ("*degree*")"), ylab = expression("sea surface temperature ("*degree*"C)"), xaxt = "n")
 
 error_polygon(lat, all_temp$l_ci_95, all_temp$u_ci_95, col = rgb(0,0,0,0.2))
 error_polygon(-lat, all_temp$l_ci_95, all_temp$u_ci_95, col = rgb(0,0,0,0.2))
