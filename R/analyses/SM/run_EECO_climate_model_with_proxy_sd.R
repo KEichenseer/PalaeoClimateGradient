@@ -57,7 +57,7 @@ mode_sd <- foreach(pc = 1:n_chains) %dopar% { # run 1 chain per cluster
 parallel::stopCluster(cl)
 
 ### save output
-saveRDS(mode, "results/SM/eeco_climate_model__with_observation_sd_output.rds")
+saveRDS(mode_sd, "results/SM/eeco_climate_model__with_observation_sd_output.rds")
 
 # combine chains and discard burn-in
 source("R/functions/model_processing/combine_posterior.R")
