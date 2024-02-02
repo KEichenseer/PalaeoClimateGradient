@@ -57,14 +57,14 @@ ggplot() +
             size = 1.5, alpha = 0.85) +
   geom_ribbon(data = eeco_temp,
               aes(x = lat, ymin = l_ci_95, ymax = u_ci_95),
-              colour = NA, fill = "#54278f", alpha = 0.35) +
+              colour = NA, fill = "#4B2280", alpha = 0.35) +
   geom_line(data = eeco_temp,
              aes(x = lat, y = median, colour = "EECO gradient"),
              size = 1.5, alpha = 0.85) +
   xlab("Absolute Latitude (\u00B0)") +
   ylab("Sea surface temperature (\u00B0C)") +
   scale_x_continuous(limits = c(0, 90), labels = seq(0, 90, 15), breaks = seq(0, 90, 15)) +
-  scale_colour_manual(values = c("#02818a", "#54278f"),
+  scale_colour_manual(values = c("#02A7B3", "#4B2280"),
                      breaks = c("Modern gradient",
                                 "EECO gradient")) + 
   scale_shape_manual(values = 20:26, labels = labs) +
@@ -82,4 +82,4 @@ ggplot() +
         panel.grid.major = element_line(colour = "grey70", size = 0.2),
         panel.grid.minor = element_blank())
 
-ggsave("./figures/fig_4_revised.png", units = "mm", width = 150, height = 150, dpi = 600)
+ggsave("./figures/fig_4_revised-contrast.png", units = "mm", width = 150, height = 150, dpi = 600)
